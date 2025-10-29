@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><?php echo($title); ?></title>
+</head>
+<body>
+
+  <div name="header">
+      <a href="/dashboard/">Dashboard</a>
+    </div>
+
+    <?php 
+      if (!empty($messages['errorMessage'])) {
+        echo($messages['errorMessage']);
+      }
+
+      if (!empty($messages['generalMessage'])) {
+        echo($messages['generalMessage']);
+      }
+    ?>
+
+    <h1><?php echo($headerText) ?></h1>
+
+    <form action="/post/add/" method="post">
+
+      Title: <input type="text" name="postTitle" id="postTitle" required> <br>
+      
+      Text: <br>
+      <textarea name="blogPost" id="blogPost" cols="30" rows="10"></textarea>
+      
+      <button type="submit">create</button>
+
+    </form>
+</body>
+</html>

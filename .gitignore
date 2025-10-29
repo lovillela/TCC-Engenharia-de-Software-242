@@ -1,0 +1,36 @@
+# General
+*.log
+*.cache
+*.tmp
+*.bak
+*.swp
+*.swo
+*.DS_Store
+
+#SSL
+*.key
+*.crt
+
+# Git
+/.git/
+/.github/
+
+# Composer
+/vendor/
+/composer.lock
+
+# Environment variables
+.env
+
+# IDEs and editors
+.idea/
+/.vscode/
+/nbproject/
+
+# PHPUnit
+/phpunit.xml
+/phpunit.xml.dist
+
+#Personal files
+/references/
+/tests/

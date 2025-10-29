@@ -1,0 +1,21 @@
+{
+    "name": "lovillela/tcc-engenharia-de-software-242",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Lovillela\\BlogApp\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Luís Otávio Villela Antunes",
+            "email": "luis.villela3@gmail.com"
+        }
+    ],
+    "require": {
+        "altorouter/altorouter": "^2.0",
+        "doctrine/dbal": "^4.2",
+        "doctrine/migrations": "^3.9",
+        "vlucas/phpdotenv": "^5.6"
+    }
+}

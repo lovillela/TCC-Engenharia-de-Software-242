@@ -1,0 +1,4 @@
+ALTER TABLE `slug_map`
+  DROP KEY `UNIQUE_slug-slug_map`,
+  ADD UNIQUE KEY `entity_slug_unique` (`entity_type`, `slug`),
+  ADD KEY `entity_lookup` (`entity_type`, `entity_id`);
