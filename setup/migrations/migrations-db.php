@@ -1,5 +1,4 @@
 <?php
-// filepath: c:\Program Files\Ampps\www\blog-app.com\setup\migrations\migrations-db.php
 
 use Dotenv\Dotenv;
 
