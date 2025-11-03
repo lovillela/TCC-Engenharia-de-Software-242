@@ -4,6 +4,10 @@ Welcome to the my Scrapbook.
 
 This document details how this system works under the hood.
 
+## TODO
+run
+openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes
+
 ## Table of Contents
 
 - [Architecture Overview](#architecture-overview)

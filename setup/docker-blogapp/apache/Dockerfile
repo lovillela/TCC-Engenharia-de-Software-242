@@ -12,7 +12,9 @@ RUN sed -i \
 
 # Copy custom configuration and SSL certificates
 COPY ./apache.conf /usr/local/apache2/conf/extra/php-fpm.conf
-#COPY ./certs/ /usr/local/apache2/conf/certs/
+RUN mkdir -p /usr/local/apache2/conf/certs/
+COPY cert.pem /usr/local/apache2/conf/certs/apache-selfsigned.crt
+COPY key.pem /usr/local/apache2/conf/certs/apache-selfsigned.key
 
 # Include our custom configuration
 RUN echo "Include conf/extra/php-fpm.conf" >> /usr/local/apache2/conf/httpd.conf
