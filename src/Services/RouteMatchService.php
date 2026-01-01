@@ -2,7 +2,7 @@
 
 namespace Lovillela\BlogApp\Services;
 
-use Lovillela\BlogApp\Utils\inputSanitization;
+use Lovillela\BlogApp\Utils\InputSanitization;
 
 class RouteMatchService
 {
@@ -47,6 +47,6 @@ class RouteMatchService
     }
 
   private function sanitize($route) {
-    return inputSanitization::urlRouteSanitize($route);
+    return InputSanitization::urlRouteSanitize($route);
   }
 }  

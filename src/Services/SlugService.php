@@ -2,7 +2,7 @@
 
 namespace Lovillela\BlogApp\Services;
 
-use Lovillela\BlogApp\Utils\inputSanitization;
+use Lovillela\BlogApp\Utils\InputSanitization;
 
 final class SlugService {
 
@@ -16,7 +16,7 @@ final class SlugService {
     //replaces blank spaces with a dash '-'
     $this->entityType =  $entityType;
     $this->slugURL = str_replace(' ', '-', strtolower($title));
-    $this->slugURL = inputSanitization::urlInputSanitize($this->slugURL);
+    $this->slugURL = InputSanitization::urlInputSanitize($this->slugURL);
 
     //if the slug for the entity already exists
     if ($this->checkDuplicate()) {

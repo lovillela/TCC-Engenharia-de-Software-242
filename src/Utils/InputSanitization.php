@@ -2,7 +2,7 @@
 
 namespace Lovillela\BlogApp\Utils;
 
-final class inputSanitization{
+final class InputSanitization{
 
   public static function urlRouteSanitize(string $url){
     return preg_replace('/[^a-zA-Z0-9\-\/\?\=\&]/', '', $url);

@@ -2,7 +2,7 @@
 
 namespace Lovillela\BlogApp\Services;
 
-use Lovillela\BlogApp\Utils\passwordHash;
+use Lovillela\BlogApp\Utils\PasswordHash;
 use Lovillela\BlogApp\Services\RedirectService;
 
 class UserManagementService{
@@ -25,7 +25,7 @@ class UserManagementService{
       RedirectService::redirectToHome();
     }
 
-    $password = passwordHash::hashPassword($password);
+    $password = PasswordHash::hashPassword($password);
 
     global $connection;
     //So the IDE can display all the methods, etc

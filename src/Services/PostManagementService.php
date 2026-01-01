@@ -2,7 +2,7 @@
 
 namespace Lovillela\BlogApp\Services;
 
-use Lovillela\BlogApp\Utils\inputSanitization;
+use Lovillela\BlogApp\Utils\InputSanitization;
 use Throwable;
 use Lovillela\BlogApp\Services\SlugService;
 class PostManagementService {
@@ -34,8 +34,8 @@ class PostManagementService {
     /** @var \Doctrine\DBAL\Connection $connection */
     $connection = $connection;
 
-    $title = inputSanitization::postTitleSanitize($title);
-    $text = inputSanitization::postContentSanitize($text);
+    $title = InputSanitization::postTitleSanitize($title);
+    $text = InputSanitization::postContentSanitize($text);
 
     try {
       $connection->beginTransaction();

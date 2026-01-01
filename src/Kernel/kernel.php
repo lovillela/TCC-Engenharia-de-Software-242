@@ -21,7 +21,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require __DIR__ . '/../../vendor/autoload.php';
 /** @var \Doctrine\DBAL\Connection $connection */
-$connection = require_once __DIR__ . '/../../src/Services/databaseConnectionService.php';
+$connection = require_once __DIR__ . '/../../src/Services/DatabaseConnectionService.php';
 $routerMain = require_once __DIR__ . '/../../config/Routes/main.php';
 $routerAdmin = require_once __DIR__ . '/../../config/Routes/admin.php';
 
