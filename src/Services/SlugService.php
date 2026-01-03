@@ -8,35 +8,31 @@ use Lovillela\BlogApp\Utils\InputSanitization;
 final class SlugService {
 
   private SlugRepository $slugRepository;
-  private string $slugURL;
-  private string $entity;
 
-  public function __construct(SlugRepository $slugRepository, string $entity) {
+  public function __construct(SlugRepository $slugRepository) {
     $this->slugRepository = $slugRepository;
-    $this->entity = $entity;
   }
   
-  public function create(string $title, string $entity): string {
+  public function create(string $entity, string $title): string {
     /*
     * Replaces blank spaces with a dash '-'
     * Substitui espaços em branco com traço '-'
     */
-    $this->entity = $entity;
-    $this->slugURL = str_replace(' ', '-', strtolower($title));
-    $this->slugURL = InputSanitization::urlInputSanitize($this->slugURL);
+    $slugURL = str_replace(' ', '-', strtolower($title));
+    $slugURL = InputSanitization::urlInputSanitize($slugURL);
 
     /*
     * If the slug for the entity already exists
     * Se a slug URL para a entidade já existir
     */
-    if ($this->slugRepository->exists()) {
-      $this->slugURL = $this->slugURL . '-' . bin2hex(random_bytes(5));
+    if ($this->slugRepository->exists($entity, $slugURL)) {
+      $slugURL = $slugURL . '-' . bin2hex(random_bytes(5));
     }
 
-    return $this->slugURL;
+    return $slugURL;
   }
 
-  public function getContentId(string $slug, string $entity){
-    return $this->slugRepository->findEntityId($slug, $entity);
+  public function getContentId(string $entity, string $slug){
+    return $this->slugRepository->findEntityId($entity, $slug);
   }
 }
