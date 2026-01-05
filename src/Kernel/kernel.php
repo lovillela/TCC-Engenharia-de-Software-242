@@ -1,5 +1,9 @@
 <?php
+use Lovillela\BlogApp\Repositories\PostRepository;
+use Lovillela\BlogApp\Repositories\SlugRepository;
+use Lovillela\BlogApp\Services\PostManagementService;
 use Lovillela\BlogApp\Services\RouteMatchService;
+use Lovillela\BlogApp\Services\SlugService;
 
 /*
 Prevents JavaScript from accessing the session cookie
@@ -22,6 +26,13 @@ if (session_status() === PHP_SESSION_NONE) {
 require __DIR__ . '/../../vendor/autoload.php';
 /** @var \Doctrine\DBAL\Connection $connection */
 $connection = require_once __DIR__ . '/../../src/Services/DatabaseConnectionService.php';
+
+$slugRepository = new SlugRepository($connection);
+$slugService = new SlugService($slugRepository);
+
+$postRepository = new PostRepository($connection);
+$postService = new PostManagementService($postRepository, $slugService, $connection);
+
 $routerMain = require_once __DIR__ . '/../../config/Routes/main.php';
 $routerAdmin = require_once __DIR__ . '/../../config/Routes/admin.php';
 
