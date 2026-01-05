@@ -32,7 +32,11 @@ final class SlugService {
     return $slugURL;
   }
 
-  public function getContentId(string $entity, string $slug){
+  public function findContentId(string $entity, string $slug): int|null{
     return $this->slugRepository->findEntityId($entity, $slug);
+  }
+
+  public function save(string $entity, string $slug, int $id): int {
+    return $this->slugRepository->save($entity, $slug, $id);
   }
 }
