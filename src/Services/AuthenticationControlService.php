@@ -4,7 +4,7 @@ namespace Lovillela\BlogApp\Services;
 
 class AuthenticationControlService {
 
-  private string $activeUserQueryCheck = "SELECT `username`, `password` , `permissions`, `isActive` FROM `users` WHERE (isActive = ? AND username = ? AND permissions = ?)";
+  private string $activeUserQueryCheck = "SELECT `username`, `password` , `permissions`, `isActive`, `id` FROM `users` WHERE (isActive = ? AND username = ? AND permissions = ?)";
 
   public function authenticate(string $user, string $password, int $permission, int $isActive = 1) {
 

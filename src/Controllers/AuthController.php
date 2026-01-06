@@ -42,6 +42,7 @@ final class AuthController{
 
     }else{
       session_regenerate_id(true); // Regenerate session ID after successful login
+      $_SESSION['userID'] = $userData['id'];
       $_SESSION['user'] = $userData['username'];
       $_SESSION['role'] = $userData['permissions'];
 
