@@ -46,7 +46,7 @@ final class PostController {
 
   public function show($slug) {
 
-    $this->data = $this->getPost($slug);
+    $this->data = $this->getPostBySlug($slug);
     
     $this->messages = [
       'title' => $this->data['title'],
@@ -66,12 +66,13 @@ final class PostController {
   public function addPostAction() {
     $this->regularUserCheck();
 
+    $userID = $_SESSION['userID'];
     $user = $_SESSION['user'];
     $title = $_POST['postTitle'];
     $text = $_POST['blogPost'];
 
     $post = $this->postService;
-    $response = $post->create($title, $text);
+    $response = $post->create($title, $text, $userID);
 
      $this->messages = [
       'title' => 'Post Form',
@@ -98,13 +99,13 @@ final class PostController {
     $render->render($this->messages);
   }
 
-  private function getPost(string $slug){
-    $getPost = new PostManagementService(NULL);
-    return $getPost->getPost($slug);
+  private function getPostBySlug(string $slug){
+    $getPost = $this->postService;
+    return $getPost->getPostBySlug($slug);
   }
 
-  private static function getAllPosts(){
-    $getAllPosts = new PostManagementService(NULL);
+  private function getAllPosts(){
+    $getAllPosts = $this->postService;
     return $getAllPosts->getAllPosts();
   }
   
