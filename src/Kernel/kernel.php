@@ -1,4 +1,7 @@
 <?php
+
+require_once __DIR__ . '/../../vendor/autoload.php';
+
 use Lovillela\BlogApp\Repositories\PostRepository;
 use Lovillela\BlogApp\Repositories\SlugRepository;
 use Lovillela\BlogApp\Services\PostManagementService;
@@ -23,7 +26,7 @@ if (session_status() === PHP_SESSION_NONE) {
   session_start();
 }
 
-require __DIR__ . '/../../vendor/autoload.php';
+
 /** @var \Doctrine\DBAL\Connection $connection */
 $connection = require_once __DIR__ . '/../../src/Services/DatabaseConnectionService.php';
 
@@ -32,6 +35,14 @@ $slugService = new SlugService($slugRepository);
 
 $postRepository = new PostRepository($connection);
 $postService = new PostManagementService($postRepository, $slugService, $connection);
+
+$dependencyContainer = [
+  'Connection' => $connection,
+  'SlugService' => $slugService,
+  'SlugRepository' => $slugRepository,
+  'PostManagementService' => $postService,
+  'PostRepository' => $postRepository,
+];
 
 $routerMain = require_once __DIR__ . '/../../config/Routes/main.php';
 $routerAdmin = require_once __DIR__ . '/../../config/Routes/admin.php';
