@@ -10,6 +10,10 @@ final class AdminController{
 
   private array $messages;
   private $render;
+
+  public function __construct(array $dependencyContainer) {
+    $this->dependencyContainer = $dependencyContainer;
+  }
   public function index() {
     
     $this->messages=[

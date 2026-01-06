@@ -47,16 +47,16 @@ $dependencyContainer = [
 $routerMain = require_once __DIR__ . '/../../config/Routes/main.php';
 $routerAdmin = require_once __DIR__ . '/../../config/Routes/admin.php';
 
-function RouteHandler($path){
+function RouteHandler($path, $dependencyContainer){
   global $routerMain;
 
-  $routerService = new RouteMatchService($routerMain, $path);
+  $routerService = new RouteMatchService($routerMain, $path, $dependencyContainer);
   $routerService->routeMatch();
 }
 
-function AdminRouteHandler($path){
+function AdminRouteHandler($path, $dependencyContainer){
   global $routerAdmin;
 
-  $routerService = new RouteMatchService($routerAdmin, $path);
+  $routerService = new RouteMatchService($routerAdmin, $path, $dependencyContainer);
   $routerService->routeMatch();
 }

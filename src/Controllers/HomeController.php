@@ -9,9 +9,9 @@ final class HomeController{
 
     private $viewRenderer;
 
-    public function __construct() {
-      
-    }
+    public function __construct(array $dependencyContainer) {
+    $this->dependencyContainer = $dependencyContainer;
+  }
     public function index(){
       
       $this->viewRenderer = new ViewRenderService(__DIR__ . '/../Views/Frontend/HomePageView.php');

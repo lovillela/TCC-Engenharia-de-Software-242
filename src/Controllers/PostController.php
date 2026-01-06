@@ -8,11 +8,17 @@ use Lovillela\BlogApp\Services\RedirectService;
 
 final class PostController {
 
+  private PostManagementService $postService;
   /**maybe some 
    * attributes*/
   private $messages = array();
   private $posts = array();
   private $data = array();
+
+  public function __construct(array $dependencyContainer) {
+    $this->postService = $dependencyContainer['PostManagementService'];
+  }
+
   public function index() {
     $this->messages = [
       'title' => 'Post Home',
@@ -64,7 +70,7 @@ final class PostController {
     $title = $_POST['postTitle'];
     $text = $_POST['blogPost'];
 
-    $post = new PostManagementService($user);
+    $post = $this->postService;
     $response = $post->create($title, $text);
 
      $this->messages = [

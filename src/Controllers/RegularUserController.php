@@ -7,9 +7,12 @@ use Lovillela\BlogApp\Services\ViewRenderService;
 
 final class RegularUserController{
   private array $messages;
-
   private int $role = 3;
 
+  public function __construct(array $dependencyContainer) {
+    $this->dependencyContainer = $dependencyContainer;
+  }
+  
   public function index() {
     $this->messages = [
       'title' => 'Login',

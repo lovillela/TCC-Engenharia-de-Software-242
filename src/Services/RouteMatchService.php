@@ -8,9 +8,11 @@ class RouteMatchService
 {
     private $router;
     private $route;
-    public function __construct($router, $route) {
+    private $dependencyContainer;
+    public function __construct($router, $route, $dependencyContainer) {
       $this->router = $router;
       $this->route = $this->sanitize($route);
+      $this->dependencyContainer = $dependencyContainer;
     }
     public function routeMatch() {
 
@@ -40,7 +42,7 @@ class RouteMatchService
             $controller = new $controllerClass(3);
           }
         }else {
-          $controller = new $controllerClass();
+          $controller = new $controllerClass($this->dependencyContainer);
         }
 
       return call_user_func_array([$controller, $method], $routeMatch['params']);
