@@ -2,58 +2,41 @@
 
 namespace Lovillela\BlogApp\Services;
 
-use Lovillela\BlogApp\Utils\PasswordHash;
+use Doctrine\DBAL\Connection;
+use Lovillela\BlogApp\Repositories\UserRepository;
 use Lovillela\BlogApp\Services\RedirectService;
+use Lovillela\BlogApp\Utils\PasswordHash;
 
 class UserManagementService{
-  private string $userCreatorQuery = 'INSERT INTO `users` (`username`, `email`, `password`, `permissions`, `isActive` ) VALUES (?, ?, ?, ?, 1)';
-  private string $userExistsQuery = 'SELECT `username` FROM `users` WHERE `username`= ?';
-  private string $userExistsQueryV2 = 'SELECT EXISTS(SELECT 1 FROM `users` WHERE `username` = ?) as usernameExists';
-  private string $emailExistsQuery = 'SELECT EXISTS(SELECT 1 FROM `users` WHERE `email` = ?) as emailExists';
-  private string $checkUserCurrentSession = 'SELECT * FROM `users` WHERE `username` = ?';
-  private string $deleteUserQuery = 'DELETE FROM `users` WHERE `id` = ?';
-  private string $getUserID_Query = 'SELECT `id` FROM `users` WHERE `username` = ?';
-  private string $getUserPostsQuery = 'SELECT `id_post` FROM `post_users` WHERE `id_user` = ?';
-  private string $deleteSlugMapQuery = 'DELETE FROM `slug_map` WHERE (`entity_id` = ? AND `entity_type` = ?)';
-  private string $deletePostQuery = 'DELETE FROM `post` WHERE id = ?';
-  private string $deletePost_UserQuery = 'DELETE FROM `post_users` WHERE id_user = ?';
 
-  public function createUser($username, $password, $email, int $role /**Account role to be created*/) {
+  private UserRepository $userRepository;
+  private Connection $connection;
+
+  public function __construct(UserRepository $userRepository, Connection $connection){
+    $this->userRepository = $userRepository;
+    $this->connection = $connection;
+  }
+
+  public function create($username, $password, $email, int $role /**Account role to be created*/) {
     
+    $password = PasswordHash::hashPassword($password);
+
     //Checks if account being created is admin OR moderator
     if (!(($role === 1 || $role === 2) && $this->userAdminOrModCreationPrivilegeCheck())) {
       RedirectService::redirectToHome();
     }
 
-    $password = PasswordHash::hashPassword($password);
-
-    global $connection;
-    //So the IDE can display all the methods, etc
-    /** @var \Doctrine\DBAL\Connection $connection */
-    $connection = $connection;
-
-    $userData = $this->checkIfUserExists($connection, $username);
-
-    if(!empty($userData)){
-      return (array('Status' => 0, 'Message' => 'User already exists'));
+    if(!($this->userRepository->userExists($username))){
+      return (array('Status' => 0, 'Message' => 'User already in use'));
     }
 
-    $sqlStatment_CheckEmailExistence = $connection->prepare($this->emailExistsQuery);
-    $sqlStatment_CheckEmailExistence->bindValue(1, $email);
-    $userData = $sqlStatment_CheckEmailExistence->executeQuery()->fetchOne();
-
-    if(!empty($userData)){
-      return (array('Status' => 0, 'Message' => 'Email already exists'));
+    if(!($this->userRepository->emailExists($email))){
+      return (array('Status' => 0, 'Message' => 'Email already in use'));
     }
-
-    $sqlStatment_UserCreation = $connection->prepare($this->userCreatorQuery);
-    $sqlStatment_UserCreation->bindValue(1, $username);
-    $sqlStatment_UserCreation->bindValue(2, $email);
-    $sqlStatment_UserCreation->bindValue(3, $password);
-    $sqlStatment_UserCreation->bindValue(4, $role);
 
     try {
-      $queryResult = $sqlStatment_UserCreation->executeQuery();
+      $this->connection->beginTransaction();
+      $this->userRepository->createUser($username, $password, $email, $role);
     } catch (\Throwable $th) {
       //Register this to the log throw $th;
       return (array('Status' => 0, 'Message' => 'User not created'));
@@ -131,10 +114,9 @@ class UserManagementService{
       return($result[0]['id']);
   }
 
-  private function checkIfUserExists($connection, $username) {
+  public function userExists(string $username) {
 
-    $sqlStatment_CheckUserExistence = $connection->prepare($this->userExistsQueryV2);
-    $sqlStatment_CheckUserExistence->bindValue(1, $username);
+    $this->userRepository->userExists($username);
 
     return $sqlStatment_CheckUserExistence->executeQuery()->fetchOne();
   }
