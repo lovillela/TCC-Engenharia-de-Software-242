@@ -1,6 +1,6 @@
 <?php
 
-namespace Lovillela\BlogApp\UserPermissions;
+namespace Lovillela\BlogApp\Config\UserPermissions;
 
 enum UserRole: int {
     case Admin = 1;
