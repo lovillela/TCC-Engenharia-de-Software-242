@@ -26,22 +26,23 @@ class UserManagementService{
       RedirectService::redirectToHome();
     }
 
-    if(!($this->userRepository->userExists($username))){
+    if($this->userRepository->userExists($username)){
       return (array('Status' => 0, 'Message' => 'User already in use'));
     }
 
-    if(!($this->userRepository->emailExists($email))){
+    if($this->userRepository->emailExists($email)){
       return (array('Status' => 0, 'Message' => 'Email already in use'));
     }
 
     try {
       $this->connection->beginTransaction();
-      $this->userRepository->createUser($username, $password, $email, $role);
+      $this->userRepository->create($username, $password, $email, $role);
     } catch (\Throwable $th) {
-      //Register this to the log throw $th;
+      $this->connection->rollBack();
       return (array('Status' => 0, 'Message' => 'User not created'));
     }
 
+    $this->connection->commit();
     return (array('Status' => 1, 'Message' => 'User created successfully'));
 
   }
