@@ -18,8 +18,6 @@ class UserManagementService{
   }
 
   public function create($username, $password, $email, int $role /**Account role to be created*/) {
-    
-    $password = PasswordHash::hashPassword($password);
 
     //Checks if account being created is admin OR moderator
     if (!(($role === 1 || $role === 2) && $this->userAdminOrModCreationPrivilegeCheck())) {
@@ -35,9 +33,17 @@ class UserManagementService{
     }
 
     try {
+
+      $password = PasswordHash::hashPassword($password);
       $this->connection->beginTransaction();
-      $this->userRepository->create($username, $password, $email, $role);
+      
+      if (!($this->userRepository->create($username, $password, $email, $role))) {
+        $this->connection->rollBack();
+        return (array('Status' => 0, 'Message' => 'User not created'));
+      }
+
       $this->connection->commit();
+      
     } catch (\Throwable $th) {
       $this->connection->rollBack();
       return (array('Status' => 0, 'Message' => 'User not created'));
