@@ -3,9 +3,6 @@
 namespace Lovillela\BlogApp\Repositories;
 
 use Doctrine\DBAL\Connection;
-use Lovillela\BlogApp\Services\RedirectService;
-use Lovillela\BlogApp\Utils\PasswordHash;
-use Lovillela\BlogApp\Config\UserPermissions;
 
 final class UserRepository
 {
