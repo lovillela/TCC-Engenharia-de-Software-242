@@ -37,14 +37,13 @@ class UserManagementService{
     try {
       $this->connection->beginTransaction();
       $this->userRepository->create($username, $password, $email, $role);
+      $this->connection->commit();
     } catch (\Throwable $th) {
       $this->connection->rollBack();
       return (array('Status' => 0, 'Message' => 'User not created'));
     }
 
-    $this->connection->commit();
     return (array('Status' => 1, 'Message' => 'User created successfully'));
-
   }
 
   public function delete($username) {
