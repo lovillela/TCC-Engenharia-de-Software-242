@@ -3,9 +3,11 @@
 namespace Lovillela\BlogApp\Services;
 
 use Doctrine\DBAL\Connection;
+use Lovillela\BlogApp\Config\UserPermissions\UserRole;
 use Lovillela\BlogApp\Repositories\UserRepository;
 use Lovillela\BlogApp\Services\RedirectService;
 use Lovillela\BlogApp\Utils\PasswordHash;
+use Lovillela\BlogApp\Config\UserPermissions;
 
 class UserManagementService{
 
@@ -19,9 +21,10 @@ class UserManagementService{
 
   public function create($username, $password, $email, int $role /**Account role to be created*/) {
 
-    //Checks if account being created is admin OR moderator
-    if (!(($role === 1 || $role === 2) && $this->userAdminOrModCreationPrivilegeCheck())) {
-      RedirectService::redirectToHome();
+    if($role === UserRole::Admin->value || $role === UserRole::Moderator->value){
+      if (!($this->userAdminOrModCreationPrivilegeCheck())){
+        RedirectService::redirectToHome();
+      }
     }
 
     if($this->userRepository->userExists($username)){
@@ -36,7 +39,7 @@ class UserManagementService{
 
       $password = PasswordHash::hashPassword($password);
       $this->connection->beginTransaction();
-      
+
       if (!($this->userRepository->create($username, $password, $email, $role))) {
         $this->connection->rollBack();
         return (array('Status' => 0, 'Message' => 'User not created'));
