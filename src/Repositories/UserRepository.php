@@ -25,16 +25,7 @@ final class UserRepository
       $this->connection = $connection;
   }
 
-  public function createUser(string $username, string $password, string $email, int $role /**Account role to be created*/) {
-    
-    //Checks if account being created is admin OR moderator
-    /**
-     * Checks if account being created is admin OR moderator
-     * Verifica se a conta a ser criada é admin ou moderador
-     */
-    if (!(($role === 1 || $role === 2) && $this->userAdminOrModCreationPrivilegeCheck())) {
-      RedirectService::redirectToHome();
-    }
+  public function create(string $username, string $password, string $email, int $role /**Account role to be created*/) {
     
     $sqlStatment_UserCreation = $this->connection->prepare($this->userCreatorQuery);
     $sqlStatment_UserCreation->bindValue(1, $username);
@@ -42,8 +33,7 @@ final class UserRepository
     $sqlStatment_UserCreation->bindValue(3, $password);
     $sqlStatment_UserCreation->bindValue(4, $role);
 
-    return (int) $sqlStatment_UserCreation->executeStatement();
-
+    return (bool) $sqlStatment_UserCreation->executeStatement();
   }
 
   public function delete(string $username) {
