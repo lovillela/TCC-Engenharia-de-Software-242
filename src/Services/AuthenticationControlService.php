@@ -2,34 +2,26 @@
 
 namespace Lovillela\BlogApp\Services;
 
+use Lovillela\BlogApp\Repositories\UserRepository;
+
 class AuthenticationControlService {
 
-  private string $activeUserQueryCheck = "SELECT `username`, `password` , `permissions`, `isActive`, `id` FROM `users` WHERE (isActive = ? AND username = ? AND permissions = ?)";
+  private UserRepository $userRepository;
 
-  public function authenticate(string $user, string $password, int $permission, int $isActive = 1) {
+  public function __construct(UserRepository $userRepository){
+    $this->userRepository = $userRepository;
+  }
 
-    global $connection;
+  public function authenticate(string $email, string $password): ?array {
 
-    $sqlStatment = $connection->prepare($this->activeUserQueryCheck);
-    $sqlStatment->bindValue(1, $isActive);
-    $sqlStatment->bindValue(2, $user);
-    $sqlStatment->bindValue(3, $permission);
+    $user = $this->userRepository->findByEmail($email);
 
-    $queryResult = $sqlStatment->executeQuery();
-    $userDataFromDB = $queryResult->fetchAllAssociative();
-    
-    if (!empty($userDataFromDB)) {
-      $userData = $userDataFromDB[0];
-      
-      if(!$userData['isActive']){
-        return false;
-      }
-
-      if(password_verify($password, $userData['password'])){
-        unset($userData['password'], $password);
-        return $userData;
-      }
+    if(!$user || !(password_verify($password, $user['password']))){
+      return null;
     }
-    return false;
+
+    unset($password, $user['password']);
+    
+    return $user;
   }
 }
