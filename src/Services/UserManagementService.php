@@ -61,7 +61,7 @@ class UserManagementService{
     return (array('Status' => 1, 'Message' => 'User created successfully'));
   }
 
-  public function delete(string $username) {
+  public function deleteByUserName(string $username) {
     
     $userId = $this->userRepository->findIdByUsername($username);
 
@@ -71,6 +71,7 @@ class UserManagementService{
   
     try {
       $this->connection->beginTransaction();
+      $this->postService->deleteAllUserPostsByUserId((int)$userId);
       $this->userRepository->delete((int)$userId);
       $this->connection->commit();
     } catch (\Throwable $th) {
