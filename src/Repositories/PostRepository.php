@@ -16,12 +16,18 @@ class PostRepository{
   private string $selectPostByID_Query = 'SELECT `title`, `content` FROM `post` WHERE `id` = ?';
   private string $selectPostBySlugQuery = 'SELECT `title`, `content` FROM `post` WHERE `slug` = ?';
   private string $selectPostsByUserId = 'SELECT `id_post` FROM `post_users` WHERE `id_user` = ?';
+  private string $selectPostIdsInRange = 'SELECT DISTINCT `id_post` FROM `post_users` WHERE `id_post` IN (?)';
 
   //Deletes
   private string $deletePost = 'DELETE FROM `post` WHERE id = ?';
   private string $deletePostUsers = 'DELETE FROM `post_users` WHERE `id_user` = ?';
   private string $deleteAllUserReactions = 'DELETE FROM `user_reaction_post` WHERE `id_user` = ?';
   private string $deleteAllUserComments = 'DELETE FROM `user_comment_post` WHERE `id_user` = ?';
+  private string $deleteAllPostCommentsInRange = 'DELETE FROM `user_comment_post` WHERE `id_post` IN (?)';
+  private string $deleteAllPostReactionsInRange = 'DELETE FROM `user_reaction_post` WHERE `id_post` IN (?)';
+  private string $deleteAllPostCategoriesInRange = 'DELETE FROM `post_category` WHERE `id_post` IN (?)';
+  private string $deleteAllPostTagsInRange = 'DELETE FROM `post_tag` WHERE `id_post` IN (?)';
+  private string $deleteAllPostsInRange = 'DELETE FROM `post` WHERE `id` IN (?)';
 
   public function __construct(Connection $connection) {
     $this->connection = $connection;
@@ -73,6 +79,40 @@ class PostRepository{
     return (bool)$deleteAllUserCommentsStmt->executeStatement();
   }
 
+  public function deleteAllUserPosts(array $postIds) {
+    
+  }
+
+  public function deletePostCommentsInRange(array $postIds): bool {
+    return (bool)$this->connection->executeStatement($this->deleteAllPostCommentsInRange,
+                                                [$postIds],
+                                                [$this->connection::PARAM_INT_ARRAY]);
+  }
+
+  public function deletePostReactionsInRange(array $postIds) : bool {
+    return (bool)$this->connection->executeStatement($this->deleteAllPostReactionsInRange,
+                                                      [$postIds],
+                                                      [$this->connection::PARAM_INT_ARRAY]);
+  }
+
+  public function deletePostCategoriesInRange(array $postIds) : bool {
+    return (bool)$this->connection->executeStatement($this->deleteAllPostCategoriesInRange,
+                                                      [$postIds],
+                                                      [$this->connection::PARAM_INT_ARRAY]);
+  }
+
+  public function deletePostTagsInRange(array $postIds) : bool {
+    return (bool)$this->connection->executeStatement($this->deleteAllPostTagsInRange,
+                                                      [$postIds],
+                                                      [$this->connection::PARAM_INT_ARRAY]);
+  }
+
+  public function deleteAllPostsInRange(array $postIds) : bool {
+    return (bool)$this->connection->executeStatement($this->deleteAllPostsInRange,
+                                                      [$postIds],
+                                                      [$this->connection::PARAM_INT_ARRAY]);
+  }
+
   public function getAllPosts(): array{
 
     $posts = $this->connection->executeQuery($this->selectAllPostsQuery);
@@ -102,6 +142,12 @@ class PostRepository{
     $selectPostsByUserIdStmt->bindValue(1, $userId);
 
     return $selectPostsByUserIdStmt->executeQuery()->fetchAllAssociative() ?: null;
+  }
+
+  public function getPostIdsInRange(array $postIds): array {
+    return $this->connection->executeQuery($this->selectPostIdsInRange, 
+                                          [$postIds], 
+                                          [$this->connection::PARAM_INT_ARRAY])->fetchAllAssociative();
   }
 
   private static function databaseExceptionHandler(Throwable $e)   {
