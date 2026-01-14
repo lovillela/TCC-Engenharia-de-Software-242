@@ -14,6 +14,7 @@ class PostManagementService {
   private SlugService $slugService;
   private Connection $connection;
   private const ENTITY = 'post';
+  private const BATCH_SIZE = 1000;
 
   public function __construct(PostRepository $postRepository, SlugService $slugService, Connection $connection){
     
@@ -56,6 +57,56 @@ class PostManagementService {
     }catch(Throwable $e){
         $this->connection->rollBack();
         return $this->databaseExceptionHandler($e);
+    }
+  }
+
+  public function deleteAllUserPostsByUserId(int $userId) {
+    
+    try {
+      $this->connection->beginTransaction();
+
+      $this->postRepository->deleteAllUserReactionsByUserId($userId);
+      $this->postRepository->deleteAllUserCommentsByUserId($userId);
+      $userPosts = array_column($this->postRepository->getUsersPostsByUserId($userId), 'id_post');
+
+      if (!empty($userPosts)) {
+        $this->postRepository->deleteAllPostUserRelantionship($userId);
+        $postIdsChunk = array_chunk($userPosts, $this::BATCH_SIZE);
+        
+        foreach ($postIdsChunk as $postIdsBatch) {
+          $otherUsersPosts = array_column($this->postRepository->getPostIdsInRange($postIdsBatch), 'id_post');
+          /**
+           * postIdsBatch - otherUsersPosts
+           * Necessary array_values to reset array indexes
+           * É necessário utilizar array_values para reiniciar os índicies do array
+           */
+          $userPostsToDelete = array_values(array_diff($postIdsBatch, $otherUsersPosts)) ;
+
+          /**
+           * Now, post_tag, post_category, user_comment_post and user_reaction_post 
+           * entries related to $userPostsToDelete must be deleted
+           * Agora as entradas em post_tag, post_category, user_comment_post e user_reaction_post,
+           * relacionadas a $userPostsToDelete devem ser deletadas
+           */
+          if (!empty($userPostsToDelete)) {
+            $this->postRepository->deletePostCommentsInRange($userPostsToDelete);
+            $this->postRepository->deletePostReactionsInRange($userPostsToDelete);
+            $this->postRepository->deletePostCategoriesInRange($userPostsToDelete);
+            $this->postRepository->deletePostTagsInRange($userPostsToDelete);
+            $this->slugService->deleteInRange($userPostsToDelete, $this::ENTITY);
+            $this->postRepository->deleteAllPostsInRange($userPostsToDelete);
+          }
+        }
+
+      }
+      
+
+
+
+      $this->connection->commit();
+    } catch (\Throwable $th) {
+      //throw $th;
+      $this->connection->rollBack();
     }
   }
 
