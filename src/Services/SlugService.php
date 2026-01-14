@@ -32,6 +32,10 @@ final class SlugService {
     return $slugURL;
   }
 
+  public function deleteInRange(array $entityIds, string $entity): bool {
+    return $this->slugRepository->deleteSlugsInRange($entityIds, $entity);
+  }
+
   public function findContentId(string $entity, string $slug): int|null{
     return $this->slugRepository->findEntityId($entity, $slug);
   }
