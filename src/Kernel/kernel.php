@@ -7,6 +7,7 @@ use Lovillela\BlogApp\Repositories\SlugRepository;
 use Lovillela\BlogApp\Services\PostManagementService;
 use Lovillela\BlogApp\Services\RouteMatchService;
 use Lovillela\BlogApp\Services\SlugService;
+use Lovillela\BlogApp\Services\InputSanitizationService;
 
 /*
 Prevents JavaScript from accessing the session cookie
@@ -30,11 +31,13 @@ if (session_status() === PHP_SESSION_NONE) {
 /** @var \Doctrine\DBAL\Connection $connection */
 $connection = require_once __DIR__ . '/../../src/Services/DatabaseConnectionService.php';
 
+$sanitizationService = new InputSanitizationService();
+
 $slugRepository = new SlugRepository($connection);
 $slugService = new SlugService($slugRepository);
 
 $postRepository = new PostRepository($connection);
-$postService = new PostManagementService($postRepository, $slugService, $connection);
+$postService = new PostManagementService($postRepository, $slugService, $sanitizationService,$connection);
 
 $dependencyContainer = [
   'Connection' => $connection,
@@ -42,6 +45,7 @@ $dependencyContainer = [
   'SlugRepository' => $slugRepository,
   'PostManagementService' => $postService,
   'PostRepository' => $postRepository,
+  'InputSanitizationService' => $sanitizationService,
 ];
 
 $routerMain = require_once __DIR__ . '/../../config/Routes/main.php';

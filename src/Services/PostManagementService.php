@@ -7,6 +7,7 @@ use Lovillela\BlogApp\Repositories\PostRepository;
 use Lovillela\BlogApp\Utils\InputSanitization;
 use Throwable;
 use Lovillela\BlogApp\Services\SlugService;
+use Lovillela\BlogApp\Services\InputSanitizationService;
 
 class PostManagementService {
 
@@ -16,7 +17,8 @@ class PostManagementService {
   private const ENTITY = 'post';
   private const BATCH_SIZE = 1000;
 
-  public function __construct(PostRepository $postRepository, SlugService $slugService, Connection $connection){
+  public function __construct(PostRepository $postRepository, SlugService $slugService, 
+                              InputSanitizationService $sanitizationService ,Connection $connection){
     
     $this->postRepository = $postRepository;
     $this->slugService = $slugService;
