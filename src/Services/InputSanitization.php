@@ -8,7 +8,7 @@ namespace Lovillela\BlogApp\Services;
 final class InputSanitization{
 
   public function urlRouteSanitize(string $url){
-    return preg_replace('/[^a-zA-Z0-9\-\/\?\=\&]/', '', $url);
+    return preg_replace('/[^a-zA-Z0-9\-\/\?\=\&\_\.\%]/', '', $url);
   }
 
   public function urlInputSanitize(string $url){
