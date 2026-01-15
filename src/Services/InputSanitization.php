@@ -25,6 +25,6 @@ final class InputSanitization{
   }
 
   public function postTitleSanitize(string $title){
-    return strip_tags($title);
+    return trim(strip_tags($title));
   }
 }
