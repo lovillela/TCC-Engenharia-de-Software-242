@@ -11,7 +11,9 @@ final class InputSanitizationService{
   private HTMLPurifier $htmlPurifier;
   private HTMLPurifier_Config $htmlPurifierConfig;
   private const CACHE_PATH = __DIR__ . '/../../cache/htmlpurifier/';
-  private const ALLOWED_TAGS = ['p,b,a[href],i,br,ul,ol,li,img[src],h1,h2,h3,h4,h5,h6,blockquote,code'];
+  private const ALLOWED_TAGS = 'a[href|style],b,blockquote,br,code,div[style],' .
+                             'h1,h2,h3,h4,h5,h6,hr,i,img[src],li,ol,p,strong,' .
+                             'table,tbody,td,th,thead,tr,ul';
 
   public function __construct() {
     $this->createCacheDirectory();
