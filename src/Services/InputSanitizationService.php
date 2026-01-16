@@ -22,11 +22,11 @@ final class InputSanitizationService{
     $this->htmlPurifierConfig->set('HTTP.Allowed', $this::ALLOWED_TAGS);
     $this->htmlPurifier = new HTMLPurifier($this->htmlPurifierConfig);
   }
-  public function urlRouteSanitize(string $url){
+  public function urlRouteSanitize(string $url): string{
     return preg_replace('/[^a-zA-Z0-9\-\/\?\=\&\_\.\%]/', '', $url);
   }
 
-  public function urlInputSanitize(string $url){
+  public function urlInputSanitize(string $url): string{
     return preg_replace('/[^a-zA-Z0-9\-]/', '', $url);
   }
   
@@ -34,7 +34,7 @@ final class InputSanitizationService{
     return $this->htmlPurifier->purify($content);
   }
 
-  public function postTitleSanitize(string $title){
+  public function postTitleSanitize(string $title): string{
     return trim(strip_tags($title));
   }
 
