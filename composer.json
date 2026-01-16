@@ -16,6 +16,7 @@
         "altorouter/altorouter": "^2.0",
         "doctrine/dbal": "^4.4",
         "doctrine/migrations": "^3.9",
+        "ezyang/htmlpurifier": "^4.0",
         "vlucas/phpdotenv": "^5.6"
     },
     "require-dev": {

@@ -1,18 +1,20 @@
 <?php
 
 namespace Lovillela\BlogApp\Services;
-
-use Lovillela\BlogApp\Utils\InputSanitization;
+use Lovillela\BlogApp\Services\InputSanitizationService;
 
 class RouteMatchService
 {
     private $router;
     private $route;
     private $dependencyContainer;
-    public function __construct($router, $route, $dependencyContainer) {
+    private InputSanitizationService $inputSanitization;
+
+    public function __construct($router, $route, array $dependencyContainer) {
       $this->router = $router;
-      $this->route = $this->sanitize($route);
       $this->dependencyContainer = $dependencyContainer;
+      $this->inputSanitization = $dependencyContainer['InputSanitization'];
+      $this->route = $this->sanitize($route);
     }
     public function routeMatch() {
 
@@ -49,6 +51,6 @@ class RouteMatchService
     }
 
   private function sanitize($route) {
-    return InputSanitization::urlRouteSanitize($route);
+    return $this->inputSanitization->urlRouteSanitize($route);
   }
 }  
