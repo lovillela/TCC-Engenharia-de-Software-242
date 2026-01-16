@@ -23,7 +23,7 @@ final class InputSanitizationService{
     $this->htmlPurifier = new HTMLPurifier($this->htmlPurifierConfig);
   }
   public function urlRouteSanitize(string $url): string{
-    return preg_replace('/[^a-zA-Z0-9\-\/\?\=\&\_\.\%]/', '', $url);
+    return preg_replace('/[^a-zA-Z0-9\-\+\/\?\=\&\_\.\%]/', '', $url);
   }
 
   public function urlInputSanitize(string $url): string{
@@ -38,7 +38,7 @@ final class InputSanitizationService{
     return trim(strip_tags($title));
   }
 
-  public function idSanitize($id) {
+  public function idSanitize($id): int {
     return (int)preg_replace('/[^0-9]/', '', $id);
   }
 
