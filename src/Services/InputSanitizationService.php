@@ -38,9 +38,13 @@ final class InputSanitizationService{
     return trim(strip_tags($title));
   }
 
+  public function idSanitize($id) {
+    return (int)preg_replace('/[^0-9]/', '', $id);
+  }
+
   private function createCacheDirectory() {
     if (!dir($this::CACHE_PATH)) {
-      mkdir($this::CACHE_PATH, 755);
+      mkdir($this::CACHE_PATH, 755, true);
     }
   }
 }
