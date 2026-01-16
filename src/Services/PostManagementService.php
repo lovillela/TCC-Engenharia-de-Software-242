@@ -4,7 +4,6 @@ namespace Lovillela\BlogApp\Services;
 
 use Doctrine\DBAL\Connection;
 use Lovillela\BlogApp\Repositories\PostRepository;
-use Lovillela\BlogApp\Utils\InputSanitization;
 use Throwable;
 use Lovillela\BlogApp\Services\SlugService;
 use Lovillela\BlogApp\Services\InputSanitizationService;
@@ -13,6 +12,7 @@ class PostManagementService {
 
   private PostRepository $postRepository;
   private SlugService $slugService;
+  private InputSanitizationService $sanitizationService;
   private Connection $connection;
   private const ENTITY = 'post';
   private const BATCH_SIZE = 1000;
@@ -22,6 +22,7 @@ class PostManagementService {
     
     $this->postRepository = $postRepository;
     $this->slugService = $slugService;
+    $this->sanitizationService = $sanitizationService;
     $this->connection = $connection;
     
     if (isset($user)) {
@@ -39,8 +40,8 @@ class PostManagementService {
     
     $this->regularUserCheck();
 
-    $title = InputSanitization::postTitleSanitize($title);
-    $text = InputSanitization::postContentSanitize($text);
+    $title = $this->sanitizationService->postTitleSanitize($title);
+    $text = $this->sanitizationService->postContentSanitize($text);
 
     try {
       $this->connection->beginTransaction();
@@ -101,9 +102,6 @@ class PostManagementService {
         }
 
       }
-      
-
-
 
       $this->connection->commit();
     } catch (\Throwable $th) {

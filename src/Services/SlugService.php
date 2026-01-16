@@ -3,14 +3,16 @@
 namespace Lovillela\BlogApp\Services;
 
 use Lovillela\BlogApp\Repositories\SlugRepository;
-use Lovillela\BlogApp\Utils\InputSanitization;
+use Lovillela\BlogApp\Services\InputSanitizationService;
 
 final class SlugService {
 
   private SlugRepository $slugRepository;
+  private InputSanitizationService $sanitizationService;
 
-  public function __construct(SlugRepository $slugRepository) {
+  public function __construct(SlugRepository $slugRepository, InputSanitizationService $sanitizationService) {
     $this->slugRepository = $slugRepository;
+    $this->sanitizationService = $sanitizationService;
   }
   
   public function create(string $entity, string $title): string {
@@ -19,7 +21,7 @@ final class SlugService {
     * Substitui espaços em branco com traço '-'
     */
     $slugURL = str_replace(' ', '-', strtolower($title));
-    $slugURL = InputSanitization::urlInputSanitize($slugURL);
+    $slugURL = $this->sanitizationService->urlInputSanitize($slugURL);
 
     /*
     * If the slug for the entity already exists

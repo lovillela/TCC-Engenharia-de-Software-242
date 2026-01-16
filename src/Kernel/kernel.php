@@ -34,7 +34,7 @@ $connection = require_once __DIR__ . '/../../src/Services/DatabaseConnectionServ
 $sanitizationService = new InputSanitizationService();
 
 $slugRepository = new SlugRepository($connection);
-$slugService = new SlugService($slugRepository);
+$slugService = new SlugService($slugRepository, $sanitizationService);
 
 $postRepository = new PostRepository($connection);
 $postService = new PostManagementService($postRepository, $slugService, $sanitizationService,$connection);
