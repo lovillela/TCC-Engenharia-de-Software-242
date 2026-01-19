@@ -17,6 +17,7 @@ class PostRepository{
   private string $selectPostBySlugQuery = 'SELECT `title`, `content` FROM `post` WHERE `slug` = ?';
   private string $selectPostsByUserId = 'SELECT `id_post` FROM `post_users` WHERE `id_user` = ?';
   private string $selectPostIdsInRange = 'SELECT DISTINCT `id_post` FROM `post_users` WHERE `id_post` IN (?)';
+  private string $selectOwnership = 'SELECT `id_user` FROM `post_users` WHERE `id_post` = ?';
 
   //Deletes
   private string $deletePost = 'DELETE FROM `post` WHERE id = ?';
@@ -148,6 +149,13 @@ class PostRepository{
     return $this->connection->executeQuery($this->selectPostIdsInRange, 
                                           [$postIds], 
                                           [$this->connection::PARAM_INT_ARRAY])->fetchAllAssociative();
+  }
+
+  public function getOwnership(int $userId): array {
+    $selectOwnershipStmt = $this->connection->prepare($this->selectOwnership);
+    $selectOwnershipStmt->bindValue(1, $userId);
+    
+    return $selectOwnershipStmt->executeQuery()->fetchAllAssociative();
   }
 
   private static function databaseExceptionHandler(Throwable $e)   {
