@@ -13,6 +13,12 @@ final class SessionService {
     $this::$forceTimeout = SessionTime::ABSOLUTE_TIMEOUT->value;
   }
 
+  public function start() {
+    if (session_status() === PHP_SESSION_NONE) {
+      session_start();
+    }
+  }
+
   public function regenerate() {
     session_regenerate_id(true);
   }

@@ -8,6 +8,7 @@ use Lovillela\BlogApp\Services\PostManagementService;
 use Lovillela\BlogApp\Services\RouteMatchService;
 use Lovillela\BlogApp\Services\SlugService;
 use Lovillela\BlogApp\Services\InputSanitizationService;
+use Lovillela\BlogApp\Services\SessionService;
 
 /*
 Prevents JavaScript from accessing the session cookie
@@ -30,6 +31,9 @@ if (session_status() === PHP_SESSION_NONE) {
 
 /** @var \Doctrine\DBAL\Connection $connection */
 $connection = require_once __DIR__ . '/../../src/Services/DatabaseConnectionService.php';
+
+$sessionService = new SessionService();
+$sessionService->start();
 
 $sanitizationService = new InputSanitizationService();
 
