@@ -12,4 +12,8 @@ final class SessionService {
     $this::$idleTimeout = SessionTime::IDLE_TIMEOUT->value;
     $this::$forceTimeout = SessionTime::ABSOLUTE_TIMEOUT->value;
   }
+
+  public function regenerate() {
+    session_regenerate_id(true);
+  }
 }
