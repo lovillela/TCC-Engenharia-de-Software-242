@@ -11,6 +11,14 @@ final class SessionService {
   public function __construct() {
     $this::$idleTimeout = SessionTime::IDLE_TIMEOUT->value;
     $this::$forceTimeout = SessionTime::ABSOLUTE_TIMEOUT->value;
+    $this->sessionConfig();
+  }
+
+  private function sessionConfig(){
+    ini_set('session.cookie_httponly', 1); 
+    ini_set('session.cookie_secure', 1);
+    ini_set('session.use_strict_mode', 1);
+    ini_set('session.cookie_samesite', 'Strict'); 
   }
 
   public function start() {
