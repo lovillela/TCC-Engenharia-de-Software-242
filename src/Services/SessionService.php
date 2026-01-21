@@ -14,6 +14,16 @@ final class SessionService {
     $this->sessionConfig();
   }
 
+  /**
+   * Previne o acesso de cookies por JS
+   * Cookies serão enviados por requisições HTTP
+   * Sessões não inicializadas serão rejeitadas
+   * Força o uso de cookies para o gerenciamento de sessão
+   * Prevents cookie access by JS
+   * Cookies will be sent via HTTP requests
+   * Unitialized sessions will be rejected
+   * Forces cookie use for session management
+   */
   private function sessionConfig(){
     ini_set('session.cookie_httponly', 1); 
     ini_set('session.cookie_secure', 1);
