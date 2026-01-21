@@ -1,6 +1,6 @@
 <?php
 
-namespace Lovillela\BlogApp\Models\UserIdentity;
+namespace Lovillela\BlogApp\Models\Users;
 
 use Lovillela\BlogApp\Config\UserPermissions\UserRole;
 
