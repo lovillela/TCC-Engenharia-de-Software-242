@@ -31,6 +31,7 @@ $dependencyContainer = [
   'PostManagementService' => $postService,
   'PostRepository' => $postRepository,
   'InputSanitizationService' => $sanitizationService,
+  'SessionService' => $sessionService,
 ];
 
 $routerMain = require_once __DIR__ . '/../../config/Routes/main.php';
