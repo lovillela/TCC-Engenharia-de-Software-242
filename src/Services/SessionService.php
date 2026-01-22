@@ -48,7 +48,7 @@ final class SessionService {
   public function setUser(UserIdentity $userIdentity) {
     $_SESSION['userId'] = $userIdentity->userId;
     $_SESSION['userName'] = $userIdentity->userName;
-    $_SESSION['permissions'] = $userIdentity->permissions;
+    $_SESSION['permissions'] = $userIdentity->permissions->value;
   }
 
   public function getUser(): ?UserIdentity {
