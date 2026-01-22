@@ -4,11 +4,15 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 use Lovillela\BlogApp\Repositories\PostRepository;
 use Lovillela\BlogApp\Repositories\SlugRepository;
+use Lovillela\BlogApp\Repositories\UserRepository;
+use Lovillela\BlogApp\Services\AuthenticationControlService;
+use Lovillela\BlogApp\Services\AutorizationService\AuthorizationService;
 use Lovillela\BlogApp\Services\PostManagementService;
 use Lovillela\BlogApp\Services\RouteMatchService;
 use Lovillela\BlogApp\Services\SlugService;
 use Lovillela\BlogApp\Services\InputSanitizationService;
 use Lovillela\BlogApp\Services\SessionService;
+use Lovillela\BlogApp\Services\UserManagementService;
 
 /** @var \Doctrine\DBAL\Connection $connection */
 $connection = require_once __DIR__ . '/../../src/Services/DatabaseConnectionService.php';
@@ -16,13 +20,24 @@ $connection = require_once __DIR__ . '/../../src/Services/DatabaseConnectionServ
 $sessionService = new SessionService();
 $sessionService->start();
 
+$userRepository = new UserRepository($connection);
+
+$authenticationService = new AuthenticationControlService($userRepository);
+
 $sanitizationService = new InputSanitizationService();
 
 $slugRepository = new SlugRepository($connection);
 $slugService = new SlugService($slugRepository, $sanitizationService);
 
 $postRepository = new PostRepository($connection);
-$postService = new PostManagementService($postRepository, $slugService, $sanitizationService,$connection);
+$postService = new PostManagementService($postRepository, $slugService, 
+                                          $sanitizationService, $connection);
+
+$authorizationService = new AuthorizationService($postRepository);
+
+$userService = new UserManagementService($userRepository, $authenticationService,
+                                        $postService,  $connection);
+
 
 $dependencyContainer = [
   'Connection' => $connection,
@@ -32,6 +47,9 @@ $dependencyContainer = [
   'PostRepository' => $postRepository,
   'InputSanitizationService' => $sanitizationService,
   'SessionService' => $sessionService,
+  'AuthenticationService' => $authenticationService,
+  'UserRepository' => $userRepository,
+  'UserService' => $userService,
 ];
 
 $routerMain = require_once __DIR__ . '/../../config/Routes/main.php';
