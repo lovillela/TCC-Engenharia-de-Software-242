@@ -3,6 +3,7 @@
 namespace Lovillela\BlogApp\Services;
 
 use Lovillela\BlogApp\Config\Session\SessionTime;
+use Lovillela\BlogApp\Models\Users\UserIdentity;
 
 final class SessionService {
 
@@ -41,5 +42,19 @@ final class SessionService {
 
   public function regenerate() {
     session_regenerate_id(true);
+  }
+
+  public function setUser(UserIdentity $userIdentity) {
+    $_SESSION['userId'] = $userIdentity->userId;
+    $_SESSION['userName'] = $userIdentity->userName;
+    $_SESSION['permissions'] = $userIdentity->permissions;
+  }
+
+  public function getUser(): ?UserIdentity {
+    if (!isset($_SESSION['userId']) || !isset($_SESSION['userName']) || !isset($_SESSION['permissions'])) {
+      return null;
+    }
+
+    return new UserIdentity($_SESSION['userId'], $_SESSION['userName'], $_SESSION['permissions']);
   }
 }
