@@ -6,7 +6,7 @@ use Lovillela\BlogApp\Repositories\PostRepository;
 use Lovillela\BlogApp\Repositories\SlugRepository;
 use Lovillela\BlogApp\Repositories\UserRepository;
 use Lovillela\BlogApp\Services\AuthenticationControlService;
-use Lovillela\BlogApp\Services\AutorizationService\AuthorizationService;
+use Lovillela\BlogApp\Services\AuthorizationService;
 use Lovillela\BlogApp\Services\PostManagementService;
 use Lovillela\BlogApp\Services\RouteMatchService;
 use Lovillela\BlogApp\Services\SlugService;
@@ -37,7 +37,6 @@ $authorizationService = new AuthorizationService($postRepository);
 
 $userService = new UserManagementService($userRepository, $authenticationService,
                                         $postService,  $connection);
-
 
 $dependencyContainer = [
   'Connection' => $connection,

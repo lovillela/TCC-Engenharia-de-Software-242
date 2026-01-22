@@ -1,6 +1,6 @@
 <?php
 
-namespace Lovillela\BlogApp\Services\AutorizationService;
+namespace Lovillela\BlogApp\Services;
 
 use Lovillela\BlogApp\Config\UserPermissions\UserRole;
 use Lovillela\BlogApp\Repositories\PostRepository;
