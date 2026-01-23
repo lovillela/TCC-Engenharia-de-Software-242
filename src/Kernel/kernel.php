@@ -53,6 +53,7 @@ $dependencyContainer = [
   'AuthenticationService' => $authenticationService,
   'UserRepository' => $userRepository,
   'UserService' => $userService,
+  'AuthManagerService' => $authManagerService,
 ];
 
 $routerMain = require_once __DIR__ . '/../../config/Routes/main.php';
