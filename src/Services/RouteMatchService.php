@@ -37,16 +37,7 @@ class RouteMatchService
       return false;
     }
 
-    if ($controller === 'AuthController' && str_contains($this->route,  'login')) {
-      if (str_contains($this->route,  'admin')) {
-        $controller = new $controllerClass(1);
-        //new conditionals will be necessary for other logins
-      }elseif(str_contains($this->route,  '')){
-        $controller = new $controllerClass(3);
-      }
-    }else {
-      $controller = new $controllerClass($this->dependencyContainer);
-    }
+    $controller = new $controllerClass($this->dependencyContainer);
 
     return call_user_func_array([$controller, $method], $routeMatch['params']);
   }
