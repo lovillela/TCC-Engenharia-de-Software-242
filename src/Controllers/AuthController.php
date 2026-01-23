@@ -2,22 +2,18 @@
 
 namespace Lovillela\BlogApp\Controllers;
 
-use Lovillela\BlogApp\Services\AuthenticationControlService;
+use Lovillela\BlogApp\Services\AuthManagerService;
 
 final class AuthController{
 
-  private $username;
-  private $password;
+  private AuthManagerService $authManagerService;
 
-  private $authenticationService;
-  private $premission;
-
-  public function __construct(int $premission = 0) {
-    $this->authenticationService = new AuthenticationControlService();
-    $this->premission = $premission;
+  public function __construct(array $dependencyContainer) {
+    $this->authManagerService = $dependencyContainer['AuthManagerService'];
   }
 
   public function login(){
+
     $this->username = trim($_POST['username']);
     $this->password = trim($_POST['password']);
 
