@@ -39,7 +39,7 @@ class RouteMatchService
 
     $controller = new $controllerClass($this->dependencyContainer);
 
-    return call_user_func_array([$controller, $method], $routeMatch['params']);
+    return \call_user_func_array([$controller, $method], $routeMatch['params']);
   }
 
 private function sanitize($route) {
