@@ -26,7 +26,7 @@ class RouteMatchService
       return false;
     } 
       
-      // Parse controller#method format
+    // Parse controller#method format
     list($controller, $method) = explode(separator: '#', string: $routeMatch['target']);
 
     $controllerClass = "Lovillela\\BlogApp\\Controllers\\{$controller}";

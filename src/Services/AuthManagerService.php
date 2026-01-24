@@ -35,5 +35,9 @@ final class AuthManagerService {
 
     return true;
   }
+
+  public function destroySession() {
+    $this->sessionService->destroy();
+  }
     
 }
