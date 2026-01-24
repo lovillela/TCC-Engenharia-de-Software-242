@@ -3,59 +3,41 @@
 namespace Lovillela\BlogApp\Controllers;
 
 use Lovillela\BlogApp\Services\AuthManagerService;
+use Lovillela\BlogApp\Services\RedirectService;
 
 final class AuthController{
 
   private AuthManagerService $authManagerService;
+  private RedirectService $redirectService;
 
   public function __construct(array $dependencyContainer) {
     $this->authManagerService = $dependencyContainer['AuthManagerService'];
+    $this->redirectService = $dependencyContainer['RedirectService'];
   }
 
   public function login(){
 
-    $this->username = trim($_POST['username']);
-    $this->password = trim($_POST['password']);
+    $username = trim($_POST['username']);
+    $password = trim($_POST['password']);
 
-    if(empty($this->username) || empty($this->password)){
-      session_destroy();
-      header('Location: /');
-      exit();
+    if(!$this->authManagerService->login($username, $password)){
+      $this->authManagerService->destroySession();
+      $this->redirectService->redirectToHome();
     }
 
-    $userData = $this->authenticationService->authenticate($this->username, $this->password, $this->premission);
     unset($_POST['password'], $this->password);
+    $userData = $this->authManagerService->getUserData();
 
-    if (!$userData && ($this->premission >= 1 && $this->premission <= 3)) {
-      session_destroy();
-      if ($this->premission >= 1 && $this->premission <= 2) {
-        header('Location: /admin/');
-        exit();
-      }else{
-        header('Location: /login/');
-        exit();
-      }
-
-    }else{
-      session_regenerate_id(true); // Regenerate session ID after successful login
-      $_SESSION['userID'] = $userData['id'];
-      $_SESSION['user'] = $userData['username'];
-      $_SESSION['role'] = $userData['permissions'];
-
-      if ($this->premission >= 1 && $this->premission <= 2) {
-        header('Location: /admin/dashboard/');
-        exit();
-      }else{
-        header('Location: /dashboard/');
-        exit();
-      }
+    if ($userData->permissions->value === 1) {
+      $this->redirectService->redirectToAdminDashboard();
+    }elseif ($userData->permissions->value === 3) {
+      $this->redirectService->redirectToUserDashboard();
     }
+
   }
 
-  public static function logout() {
-    session_regenerate_id(true);
-    session_destroy();
-    header('Location: /');
-    exit();
+  public function logout() {
+    $this->authManagerService->destroySession();
+    $this->redirectService->redirectToHome();
   }
 }
