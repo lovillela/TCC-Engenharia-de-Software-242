@@ -36,6 +36,10 @@ final class AuthManagerService {
     return true;
   }
 
+  public function getUserData(): ?UserIdentity {
+    return $this->sessionService->getUser();
+  }
+
   public function destroySession() {
     $this->sessionService->destroy();
   }
