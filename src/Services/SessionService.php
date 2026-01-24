@@ -65,4 +65,9 @@ final class SessionService {
 
     return new UserIdentity($_SESSION['userId'], $_SESSION['userName'], $permissions);
   }
+
+  public function destroy() {
+    session_unset();
+    session_destroy();
+  }
 }

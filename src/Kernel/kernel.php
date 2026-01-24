@@ -14,12 +14,15 @@ use Lovillela\BlogApp\Services\SlugService;
 use Lovillela\BlogApp\Services\InputSanitizationService;
 use Lovillela\BlogApp\Services\SessionService;
 use Lovillela\BlogApp\Services\UserManagementService;
+use Lovillela\BlogApp\Services\RedirectService;
 
 /** @var \Doctrine\DBAL\Connection $connection */
 $connection = require_once __DIR__ . '/../../src/Services/DatabaseConnectionService.php';
 
 $sessionService = new SessionService();
 $sessionService->start();
+
+$redirectService = new RedirectService();
 
 $userRepository = new UserRepository($connection);
 
@@ -54,6 +57,7 @@ $dependencyContainer = [
   'UserRepository' => $userRepository,
   'UserService' => $userService,
   'AuthManagerService' => $authManagerService,
+  'RedirectService' => $redirectService,
 ];
 
 $routerMain = require_once __DIR__ . '/../../config/Routes/main.php';
