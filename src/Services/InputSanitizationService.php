@@ -43,7 +43,7 @@ final class InputSanitizationService{
   }
 
   private function createCacheDirectory() {
-    if (!dir($this::CACHE_PATH)) {
+    if (!is_dir($this::CACHE_PATH)) {
       mkdir($this::CACHE_PATH, 755, true);
     }
   }
