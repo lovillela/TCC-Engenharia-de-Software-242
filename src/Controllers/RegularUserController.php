@@ -8,6 +8,7 @@ use Lovillela\BlogApp\Services\ViewRenderService;
 final class RegularUserController{
   private array $messages;
   private int $role = 3;
+  private array $dependencyContainer;
 
   public function __construct(array $dependencyContainer) {
     $this->dependencyContainer = $dependencyContainer;

@@ -6,8 +6,8 @@ use Lovillela\BlogApp\Services\ViewRenderService;
 final class HomeController{
 
     private array $messages;
-
     private $viewRenderer;
+    private array $dependencyContainer;
 
     public function __construct(array $dependencyContainer) {
     $this->dependencyContainer = $dependencyContainer;

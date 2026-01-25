@@ -7,7 +7,7 @@ class RouteMatchService
 {
   private $router;
   private $route;
-  private $dependencyContainer;
+  private array $dependencyContainer;
   private InputSanitizationService $inputSanitization;
 
   public function __construct($router, $route, array $dependencyContainer) {

@@ -9,6 +9,7 @@ use Lovillela\BlogApp\Services\RedirectService;
 final class AdminController{
 
   private array $messages;
+  private array $dependencyContainer;
   private $render;
 
   public function __construct(array $dependencyContainer) {
