@@ -3,11 +3,10 @@
 namespace Lovillela\BlogApp\Services;
 
 use Doctrine\DBAL\Connection;
-use Lovillela\BlogApp\Config\UserPermissions\UserRole;
+use Lovillela\BlogApp\Config\Permissions\UserPermissions;
 use Lovillela\BlogApp\Repositories\UserRepository;
 use Lovillela\BlogApp\Services\RedirectService;
 use Lovillela\BlogApp\Utils\PasswordHash;
-use Lovillela\BlogApp\Config\UserPermissions;
 use Lovillela\BlogApp\Services\AuthenticationControlService;
 
 class UserManagementService{
@@ -27,10 +26,11 @@ class UserManagementService{
   
   public function create(string $username, string $password, string $email, int $role /**Account role to be created*/) {
 
-    if($role === UserRole::Admin->value || $role === UserRole::Moderator->value){
-      if (!($this->userAdminOrModCreationPrivilegeCheck())){
-        RedirectService::redirectToHome();
-      }
+    if($role === UserPermissions::Admin->value || $role === UserPermissions::Moderator->value){
+      /**
+       * Verificar autorização
+       * Check authorization
+       */
     }
 
     if($this->userRepository->exists($username)){
@@ -82,54 +82,5 @@ class UserManagementService{
     
     return ['Status' => 1, 'Message' => 'User deleted successfully'];
   }
-
-  private function getUserID($connection, $username)  {
-      $sqlStatment_CheckUser = $connection->prepare($this->getUserID_Query);
-      $sqlStatment_CheckUser->bindValue(1, $username);
-      $result = $sqlStatment_CheckUser->executeQuery()->fetchAllAssociative();
-
-      return($result[0]['id']);
-  }
-
-  public static function userAdminOrModCreationPrivilegeCheck(){
-    
-    if($_SESSION['role'] != 1){
-      session_destroy();
-      return false;
-    }
-
-    return true;
-  }
-
-  public static function adminPrivilegeCheck(){
-    
-    if($_SESSION['role'] != 1){
-      session_destroy();
-      return false;
-    }
-
-    return true;
-  }
-
-  private function checkUserSession($connection, $username) {
-
-    $sqlStatment_CheckUser = $connection->prepare($this->checkUserCurrentSession);
-    $sqlStatment_CheckUser->bindValue(1, $username);
-    $result = $sqlStatment_CheckUser->executeQuery()->fetchAllAssociative();
-
-    $userData = $result[0];
-    
-    if (!($userData['username'] === $_SESSION['user'])) {
-      return false;
-    }
-
-    return true;
-  }
-
-  public function logout() {
-    session_unset();
-    session_destroy();
-    RedirectService::redirectToHome();
-    exit();
-  }
+  
 }
