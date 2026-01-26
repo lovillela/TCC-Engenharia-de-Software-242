@@ -2,6 +2,7 @@
 
 namespace Lovillela\BlogApp\Controllers;
 
+use Lovillela\BlogApp\Config\Permissions\UserPermissions;
 use Lovillela\BlogApp\Services\UserManagementService;
 use Lovillela\BlogApp\Services\ViewRenderService;
 use Lovillela\BlogApp\Services\RedirectService;
@@ -10,10 +11,14 @@ final class AdminController{
 
   private array $messages;
   private array $dependencyContainer;
+  private UserManagementService $userManagementService;
+  private RedirectService $redirectService;
   private $render;
 
   public function __construct(array $dependencyContainer) {
     $this->dependencyContainer = $dependencyContainer;
+    $this->userManagementService = $this->dependencyContainer['UserService'];
+    $this->redirectService = $this->dependencyContainer['RedirectService'];
   }
   public function index() {
     
@@ -39,7 +44,8 @@ final class AdminController{
     
     if(!($userManagement->adminPrivilegeCheck())){
       //User session already destroyed on adminPrivilegeCheck
-      RedirectService::redirectToHome();
+      $this->
+      $this->redirectService->redirectToHome();
       exit();
     }
 
@@ -79,9 +85,8 @@ final class AdminController{
     $email = trim($_POST['newUserEmail']);
     $role = $_POST['userRole'];
 
-    $userMngt = new UserManagementService();
-
-    $response = $userMngt->createUser($username, $password, $email, $role);
+    $response = $this->userManagementService->create($username, $password, 
+                                              $email, UserPermissions::Admin->value);
 
     if ($response['Status'] != 1) {
       $this->messages['errorMessage'] = $response['Message'];

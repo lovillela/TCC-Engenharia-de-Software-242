@@ -27,10 +27,12 @@ class UserManagementService{
   public function create(string $username, string $password, string $email, int $role /**Account role to be created*/) {
 
     if($role === UserPermissions::Admin->value || $role === UserPermissions::Moderator->value){
-      /**
-       * Verificar autorização
-       * Check authorization
-       */
+      $userData = $this->authManagerService->getUserData();
+
+      if (!isset($userData) || 
+        $userData->permissions->value !== UserPermissions::Admin->value) {
+        return array('Status' => 0, 'Message' => 'Not an admin');
+      }
     }
 
     if($this->userRepository->exists($username)){
