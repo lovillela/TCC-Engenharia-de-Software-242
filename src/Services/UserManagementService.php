@@ -34,11 +34,11 @@ class UserManagementService{
     }
 
     if($this->userRepository->exists($username)){
-      return (array('Status' => 0, 'Message' => 'User already in use'));
+      return array('Status' => 0, 'Message' => 'User already in use');
     }
 
     if($this->userRepository->emailExists($email)){
-      return (array('Status' => 0, 'Message' => 'Email already in use'));
+      return array('Status' => 0, 'Message' => 'Email already in use');
     }
 
     try {
@@ -55,10 +55,10 @@ class UserManagementService{
       
     } catch (\Throwable $th) {
       $this->connection->rollBack();
-      return (array('Status' => 0, 'Message' => 'User not created'));
+      return array('Status' => 0, 'Message' => 'User not created');
     }
 
-    return (array('Status' => 1, 'Message' => 'User created successfully'));
+    return array('Status' => 1, 'Message' => 'User created successfully');
   }
 
   public function deleteByUserName(string $username) {
