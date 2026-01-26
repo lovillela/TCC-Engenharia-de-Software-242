@@ -13,13 +13,13 @@ class UserManagementService{
 
   private UserRepository $userRepository;
   private PostManagementService $postService;
-  private AuthenticationControlService $authenticationService;
+  private AuthManagerService $authManagerService;
   private Connection $connection;
 
-  public function __construct(UserRepository $userRepository, AuthenticationControlService $authenticationService, 
+  public function __construct(UserRepository $userRepository, AuthManagerService $authManagerService, 
                               PostManagementService $postService, Connection $connection){
     $this->userRepository = $userRepository;
-    $this->authenticationService = $authenticationService;
+    $this->authManagerService = $authManagerService;
     $this->postService = $postService;
     $this->connection = $connection;
   }
