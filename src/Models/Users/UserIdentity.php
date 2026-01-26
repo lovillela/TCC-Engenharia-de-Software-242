@@ -2,14 +2,14 @@
 
 namespace Lovillela\BlogApp\Models\Users;
 
-use Lovillela\BlogApp\Config\UserPermissions\UserRole;
+use Lovillela\BlogApp\Config\Permissions\UserPermissions;
 
 final class UserIdentity{
   public readonly int $userId;
   public readonly string $userName;
-  public readonly UserRole $permissions;
+  public readonly UserPermissions $permissions;
 
-  public function __construct(int $userId, string $userName, UserRole $permissions) {
+  public function __construct(int $userId, string $userName, UserPermissions $permissions) {
     $this->userId = $userId;
     $this->userName = $userName;
     $this->permissions = $permissions;

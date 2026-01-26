@@ -4,7 +4,7 @@ namespace Lovillela\BlogApp\Services;
 
 use Lovillela\BlogApp\Config\Session\SessionTime;
 use Lovillela\BlogApp\Models\Users\UserIdentity;
-use Lovillela\BlogApp\Config\UserPermissions\UserRole;
+use Lovillela\BlogApp\Config\Permissions\UserPermissions;
 
 final class SessionService {
 
@@ -57,7 +57,7 @@ final class SessionService {
       return null;
     }
 
-    $permissions =  UserRole::tryFrom($_SESSION['permissions']);
+    $permissions =  UserPermissions::tryFrom($_SESSION['permissions']);
 
     if (!$permissions) {
       return null;

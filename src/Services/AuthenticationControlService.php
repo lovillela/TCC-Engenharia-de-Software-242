@@ -4,7 +4,7 @@ namespace Lovillela\BlogApp\Services;
 
 use Lovillela\BlogApp\Repositories\UserRepository;
 use Lovillela\BlogApp\Models\Users\UserIdentity;
-use Lovillela\BlogApp\Config\UserPermissions\UserRole;
+use Lovillela\BlogApp\Config\Permissions\UserPermissions;
 
 class AuthenticationControlService {
 
@@ -22,7 +22,7 @@ class AuthenticationControlService {
       return null;
     }
     
-    $permissions =  UserRole::tryFrom($user['permissions']);
+    $permissions =  UserPermissions::tryFrom($user['permissions']);
     
     if(!(password_verify($password, $user['password'])) || !$permissions){
       return null;

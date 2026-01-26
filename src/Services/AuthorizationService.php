@@ -2,7 +2,7 @@
 
 namespace Lovillela\BlogApp\Services;
 
-use Lovillela\BlogApp\Config\UserPermissions\UserRole;
+use Lovillela\BlogApp\Config\Permissions\UserPermissions;
 use Lovillela\BlogApp\Repositories\PostRepository;
 
 final class AuthorizationService {
