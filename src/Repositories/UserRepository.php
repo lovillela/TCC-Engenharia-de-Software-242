@@ -7,9 +7,12 @@ use Doctrine\DBAL\Connection;
 final class UserRepository
 {
   private Connection $connection;
+
+  //Deletes
   private string $userCreatorQuery = 'INSERT INTO `users` (`username`, `email`, `password`, `permissions`, `isActive` ) 
                                       VALUES (?, ?, ?, ?, 1)';
-  private string $deleteUserbyUsernameQuery = 'DELETE FROM `users` WHERE `username` = ?';
+
+  //Selects
   private string $userPasswordQuery = 'SELECT `password` FROM `users` WHERE `username` = ?';
   private string $activeUserQuery = 'SELECT EXISTS(SELECT 1 FROM `users` WHERE (`username` = ?) AND (isActive = 1)) as isActive';
   private string $userExistsQuery = 'SELECT EXISTS(SELECT 1 FROM `users` WHERE `username` = ?) as usernameExists';
@@ -19,9 +22,12 @@ final class UserRepository
                                           `users` WHERE (`email` = ? AND isActive = 1)';
   private string $getUserInfoQueryUsername = 'SELECT `id`, `username`, `email`, `password`, `isActive` FROM 
                                               `users` WHERE (`username` = ? AND isActive = 1)';
-  private string $deleteUserQuery = 'DELETE FROM `users` WHERE `id` = ?';
   private string $getUserIdByUsernameQuery = 'SELECT `id` FROM `users` WHERE `username` = ?';
   private string $getUserPostsQuery = 'SELECT `id_post` FROM `post_users` WHERE `id_user` = ?';
+
+  //Deletes
+  private string $deleteUserQuery = 'DELETE FROM `users` WHERE `id` = ?';
+  private string $deleteUserbyUsernameQuery = 'DELETE FROM `users` WHERE `username` = ?';
   
   public function __construct(Connection $connection){
       $this->connection = $connection;
