@@ -42,8 +42,9 @@ $authManagerService = new AuthManagerService($sessionService,
                                             $authenticationService, 
                                             $authorizationService);
 
-$userService = new UserManagementService($userRepository, $authenticationService,
-                                        $postService,  $connection);
+$userService = new UserManagementService($userRepository,
+                                        $postService, 
+                                         $connection);
 
 $dependencyContainer = [
   'Connection' => $connection,
