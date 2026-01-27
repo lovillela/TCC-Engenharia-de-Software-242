@@ -3,17 +3,17 @@
 namespace Lovillela\BlogApp\Services;
 
 use Lovillela\BlogApp\Config\Permissions\UserPermissions;
-use Lovillela\BlogApp\Repositories\PostRepository;
+use Lovillela\BlogApp\Services\PostManagementService;
+use Lovillela\BlogApp\Services\UserManagementService;
 
 final class AuthorizationService {
 
-  private PostRepository $postRepository;
+  private PostManagementService $postManagementService;
+  private UserManagementService $userManagementService;
 
-  public function __construct(PostRepository $postRepository) {
-    $this->postRepository = $postRepository;
+  public function __construct(PostManagementService $postManagementService, UserManagementService $userManagementService) {
+    $this->postManagementService = $postManagementService;
+    $this->userManagementService = $userManagementService;
   }
 
-  public function authorize(int $userId, int $contentId, int $permissions) : bool {
-    return (bool)$this->postRepository->getOwnership($userId);
-  }
 }
