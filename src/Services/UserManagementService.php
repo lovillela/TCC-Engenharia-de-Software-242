@@ -11,13 +11,11 @@ class UserManagementService{
 
   private UserRepository $userRepository;
   private PostManagementService $postService;
-  private AuthManagerService $authManagerService;
   private Connection $connection;
 
-  public function __construct(UserRepository $userRepository, AuthManagerService $authManagerService, 
+  public function __construct(UserRepository $userRepository,
                               PostManagementService $postService, Connection $connection){
     $this->userRepository = $userRepository;
-    $this->authManagerService = $authManagerService;
     $this->postService = $postService;
     $this->connection = $connection;
   }
@@ -25,7 +23,7 @@ class UserManagementService{
   public function create(string $username, string $password, string $email, int $role /**Account role to be created*/) {
 
     if($role === UserPermissions::Admin->value || $role === UserPermissions::Moderator->value){
-      $userData = $this->authManagerService->getUserData();
+      //$userData = $this->authManagerService->getUserData();
 
       if (!isset($userData) || 
         $userData->permissions->value !== UserPermissions::Admin->value) {
