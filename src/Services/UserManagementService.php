@@ -5,9 +5,7 @@ namespace Lovillela\BlogApp\Services;
 use Doctrine\DBAL\Connection;
 use Lovillela\BlogApp\Config\Permissions\UserPermissions;
 use Lovillela\BlogApp\Repositories\UserRepository;
-use Lovillela\BlogApp\Services\RedirectService;
 use Lovillela\BlogApp\Utils\PasswordHash;
-use Lovillela\BlogApp\Services\AuthenticationControlService;
 
 class UserManagementService{
 
