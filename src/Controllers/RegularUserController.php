@@ -2,15 +2,21 @@
 
 namespace Lovillela\BlogApp\Controllers;
 
+use Lovillela\BlogApp\Services\RedirectService;
 use Lovillela\BlogApp\Services\UserManagementService;
 use Lovillela\BlogApp\Services\ViewRenderService;
+use Lovillela\BlogApp\Config\Permissions\UserPermissions;
 
 final class RegularUserController{
   private array $messages;
-  private int $role = 3;
+  private array $dependencyContainer;
+  private UserManagementService $userManagementService;
+  private RedirectService $redirectService;
 
   public function __construct(array $dependencyContainer) {
     $this->dependencyContainer = $dependencyContainer;
+    $this->userManagementService = $this->dependencyContainer['UserService'];
+    $this->redirectService = $this->dependencyContainer['RedirectService'];
   }
   
   public function index() {
@@ -39,12 +45,11 @@ final class RegularUserController{
     $password = trim($_POST['newUserPassword']);
 
     if (empty($username) || empty($email) || empty($password)) {
-      header('Location: /signup/');
-      exit();
+      $this->redirectService->redirectToHome();
     }
-
-    $userMgnt = new UserManagementService();
-    $response = $userMgnt->createUser($username, $password, $email, $this->role);
+    
+    $response = $this->userManagementService->create($username, $password, 
+                                              $email, UserPermissions::RegularUser->value);
 
     if ($response['Status'] != 1) {
       $this->messages['errorMessage'] = $response['Message'];
@@ -81,17 +86,13 @@ final class RegularUserController{
       'generalMessage' => '',
     ];
     
-    $this->regularUserCheck();
+    /**
+     * Verificar Autorização
+     * Check authorization
+     */
 
     $render = new ViewRenderService(__DIR__ . '/../Views/Frontend/DashBoardViewRegularUser.php');
     $render->render($this->messages);
   }
 
-  private static function regularUserCheck()  {
-    if ($_SESSION['role'] != 3) {
-      session_destroy();
-      header('Location: /');
-      exit();
-    }
-  }
 }

@@ -32,7 +32,7 @@ RUN git config --global --add safe.directory '*' && \
     chsh -s /bin/bash www-data
 
 # Set working directory
-WORKDIR /var/www/html/public
+WORKDIR /var/www/html
 
 # Switch to www-data user
 USER www-data

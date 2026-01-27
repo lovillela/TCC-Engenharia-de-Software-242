@@ -14,6 +14,7 @@ final class PostController {
   private $messages = array();
   private $posts = array();
   private $data = array();
+  private array $dependencyContainer;
 
   public function __construct(array $dependencyContainer) {
     $this->postService = $dependencyContainer['PostManagementService'];

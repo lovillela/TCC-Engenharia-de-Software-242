@@ -4,32 +4,27 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 use Lovillela\BlogApp\Repositories\PostRepository;
 use Lovillela\BlogApp\Repositories\SlugRepository;
+use Lovillela\BlogApp\Repositories\UserRepository;
+use Lovillela\BlogApp\Services\AuthenticationControlService;
+use Lovillela\BlogApp\Services\AuthManagerService;
+use Lovillela\BlogApp\Services\AuthorizationService;
 use Lovillela\BlogApp\Services\PostManagementService;
 use Lovillela\BlogApp\Services\RouteMatchService;
 use Lovillela\BlogApp\Services\SlugService;
 use Lovillela\BlogApp\Services\InputSanitizationService;
-
-/*
-Prevents JavaScript from accessing the session cookie
-Cookie is only sent via HTTP(S) requests, not accessible via document.cookie
-*/
-ini_set('session.cookie_httponly', 1); 
-ini_set('session.cookie_secure', 1);      // HTTPS only (for production)
-
-/**PHP will reject uninitialized session IDs
-Forces session ID regeneration for unknown IDs */
-ini_set('session.use_strict_mode', 1);
-ini_set('session.cookie_samesite', 'Strict'); //CSRF Attack Prevention
-
-ini_set('session.gc_maxlifetime', 1440);
-
-if (session_status() === PHP_SESSION_NONE) {
-  session_start();
-}
-
+use Lovillela\BlogApp\Services\SessionService;
+use Lovillela\BlogApp\Services\UserManagementService;
+use Lovillela\BlogApp\Services\RedirectService;
 
 /** @var \Doctrine\DBAL\Connection $connection */
 $connection = require_once __DIR__ . '/../../src/Services/DatabaseConnectionService.php';
+
+$sessionService = new SessionService();
+$sessionService->start();
+
+$redirectService = new RedirectService();
+
+$userRepository = new UserRepository($connection);
 
 $sanitizationService = new InputSanitizationService();
 
@@ -37,7 +32,18 @@ $slugRepository = new SlugRepository($connection);
 $slugService = new SlugService($slugRepository, $sanitizationService);
 
 $postRepository = new PostRepository($connection);
-$postService = new PostManagementService($postRepository, $slugService, $sanitizationService,$connection);
+$postService = new PostManagementService($postRepository, $slugService, 
+                                          $sanitizationService, $connection);
+
+$authenticationService = new AuthenticationControlService($userRepository);
+$authorizationService = new AuthorizationService($postRepository);
+
+$authManagerService = new AuthManagerService($sessionService, 
+                                            $authenticationService, 
+                                            $authorizationService);
+
+$userService = new UserManagementService($userRepository, $authenticationService,
+                                        $postService,  $connection);
 
 $dependencyContainer = [
   'Connection' => $connection,
@@ -46,6 +52,12 @@ $dependencyContainer = [
   'PostManagementService' => $postService,
   'PostRepository' => $postRepository,
   'InputSanitizationService' => $sanitizationService,
+  'SessionService' => $sessionService,
+  'AuthenticationService' => $authenticationService,
+  'UserRepository' => $userRepository,
+  'UserService' => $userService,
+  'AuthManagerService' => $authManagerService,
+  'RedirectService' => $redirectService,
 ];
 
 $routerMain = require_once __DIR__ . '/../../config/Routes/main.php';
