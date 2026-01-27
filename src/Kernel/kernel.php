@@ -35,16 +35,18 @@ $postRepository = new PostRepository($connection);
 $postService = new PostManagementService($postRepository, $slugService, 
                                           $sanitizationService, $connection);
 
+$userService = new UserManagementService($userRepository,
+                                        $postService, 
+                                         $connection);
+
 $authenticationService = new AuthenticationControlService($userRepository);
-$authorizationService = new AuthorizationService($postRepository);
+
+$authorizationService = new AuthorizationService($postService,
+                                                 $userService);
 
 $authManagerService = new AuthManagerService($sessionService, 
                                             $authenticationService, 
                                             $authorizationService);
-
-$userService = new UserManagementService($userRepository,
-                                        $postService, 
-                                         $connection);
 
 $dependencyContainer = [
   'Connection' => $connection,
