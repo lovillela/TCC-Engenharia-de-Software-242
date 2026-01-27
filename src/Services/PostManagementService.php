@@ -25,21 +25,15 @@ class PostManagementService {
     $this->sanitizationService = $sanitizationService;
     $this->connection = $connection;
     
-    if (isset($user)) {
-      $this->user = $user;
-      $this->userID = $this->getUserID();
-      $this->entityType = 'post';
     }
-  }
 
   public function create(string $title, string $text, int $userID): array{
     
     /**
-     * Verificar Usuário
+     * Checar autorização e autenticação antes
+     * Check authorization and authentication prior
      */
     
-    $this->regularUserCheck();
-
     $title = $this->sanitizationService->postTitleSanitize($title);
     $text = $this->sanitizationService->postContentSanitize($text);
 
@@ -128,26 +122,6 @@ class PostManagementService {
     $message = $errors[get_class(object: $e)] ?? 'General Error';
 
     return array('Status' => 0, 'Message' => $message);
-  }
-
-  private function getUserID(): int{
-    global $connection;
-    //So the IDE can display all the methods, etc
-    /** @var \Doctrine\DBAL\Connection $connection */
-    $connection = $connection;
-
-    $sqlStatment_GetUserID = $connection->prepare($this->selectUserID_Query);
-    $sqlStatment_GetUserID->bindValue(1, $this->user);
-
-    return $sqlStatment_GetUserID->executeQuery()->fetchOne();
-  }
-
-  private static function regularUserCheck()  {
-    if ($_SESSION['role'] != 3) {
-      session_destroy();
-      header('Location: /');
-      exit();
-    }
   }
 
 }
