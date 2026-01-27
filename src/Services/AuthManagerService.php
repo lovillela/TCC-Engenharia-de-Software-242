@@ -7,6 +7,12 @@ use Lovillela\BlogApp\Services\AuthenticationControlService;
 use Lovillela\BlogApp\Services\AuthorizationService;
 use Lovillela\BlogApp\Models\Users\UserIdentity;
 
+/**
+ * Ponto de entrada para os serviços de Autenticação e Autorização.
+ * Com base nos resultados, será permitido ou não o uso das funções de crud
+ * Entrypoint for Authentication and Authorization services.
+ * Base on the results, the used of crud functions will be allowed or not.
+ */
 final class AuthManagerService {
 
   private SessionService $sessionService;
