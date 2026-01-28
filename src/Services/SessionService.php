@@ -66,6 +66,15 @@ final class SessionService {
     return new UserIdentity($_SESSION['userId'], $_SESSION['userName'], $permissions);
   }
 
+  public function isActive() {
+    
+    if (!isset($_SESSION['userId']) || !isset($_SESSION['userName']) || !isset($_SESSION['permissions'])) {
+      return false;
+    }
+
+    return true;
+  }
+
   public function destroy() {
     session_unset();
     session_destroy();
