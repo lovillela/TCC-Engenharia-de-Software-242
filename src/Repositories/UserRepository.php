@@ -24,6 +24,7 @@ final class UserRepository
                                               `users` WHERE (`username` = ? AND isActive = 1)';
   private string $getUserIdByUsernameQuery = 'SELECT `id` FROM `users` WHERE `username` = ?';
   private string $getUserPostsQuery = 'SELECT `id_post` FROM `post_users` WHERE `id_user` = ?';
+  private string $getUserPermissionsByIdQuery = 'SELECT `permissions` FROM `users` WHERE `id_user` = ?';
 
   //Deletes
   private string $deleteUserQuery = 'DELETE FROM `users` WHERE `id` = ?';
@@ -94,6 +95,12 @@ final class UserRepository
     $activeUserStmt->bindValue(1, $username);
 
     return (bool) $activeUserStmt->executeQuery()->fetchOne();
+  }
+
+  public function getUserPermissionsById(int $userId): int {
+    $getUserPermissionsQuery = $this->connection->prepare($this->getUserPermissionsByIdQuery);
+    $getUserPermissionsQuery->bindValue(1, $userId);
+    return (int)$getUserPermissionsQuery->executeQuery()->fetchOne();
   }
 
 }

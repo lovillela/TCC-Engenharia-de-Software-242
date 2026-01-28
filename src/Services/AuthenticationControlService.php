@@ -8,15 +8,15 @@ use Lovillela\BlogApp\Config\Permissions\UserPermissions;
 
 class AuthenticationControlService {
 
-  private UserRepository $userRepository;
-
-  public function __construct(UserRepository $userRepository){
-    $this->userRepository = $userRepository;
+  private UserManagementService $userManagementService;
+  
+  public function __construct(UserManagementService $userManagementService){
+    $this->userManagementService = $userManagementService;
   }
 
   public function authenticate(string $email, string $password): ?UserIdentity {
 
-    $user = $this->userRepository->findByEmail($email);
+    $user = $this->userManagementService->findByEmail($email);
 
     if (!$user) {
       return null;

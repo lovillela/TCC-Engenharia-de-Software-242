@@ -2,6 +2,7 @@
 
 namespace Lovillela\BlogApp\Controllers;
 
+use Lovillela\BlogApp\Services\AuthManagerService;
 use Lovillela\BlogApp\Services\RedirectService;
 use Lovillela\BlogApp\Services\UserManagementService;
 use Lovillela\BlogApp\Services\ViewRenderService;
@@ -12,11 +13,13 @@ final class RegularUserController{
   private array $dependencyContainer;
   private UserManagementService $userManagementService;
   private RedirectService $redirectService;
+  private AuthManagerService $authManagerService;
 
   public function __construct(array $dependencyContainer) {
     $this->dependencyContainer = $dependencyContainer;
     $this->userManagementService = $this->dependencyContainer['UserService'];
     $this->redirectService = $this->dependencyContainer['RedirectService'];
+    $this->authManagerService = $this->dependencyContainer['AuthManagerService'];
   }
   
   public function index() {
@@ -90,6 +93,18 @@ final class RegularUserController{
      * Verificar Autorização
      * Check authorization
      */
+
+    if (!$this->authManagerService->isSessionActive()) {
+      $this->authManagerService->destroySession();
+      $this->redirectService->redirectToHome();
+    }
+
+    $userData = $this->authManagerService->getUserData();
+
+    if (!$this->authManagerService->isRegularUserDashboardAllowed($userData)) {
+      $this->authManagerService->destroySession();
+      $this->redirectService->redirectToHome();
+    }
 
     $render = new ViewRenderService(__DIR__ . '/../Views/Frontend/DashBoardViewRegularUser.php');
     $render->render($this->messages);

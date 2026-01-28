@@ -46,6 +46,14 @@ final class AuthManagerService {
     return $this->sessionService->getUser();
   }
 
+  public function isSessionActive(){
+    return $this->sessionService->isActive();
+  }
+
+  public function isRegularUserDashboardAllowed(UserIdentity $userData) {
+    return $this->authorizationService->isRegularUserDashboardAllowed($userData); 
+  }
+
   public function destroySession() {
     $this->sessionService->destroy();
   }
