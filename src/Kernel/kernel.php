@@ -39,7 +39,7 @@ $userService = new UserManagementService($userRepository,
                                         $postService, 
                                          $connection);
 
-$authenticationService = new AuthenticationControlService($userRepository);
+$authenticationService = new AuthenticationControlService($userService);
 
 $authorizationService = new AuthorizationService($postService,
                                                  $userService);
