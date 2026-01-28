@@ -22,15 +22,6 @@ class UserManagementService{
   
   public function create(string $username, string $password, string $email, int $role /**Account role to be created*/) {
 
-    if($role === UserPermissions::Admin->value || $role === UserPermissions::Moderator->value){
-      //$userData = $this->authManagerService->getUserData();
-
-      if (!isset($userData) || 
-        $userData->permissions->value !== UserPermissions::Admin->value) {
-        return array('Status' => 0, 'Message' => 'Not an admin');
-      }
-    }
-
     if($this->userRepository->exists($username)){
       return array('Status' => 0, 'Message' => 'User already in use');
     }
@@ -79,6 +70,14 @@ class UserManagementService{
     }
     
     return ['Status' => 1, 'Message' => 'User deleted successfully'];
+  }
+
+  public function findByEmail(string $email): ?array {
+    return $this->userRepository->findByEmail($email);
+  }
+
+  public function getUserPermissionsById(int $userId) {
+    return $this->userRepository->getUserPermissionsById($userId);
   }
   
 }
