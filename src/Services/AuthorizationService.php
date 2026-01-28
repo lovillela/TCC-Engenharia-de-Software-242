@@ -17,7 +17,7 @@ final class AuthorizationService {
     $this->userManagementService = $userManagementService;
   }
 
-  public function isRegularUserDashboardAllowed(UserIdentity $userData) {
+  public function isRegularUserDashboardAllowed(UserIdentity $userData): bool {
     $permission = $this->userManagementService->getUserPermissionsById($userData->userId);
 
     if ($permission !== UserPermissions::RegularUser->value) {
@@ -25,5 +25,11 @@ final class AuthorizationService {
     }
 
     return true;
+  }
+
+  public function isPostCreationAllowed(UserIdentity $userData): bool{
+    $permission = $this->userManagementService->getUserPermissionsById($userData->userId);
+
+    return $permission == UserPermissions::RegularUser->value ? true : false;
   }
 }

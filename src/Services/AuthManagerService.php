@@ -54,6 +54,10 @@ final class AuthManagerService {
     return $this->authorizationService->isRegularUserDashboardAllowed($userData); 
   }
 
+  public function isPostCreationAllowed(UserIdentity $userData) {
+    return $this->authorizationService->isPostCreationAllowed($userData);
+  }
+
   public function destroySession() {
     $this->sessionService->destroy();
   }
