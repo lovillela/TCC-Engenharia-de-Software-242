@@ -151,11 +151,11 @@ class PostRepository{
                                           [$this->connection::PARAM_INT_ARRAY])->fetchAllAssociative();
   }
 
-  public function getOwnership(int $userId): array {
+  public function getOwnership(int $postId): ?int {
     $selectOwnershipStmt = $this->connection->prepare($this->selectOwnership);
-    $selectOwnershipStmt->bindValue(1, $userId);
+    $selectOwnershipStmt->bindValue(1, $postId);
     
-    return $selectOwnershipStmt->executeQuery()->fetchAllAssociative();
+    return (int)$selectOwnershipStmt->executeQuery()->fetchOne();
   }
 
   private static function databaseExceptionHandler(Throwable $e)   {

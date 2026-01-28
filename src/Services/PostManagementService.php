@@ -112,6 +112,10 @@ class PostManagementService {
     return $this->postRepository->getPostBySlug($slug);
   }
 
+  public function getOwnershipById(int $postId) {
+    return $this->postRepository->getOwnership($postId);
+  }
+
   private static function databaseExceptionHandler(Throwable $e)   {
     $errors= [
       \Doctrine\DBAL\Exception\ConnectionException::class => 'Connection Error!',
