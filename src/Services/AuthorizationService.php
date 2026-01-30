@@ -20,16 +20,19 @@ final class AuthorizationService {
   public function isRegularUserDashboardAllowed(UserIdentity $userData): bool {
     $permission = $this->userManagementService->getUserPermissionsById($userData->userId);
 
-    if ($permission !== UserPermissions::RegularUser->value) {
-      return false;
-    }
-
-    return true;
+    return ($permission === UserPermissions::RegularUser->value) ? true : false;
   }
 
-  public function isPostCreationAllowed(UserIdentity $userData): bool{
+  public function canCreatePost(UserIdentity $userData): bool{
     $permission = $this->userManagementService->getUserPermissionsById($userData->userId);
 
-    return $permission == UserPermissions::RegularUser->value ? true : false;
+    return ($permission === UserPermissions::RegularUser->value) ? true : false;
   }
+
+  public function canDeletePost(UserIdentity $userData, int $postId) : bool {
+    $ownerId = $this->postManagementService->getOwnershipById($postId);
+
+    return $ownerId === $userData->userId ? true : false;
+  }
+  
 }

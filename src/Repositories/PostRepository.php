@@ -154,8 +154,9 @@ class PostRepository{
   public function getOwnership(int $postId): ?int {
     $selectOwnershipStmt = $this->connection->prepare($this->selectOwnership);
     $selectOwnershipStmt->bindValue(1, $postId);
+    $ownerId = $selectOwnershipStmt->executeQuery()->fetchOne();
     
-    return (int)$selectOwnershipStmt->executeQuery()->fetchOne();
+    return ($ownerId !== false ) ? (int)$ownerId : null;
   }
 
   private static function databaseExceptionHandler(Throwable $e)   {

@@ -46,7 +46,7 @@ final class AuthManagerService {
     return $this->sessionService->getUser();
   }
 
-  public function isSessionActive(){
+  public function isSessionActive(): bool{
     return $this->sessionService->isActive();
   }
 
@@ -54,8 +54,12 @@ final class AuthManagerService {
     return $this->authorizationService->isRegularUserDashboardAllowed($userData); 
   }
 
-  public function isPostCreationAllowed(UserIdentity $userData) {
-    return $this->authorizationService->isPostCreationAllowed($userData);
+  public function canCreatePost(UserIdentity $userData) {
+    return $this->authorizationService->canCreatePost($userData);
+  }
+
+  public function canDeletePost(UserIdentity $userData, int $postId) {
+    return $this->authorizationService->canDeletePost($userData, $postId);
   }
 
   public function destroySession() {
