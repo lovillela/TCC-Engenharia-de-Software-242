@@ -18,14 +18,16 @@ final class AuthManagerService {
   private SessionService $sessionService;
   private AuthenticationControlService $authenticationService;
   private AuthorizationService $authorizationService;
+  private CsrfService $csrfService;
 
   public function __construct(SessionService  $sessionService, 
                               AuthenticationControlService $authenticationService, 
-                              AuthorizationService $authorizationService) {
+                              AuthorizationService $authorizationService,
+                              CsrfService $csrfService) {
     $this->sessionService = $sessionService;
     $this->authenticationService = $authenticationService;
     $this->authorizationService = $authorizationService;
-
+    $this->csrfService = $csrfService;
   }
 
   public function login(string $email, string $password) : bool {
@@ -37,13 +39,21 @@ final class AuthManagerService {
     }
 
     $this->sessionService->regenerate();
-    $this->sessionService->setUser($userIdentity);
+    $this->sessionService->setUser($userIdentity, $this->csrfService->generate());
 
     return true;
   }
 
   public function getUserData(): ?UserIdentity {
     return $this->sessionService->getUser();
+  }
+
+  public function getCsrfToken(): ?string {
+    return $this->sessionService->getCsrfToken();
+  }
+
+  public function validateCsrfToken(string $csrfToken): bool {
+    return $this->csrfService->validate($csrfToken, $this->sessionService->getCsrfToken());
   }
 
   public function isSessionActive(): bool{

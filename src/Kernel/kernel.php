@@ -8,6 +8,7 @@ use Lovillela\BlogApp\Repositories\UserRepository;
 use Lovillela\BlogApp\Services\AuthenticationControlService;
 use Lovillela\BlogApp\Services\AuthManagerService;
 use Lovillela\BlogApp\Services\AuthorizationService;
+use Lovillela\BlogApp\Services\CsrfService;
 use Lovillela\BlogApp\Services\PostManagementService;
 use Lovillela\BlogApp\Services\RouteMatchService;
 use Lovillela\BlogApp\Services\SlugService;
@@ -21,6 +22,8 @@ $connection = require_once __DIR__ . '/../../src/Services/DatabaseConnectionServ
 
 $sessionService = new SessionService();
 $sessionService->start();
+
+$csrfService = new CsrfService();
 
 $redirectService = new RedirectService();
 
@@ -46,7 +49,10 @@ $authorizationService = new AuthorizationService($postService,
 
 $authManagerService = new AuthManagerService($sessionService, 
                                             $authenticationService, 
-                                            $authorizationService);
+                                            $authorizationService,
+                                            $csrfService);
+
+                                          
 
 $dependencyContainer = [
   'Connection' => $connection,
@@ -61,6 +67,7 @@ $dependencyContainer = [
   'UserService' => $userService,
   'AuthManagerService' => $authManagerService,
   'RedirectService' => $redirectService,
+  'CsrfService' => $csrfService,
 ];
 
 $routerMain = require_once __DIR__ . '/../../config/Routes/main.php';
