@@ -57,6 +57,30 @@ class PostManagementService {
     }
   }
 
+  public function delete(int $postId, int $userId) {
+    try {
+      
+      $this->connection->beginTransaction();
+      $this->postRepository->deletePostUserRelationship($postId, $userId);
+      $ownershipCount = $this->postRepository->getOwnershipCount($postId);
+
+      if ($ownershipCount === 0) {
+        $this->postRepository->deletePostTagsInRange(array($postId));
+        $this->postRepository->deletePostReactionsInRange(array($postId));
+        $this->postRepository->deletePostCommentsInRange(array($postId));
+        $this->postRepository->deletePostCategoriesInRange(array($postId));
+        $this->slugService->deleteInRange(array($postId), $this::ENTITY);
+        $this->postRepository->delete($postId);
+      }
+
+      $this->connection->commit();
+      
+    } catch (\Throwable $th) {
+      $this->connection->rollBack();
+      //throw $th;
+    }
+  }
+
   public function deleteAllUserPostsByUserId(int $userId) {
     
     try {
@@ -112,7 +136,7 @@ class PostManagementService {
     return $this->postRepository->getPostBySlug($slug);
   }
 
-  public function getOwnershipById(int $postId) {
+  public function getOwnershipById(int $postId): ?int {
     return $this->postRepository->getOwnership($postId);
   }
 

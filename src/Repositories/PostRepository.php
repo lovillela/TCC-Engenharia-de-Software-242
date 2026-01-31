@@ -18,6 +18,7 @@ class PostRepository{
   private string $selectPostsByUserId = 'SELECT `id_post` FROM `post_users` WHERE `id_user` = ?';
   private string $selectPostIdsInRange = 'SELECT DISTINCT `id_post` FROM `post_users` WHERE `id_post` IN (?)';
   private string $selectOwnership = 'SELECT `id_user` FROM `post_users` WHERE `id_post` = ?';
+  private string $selectOwnershipCount = 'SELECT COUNT (*) FROM `post_users` WHERE `id_post` = ?';
 
   //Deletes
   private string $deletePost = 'DELETE FROM `post` WHERE id = ?';
@@ -29,6 +30,7 @@ class PostRepository{
   private string $deleteAllPostCategoriesInRange = 'DELETE FROM `post_category` WHERE `id_post` IN (?)';
   private string $deleteAllPostTagsInRange = 'DELETE FROM `post_tag` WHERE `id_post` IN (?)';
   private string $deleteAllPostsInRange = 'DELETE FROM `post` WHERE `id` IN (?)';
+  private string $deletePostUserRelationship = 'DELETE FROM `post_users` WHERE `id_post` = ? AND `id_user` = ?';
 
   public function __construct(Connection $connection) {
     $this->connection = $connection;
@@ -59,7 +61,15 @@ class PostRepository{
     return (bool) $deletePostStmt->executeStatement();
   }
 
-  public function deleteAllPostUserRelantionship($userId): bool {
+  public function deletePostUserRelationship(int $postId, int $userId) : bool {
+    $deletePostUserRelationshipStmt = $this->connection->prepare($this->deletePostUserRelationship);
+    $deletePostUserRelationshipStmt->bindValue(1, $postId);
+    $deletePostUserRelationshipStmt->bindValue(2, $userId);
+
+    return (bool)$deletePostUserRelationshipStmt->executeStatement();
+  }
+
+  public function deleteAllPostUserRelantionship(int $userId): bool {
     $deletePostUsersStmt = $this->connection->prepare(sql: $this->deletePostUsers);
     $deletePostUsersStmt->bindValue(1, $userId);
 
@@ -78,10 +88,6 @@ class PostRepository{
     $deleteAllUserCommentsStmt->bindValue(1, $userId);
 
     return (bool)$deleteAllUserCommentsStmt->executeStatement();
-  }
-
-  public function deleteAllUserPosts(array $postIds) {
-    
   }
 
   public function deletePostCommentsInRange(array $postIds): bool {
@@ -151,6 +157,11 @@ class PostRepository{
                                           [$this->connection::PARAM_INT_ARRAY])->fetchAllAssociative();
   }
 
+  public function getOwnershipCount(int $postId): int {
+    $getOwnershipCountQuery = $this->connection->prepare($this->selectOwnershipCount);
+    $getOwnershipCountQuery->bindValue(1, $postId);
+    return (int)$getOwnershipCountQuery->executeQuery()->fetchOne();
+  }
   public function getOwnership(int $postId): ?int {
     $selectOwnershipStmt = $this->connection->prepare($this->selectOwnership);
     $selectOwnershipStmt->bindValue(1, $postId);
