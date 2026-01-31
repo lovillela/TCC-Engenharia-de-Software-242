@@ -25,21 +25,15 @@ class PostManagementService {
     $this->sanitizationService = $sanitizationService;
     $this->connection = $connection;
     
-    if (isset($user)) {
-      $this->user = $user;
-      $this->userID = $this->getUserID();
-      $this->entityType = 'post';
     }
-  }
 
   public function create(string $title, string $text, int $userID): array{
     
     /**
-     * Verificar Usuário
+     * Checar autorização e autenticação antes
+     * Check authorization and authentication prior
      */
     
-    $this->regularUserCheck();
-
     $title = $this->sanitizationService->postTitleSanitize($title);
     $text = $this->sanitizationService->postContentSanitize($text);
 
@@ -60,6 +54,30 @@ class PostManagementService {
     }catch(Throwable $e){
         $this->connection->rollBack();
         return $this->databaseExceptionHandler($e);
+    }
+  }
+
+  public function delete(int $postId, int $userId) {
+    try {
+      
+      $this->connection->beginTransaction();
+      $this->postRepository->deletePostUserRelationship($postId, $userId);
+      $ownershipCount = $this->postRepository->getOwnershipCount($postId);
+
+      if ($ownershipCount === 0) {
+        $this->postRepository->deletePostTagsInRange(array($postId));
+        $this->postRepository->deletePostReactionsInRange(array($postId));
+        $this->postRepository->deletePostCommentsInRange(array($postId));
+        $this->postRepository->deletePostCategoriesInRange(array($postId));
+        $this->slugService->deleteInRange(array($postId), $this::ENTITY);
+        $this->postRepository->delete($postId);
+      }
+
+      $this->connection->commit();
+      
+    } catch (\Throwable $th) {
+      $this->connection->rollBack();
+      //throw $th;
     }
   }
 
@@ -118,6 +136,10 @@ class PostManagementService {
     return $this->postRepository->getPostBySlug($slug);
   }
 
+  public function getOwnershipById(int $postId): ?int {
+    return $this->postRepository->getOwnership($postId);
+  }
+
   private static function databaseExceptionHandler(Throwable $e)   {
     $errors= [
       \Doctrine\DBAL\Exception\ConnectionException::class => 'Connection Error!',
@@ -128,26 +150,6 @@ class PostManagementService {
     $message = $errors[get_class(object: $e)] ?? 'General Error';
 
     return array('Status' => 0, 'Message' => $message);
-  }
-
-  private function getUserID(): int{
-    global $connection;
-    //So the IDE can display all the methods, etc
-    /** @var \Doctrine\DBAL\Connection $connection */
-    $connection = $connection;
-
-    $sqlStatment_GetUserID = $connection->prepare($this->selectUserID_Query);
-    $sqlStatment_GetUserID->bindValue(1, $this->user);
-
-    return $sqlStatment_GetUserID->executeQuery()->fetchOne();
-  }
-
-  private static function regularUserCheck()  {
-    if ($_SESSION['role'] != 3) {
-      session_destroy();
-      header('Location: /');
-      exit();
-    }
   }
 
 }
