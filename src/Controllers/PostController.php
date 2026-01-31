@@ -68,7 +68,7 @@ final class PostController {
 
     $userData = $this->authManagerService->getUserData();
 
-    if (!isset($userData) || !$this->authManagerService->isPostCreationAllowed($userData)) {
+    if (!isset($userData) || !$this->authManagerService->canCreatePost($userData)) {
       $this->authManagerService->destroySession();
       $this->redirectService->redirectToHome();
     }
@@ -89,8 +89,37 @@ final class PostController {
     $render->render($this->messages);
   }
 
+  public function deletePostAction(int $postId) {
+
+    if (!$this->authManagerService->isSessionActive()) {
+      $this->authManagerService->destroySession();
+      $this->redirectService->redirectToHome();
+    }
+
+    $userData = $this->authManagerService->getUserData();
+
+    if (!isset($userData) || !$this->authManagerService->canDeletePost($userData, $postId)) {
+    
+      $response = 'Cannot delete';
+
+      $this->messages = [
+      'title' => 'Post Form',
+      'headerText' => 'Post Form',
+      'errorMessage' => $response,
+      'generalMessage' => '',
+      ];
+
+      $render = new ViewRenderService(__DIR__ . '/../Views/Frontend/PostFormView.php');
+      $render->render($this->messages);
+    }
+
+    $this->postService->delete($postId, $userData->userId);
+
+    $render = new ViewRenderService(__DIR__ . '/../Views/Frontend/PostFormView.php');
+    $render->render($this->messages);
+  }
+
   public function addPostForm() {
-    $this->regularUserCheck();
 
     $this->messages = [
       'title' => 'Post Form',
@@ -101,6 +130,10 @@ final class PostController {
 
     $render = new ViewRenderService(__DIR__ . '/../Views/Frontend/PostFormView.php');
     $render->render($this->messages);
+  }
+
+  public function editPostForm(int $postId) : Returntype {
+    
   }
 
   private function getPostBySlug(string $slug){
