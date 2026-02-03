@@ -137,12 +137,10 @@ final class PostController {
   }
 
   private function getPostBySlug(string $slug){
-    $getPost = $this->postService;
-    return $getPost->getPostBySlug($slug);
+    return $this->postService->getPostBySlug($slug);
   }
   private function getAllPosts(){
-    $getAllPosts = $this->postService;
-    return $getAllPosts->getAllPosts();
+    return $this->postService->getAllPosts();
   }
 
 }

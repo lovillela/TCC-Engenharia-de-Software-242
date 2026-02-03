@@ -132,8 +132,14 @@ class PostManagementService {
     return $this->postRepository->getAllPosts();
   }
 
-  public function getPostBySlug(string $slug){
-    return $this->postRepository->getPostBySlug($slug);
+  public function getPostBySlug(string $slug): ?array{
+
+    $post = $this->postRepository->getPostBySlug($slug);
+
+    $post['title'] = $this->sanitizationService->postTitleSanitize($post['title']);
+    //$post['content'] = $this->sanitizationService->postContentSanitize($post['content']);
+
+    return $post;
   }
 
   public function getOwnershipById(int $postId): ?int {
