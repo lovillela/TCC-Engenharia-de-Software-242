@@ -28,6 +28,7 @@ final class RegularUserController{
       'headerText' => 'Login',
       'errorMessage' => '',
       'generalMessage' => '',
+      'csrfToken' => $this->authManagerService->getCsrfToken(),
     ];
 
     $viewRender = new ViewRenderService(__DIR__ . '/../Views/Frontend/LoginViewRegularUser.php');

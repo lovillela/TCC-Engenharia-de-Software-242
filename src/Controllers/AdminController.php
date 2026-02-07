@@ -2,6 +2,7 @@
 
 namespace Lovillela\BlogApp\Controllers;
 
+use Lovillela\BlogApp\Services\AuthManagerService;
 use Lovillela\BlogApp\Config\Permissions\UserPermissions;
 use Lovillela\BlogApp\Services\UserManagementService;
 use Lovillela\BlogApp\Services\ViewRenderService;
@@ -13,12 +14,14 @@ final class AdminController{
   private array $dependencyContainer;
   private UserManagementService $userManagementService;
   private RedirectService $redirectService;
+  private AuthManagerService $authManagerService;
   private $render;
 
   public function __construct(array $dependencyContainer) {
     $this->dependencyContainer = $dependencyContainer;
     $this->userManagementService = $this->dependencyContainer['UserService'];
     $this->redirectService = $this->dependencyContainer['RedirectService'];
+    $this->authManagerService = $this->dependencyContainer['AuthManagerService'];
   }
   public function index() {
     
@@ -26,6 +29,7 @@ final class AdminController{
       'title' => 'Admin Login',
       'loginHeaderText' => 'Admin Login Page',
       'errorMessage' => '',
+      'csrfToken' => $this->authManagerService->getCsrfToken(),
     ];
 
     $viewRender = new ViewRenderService(__DIR__ . '/../Views/Admin/LoginView.php');
