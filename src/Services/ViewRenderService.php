@@ -36,6 +36,10 @@ class ViewRenderService{
    */
   private function addSecurityHeaders(){
 
+    if (headers_sent()) {
+      return;
+    }
+
     /**
      * Para forçar o navegador a respeitar o tipo MIME em Content-Type
      * Used to force the browser to respect the MIME type on Content-Type
