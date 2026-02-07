@@ -42,6 +42,19 @@ final class InputSanitizationService{
     return (int)preg_replace('/[^0-9]/', '', $id);
   }
 
+  public function displayPostSanitize(array $post): array {
+    
+    $post['title'] = htmlspecialchars($post['title'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    
+    /**
+     * É possível utilizar, mas é uma biblioteca pesada.
+     * This may be used, it is a heavy library however.
+     */
+    //$post['content'] = $this->postContentSanitize($post['content']);
+
+    return $post;
+  }
+
   private function createCacheDirectory() {
     if (!is_dir($this::CACHE_PATH)) {
       mkdir($this::CACHE_PATH, 755, true);
