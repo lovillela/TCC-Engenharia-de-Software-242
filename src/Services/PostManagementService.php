@@ -136,8 +136,11 @@ class PostManagementService {
 
     $post = $this->postRepository->getPostBySlug($slug);
 
-    $post['title'] = $this->sanitizationService->postTitleSanitize($post['title']);
-    //$post['content'] = $this->sanitizationService->postContentSanitize($post['content']);
+    if (!isset($post)) {
+      return null;
+    }
+
+    $post = $this->sanitizationService->displayPostSanitize($post);
 
     return $post;
   }
