@@ -20,11 +20,6 @@ use Lovillela\BlogApp\Services\RedirectService;
 /** @var \Doctrine\DBAL\Connection $connection */
 $connection = require_once __DIR__ . '/../../src/Services/DatabaseConnectionService.php';
 
-$sessionService = new SessionService();
-$sessionService->start();
-
-$csrfService = new CsrfService();
-
 $redirectService = new RedirectService();
 
 $userRepository = new UserRepository($connection);
@@ -48,11 +43,16 @@ $authenticationService = new AuthenticationControlService($userService);
 $authorizationService = new AuthorizationService($postService,
                                                  $userService);
 
+$csrfService = new CsrfService();
+$sessionService = new SessionService();
+$sessionService->start();
+
 $authManagerService = new AuthManagerService($sessionService, 
                                             $authenticationService, 
                                             $authorizationService,
                                             $csrfService);
-
+                                          
+$authManagerService->setCsrfToken();                                            
                                           
 
 $dependencyContainer = [

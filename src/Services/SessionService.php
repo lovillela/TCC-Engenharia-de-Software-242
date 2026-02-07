@@ -45,11 +45,10 @@ final class SessionService {
     session_regenerate_id(true);
   }
 
-  public function setUser(UserIdentity $userIdentity, string $csrfToken) {
+  public function setUser(UserIdentity $userIdentity) {
     $_SESSION['userId'] = $userIdentity->userId;
     $_SESSION['userName'] = $userIdentity->userName;
     $_SESSION['permissions'] = $userIdentity->permissions->value;
-    $_SESSION['csrfToken'] = $csrfToken;
   }
 
   public function getUser(): ?UserIdentity {
@@ -67,6 +66,12 @@ final class SessionService {
     return new UserIdentity($_SESSION['userId'], $_SESSION['userName'], $permissions);
   }
 
+  public function setCsrfToken(string $csrfToken) {
+    
+    if (!isset($_SESSION['csrfToken'])) {
+       $_SESSION['csrfToken'] = $csrfToken;
+    }
+  }
   public function getCsrfToken(): ?string  {
     return isset($_SESSION['csrfToken']) ? (string)$_SESSION['csrfToken'] : null;
   }
