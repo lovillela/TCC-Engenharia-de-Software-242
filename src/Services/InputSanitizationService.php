@@ -38,8 +38,16 @@ final class InputSanitizationService{
     return trim(strip_tags($title));
   }
 
-  public function idSanitize($id): int {
+  public function idSanitize(int $id): int {
     return (int)preg_replace('/[^0-9]/', '', $id);
+  }
+
+  public function usernameSanitize(string $username): string {
+    return (string)preg_replace('/[^a-zA-Z0-9\.\_]/', '', $username);
+  }
+
+  public function emailSanitize(string $email): string {
+    return filter_var($email, FILTER_SANITIZE_EMAIL);
   }
 
   public function displayPostSanitize(array $post): array {

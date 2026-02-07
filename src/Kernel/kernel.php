@@ -39,7 +39,8 @@ $postService = new PostManagementService($postRepository, $slugService,
                                           $sanitizationService, $connection);
 
 $userService = new UserManagementService($userRepository,
-                                        $postService, 
+                                        $postService,
+                                        $sanitizationService, 
                                          $connection);
 
 $authenticationService = new AuthenticationControlService($userService);

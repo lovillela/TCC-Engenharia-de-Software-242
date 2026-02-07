@@ -36,6 +36,10 @@ class ViewRenderService{
    */
   private function addSecurityHeaders(){
 
+    /**
+     * Para evitar o erro 'headers already sent'
+     * To prevent the error 'headers already sent'
+     */
     if (headers_sent()) {
       return;
     }
