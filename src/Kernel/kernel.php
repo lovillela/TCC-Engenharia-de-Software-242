@@ -8,6 +8,7 @@ use Lovillela\BlogApp\Repositories\UserRepository;
 use Lovillela\BlogApp\Services\AuthenticationControlService;
 use Lovillela\BlogApp\Services\AuthManagerService;
 use Lovillela\BlogApp\Services\AuthorizationService;
+use Lovillela\BlogApp\Services\CsrfService;
 use Lovillela\BlogApp\Services\PostManagementService;
 use Lovillela\BlogApp\Services\RouteMatchService;
 use Lovillela\BlogApp\Services\SlugService;
@@ -18,9 +19,6 @@ use Lovillela\BlogApp\Services\RedirectService;
 
 /** @var \Doctrine\DBAL\Connection $connection */
 $connection = require_once __DIR__ . '/../../src/Services/DatabaseConnectionService.php';
-
-$sessionService = new SessionService();
-$sessionService->start();
 
 $redirectService = new RedirectService();
 
@@ -36,7 +34,8 @@ $postService = new PostManagementService($postRepository, $slugService,
                                           $sanitizationService, $connection);
 
 $userService = new UserManagementService($userRepository,
-                                        $postService, 
+                                        $postService,
+                                        $sanitizationService, 
                                          $connection);
 
 $authenticationService = new AuthenticationControlService($userService);
@@ -44,9 +43,17 @@ $authenticationService = new AuthenticationControlService($userService);
 $authorizationService = new AuthorizationService($postService,
                                                  $userService);
 
+$csrfService = new CsrfService();
+$sessionService = new SessionService();
+$sessionService->start();
+
 $authManagerService = new AuthManagerService($sessionService, 
                                             $authenticationService, 
-                                            $authorizationService);
+                                            $authorizationService,
+                                            $csrfService);
+                                          
+$authManagerService->setCsrfToken();                                            
+                                          
 
 $dependencyContainer = [
   'Connection' => $connection,
@@ -61,6 +68,7 @@ $dependencyContainer = [
   'UserService' => $userService,
   'AuthManagerService' => $authManagerService,
   'RedirectService' => $redirectService,
+  'CsrfService' => $csrfService,
 ];
 
 $routerMain = require_once __DIR__ . '/../../config/Routes/main.php';

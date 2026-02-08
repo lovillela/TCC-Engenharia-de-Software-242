@@ -18,6 +18,10 @@ final class AuthController{
 
   public function login(){
 
+    if (!isset($_POST['csrfToken']) || !$this->authManagerService->validateCsrfToken($_POST['csrfToken'])) {
+      $this->redirectService->redirectToHome();
+    }
+
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
 

@@ -6,21 +6,28 @@ use Doctrine\DBAL\Connection;
 use Lovillela\BlogApp\Config\Permissions\UserPermissions;
 use Lovillela\BlogApp\Repositories\UserRepository;
 use Lovillela\BlogApp\Utils\PasswordHash;
+use Lovillela\BlogApp\Services\InputSanitizationService;
 
 class UserManagementService{
 
   private UserRepository $userRepository;
   private PostManagementService $postService;
+  private InputSanitizationService $sanitizationService;
   private Connection $connection;
 
   public function __construct(UserRepository $userRepository,
-                              PostManagementService $postService, Connection $connection){
+                              PostManagementService $postService, 
+                              InputSanitizationService $sanitizationService,
+                              Connection $connection){
     $this->userRepository = $userRepository;
     $this->postService = $postService;
+    $this->sanitizationService = $sanitizationService;
     $this->connection = $connection;
   }
   
   public function create(string $username, string $password, string $email, int $role /**Account role to be created*/) {
+
+    $username = $this->sanitizationService->usernameSanitize($username);
 
     if($this->userRepository->exists($username)){
       return array('Status' => 0, 'Message' => 'User already in use');

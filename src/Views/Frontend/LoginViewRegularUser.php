@@ -9,6 +9,9 @@
   <h2><?php echo ($headerText);?></h2>
   <div name="loginForm">
     <form action="/login/" method="post">
+    
+      <input type="hidden" name="csrfToken" id="csrfToken" value="<?php echo($csrfToken); ?>">
+
       <p>
         Username:
         <input type="text" name="username" id="usernameRegularUser" required>

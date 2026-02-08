@@ -66,6 +66,16 @@ final class SessionService {
     return new UserIdentity($_SESSION['userId'], $_SESSION['userName'], $permissions);
   }
 
+  public function setCsrfToken(string $csrfToken) {
+    
+    if (!isset($_SESSION['csrfToken'])) {
+       $_SESSION['csrfToken'] = $csrfToken;
+    }
+  }
+  public function getCsrfToken(): ?string  {
+    return isset($_SESSION['csrfToken']) ? (string)$_SESSION['csrfToken'] : null;
+  }
+
   public function isActive() {
     
     if (!isset($_SESSION['userId']) || !isset($_SESSION['userName']) || !isset($_SESSION['permissions'])) {

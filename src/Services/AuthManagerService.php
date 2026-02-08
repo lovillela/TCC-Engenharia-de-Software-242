@@ -6,6 +6,7 @@ use Lovillela\BlogApp\Services\SessionService;
 use Lovillela\BlogApp\Services\AuthenticationControlService;
 use Lovillela\BlogApp\Services\AuthorizationService;
 use Lovillela\BlogApp\Models\Users\UserIdentity;
+use Lovillela\BlogApp\Services\CsrfService;
 
 /**
  * Ponto de entrada para os serviços de Autenticação e Autorização.
@@ -18,14 +19,16 @@ final class AuthManagerService {
   private SessionService $sessionService;
   private AuthenticationControlService $authenticationService;
   private AuthorizationService $authorizationService;
-
+  private CsrfService $csrfService;
+  
   public function __construct(SessionService  $sessionService, 
                               AuthenticationControlService $authenticationService, 
-                              AuthorizationService $authorizationService) {
+                              AuthorizationService $authorizationService,
+                              CsrfService $csrfService) {
     $this->sessionService = $sessionService;
     $this->authenticationService = $authenticationService;
     $this->authorizationService = $authorizationService;
-
+    $this->csrfService = $csrfService;
   }
 
   public function login(string $email, string $password) : bool {
@@ -44,6 +47,18 @@ final class AuthManagerService {
 
   public function getUserData(): ?UserIdentity {
     return $this->sessionService->getUser();
+  }
+
+  public function getCsrfToken(): ?string {
+    return $this->sessionService->getCsrfToken();
+  }
+
+  public function setCsrfToken() {
+    $this->sessionService->setCsrfToken($this->csrfService->generate());
+  }
+
+  public function validateCsrfToken(string $csrfToken): bool {
+    return $this->csrfService->validate($csrfToken, $this->sessionService->getCsrfToken());
   }
 
   public function isSessionActive(): bool{
