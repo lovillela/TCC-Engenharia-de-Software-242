@@ -18,18 +18,28 @@ final class ViewRenderService{
       exit();
     }
     
+    /**
+     * Inicia a bufferização
+     * Initiates buffering
+     */
     ob_start();
 
-    extract($viewData->bodyData);
+    if (!empty($viewData->bodyData)) {
+      extract($viewData->bodyData);
+    }
 
     include $viewData->viewFilePath;
-
-    $bodyData = ob_get_clean();
 
     $headTitle = $viewData->headTitle;
     $baseView = ViewPath::BASE_VIEW->value;
 
     $this->addSecurityHeaders();
+
+    /**
+     * Termina a bufferização e limpeza
+     * Finishes buffering and cleanup
+     */
+    $bodyData = ob_get_clean();
 
     return (include $baseView);
   }
