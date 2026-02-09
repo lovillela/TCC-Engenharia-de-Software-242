@@ -3,30 +3,35 @@
 namespace Lovillela\BlogApp\Services;
 
 use Exception;
+use Lovillela\BlogApp\Models\Views\ViewData\ViewData;
+use Lovillela\BlogApp\Config\Views\ViewPath;
 
-class ViewRenderService{
+final class ViewRenderService{
 
-  private $viewFile;
-
-  public function __construct(string $requestedView){
-    $this->viewFile = $requestedView;
+  public function __construct(){
   }
 
-  public function render(array $messages, ?array $data = NULL){
+  public function render(ViewData $viewData){
 
-    extract($messages);
-
-    if (isset($data)) {
-      extract($data);
+    if (!(file_exists($viewData->viewFilePath))) {
+      //throw new Exception((string)$e . "\nView file not found", 1);
+      exit();
     }
     
-    if (!(file_exists($this->viewFile))) {
-      throw new Exception((string)$e . "\nView file not found", 1);
-    }
+    ob_start();
+
+    extract($viewData->bodyData);
+
+    include $viewData->viewFilePath;
+
+    $bodyData = ob_get_clean();
+
+    $headTitle = $viewData->headTitle;
+    $baseView = ViewPath::BASE_VIEW->value;
 
     $this->addSecurityHeaders();
 
-    return (include $this->viewFile);
+    return (include $baseView);
   }
 
   /**
