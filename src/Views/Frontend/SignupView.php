@@ -5,12 +5,12 @@
   </div>
 
   <?php 
-    if (!empty($messages['errorMessage'])) {
-      echo($messages['errorMessage']);
+    if (!empty($errorMessage)) {
+      echo($errorMessage);
     }
 
-    if (!empty($messages['generalMessage'])) {
-      echo($messages['generalMessage']);
+    if (!empty($generalMessage)) {
+      echo($generalMessage);
     }
   ?>
 
