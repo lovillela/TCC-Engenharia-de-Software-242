@@ -3,16 +3,13 @@
 namespace Lovillela\BlogApp\Config\Views;
 
 enum ViewPath: string{
-  case BASE_PATH = __DIR__ . '/../../src/Views/';
-  case BASE_VIEW = (string)BASE_PATH . 'BaseView.php';
-  case ADMIN_BASE_PATH = BASE_PATH . 'Admin/';
-  case FRONTEND_BASE_PATH = BASE_PATH . 'Frontend/';
+  case BASE_VIEW = 'BaseView.php';
   /**
    * Admin views
    */
-  case ADMIN_ADD_USER_VIEW = ADMIN_BASE_PATH . 'AddUserView.php';
-  case ADMIN_DASHBOARD_VIEW = ADMIN_BASE_PATH . 'DashBoardView.php';
-  case ADMIN_LOGIN_VIEW = ADMIN_BASE_PATH . 'LoginView.php';
+  case ADMIN_ADD_USER = 'Admin/AddUserView.php';
+  case ADMIN_DASHBOARD = 'Admin/DashBoardView.php';
+  case ADMIN_LOGIN = 'Admin/LoginView.php';
   /**
    * Fim/End Admin Views
    */
@@ -20,14 +17,18 @@ enum ViewPath: string{
   /**
    * Frontend views
    */
-  case FRONTEND_DASHBOARD_VIEW_REGULARUSER = FRONTEND_BASE_PATH . 'DashBoardViewRegularUser.php';
-  case FRONTEND_HOMEPAGE_VIEW = FRONTEND_BASE_PATH . 'HomePageView.php';
-  case FRONTEND_LOGIN_VIEW_REGULAR_USER = FRONTEND_BASE_PATH . 'LoginViewRegularUser.php';
-  case FRONTEND_POSTFOR_MVIEW = FRONTEND_BASE_PATH . 'PostFormView.php';
-  case FRONTEND_POST_HOME_VIEW = FRONTEND_BASE_PATH . 'PostHomeView.php';
-  case FRONTEND_POST_VIEW = FRONTEND_BASE_PATH . 'PostView.php';
-  case FRONTEND_SIGNUP_VIEW = FRONTEND_BASE_PATH . 'SignupView.php';
+  case FRONTEND_DASHBOARD_REGULARUSER = 'Frontend/DashBoardViewRegularUser.php';
+  case FRONTEND_HOMEPAGE = 'Frontend/HomePageView.php';
+  case FRONTEND_LOGIN_REGULAR_USER = 'Frontend/LoginViewRegularUser.php';
+  case FRONTEND_POSTFORM = 'Frontend/PostFormView.php';
+  case FRONTEND_POST_HOME = 'Frontend/PostHomeView.php';
+  case FRONTEND_POST = 'Frontend/PostView.php';
+  case FRONTEND_SIGNUP = 'Frontend/SignupView.php';
   /**
    * Fim/End Admin Views
    */
+
+  public function getPath() : string {
+    return __DIR__ . '/../../src/Views/' . $this->value;
+  }
 }
