@@ -1,6 +1,6 @@
 <?php
 
-namespace Lovillela\BlogApp\Models\Views\ViewData;
+namespace Lovillela\BlogApp\Models\Views;
 
 class ViewData {
 
