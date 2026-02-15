@@ -1,5 +1,5 @@
 <div>
-  <?php echo ($headerText); ?>  <a href="/post/">  Posts  </a>
+  <a href="/post/">  <?php echo ($allPostsLink); ?>  </a>
 </div>
 
 <br> 
