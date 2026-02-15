@@ -8,15 +8,16 @@ use Lovillela\BlogApp\Services\PostManagementService;
 use Lovillela\BlogApp\Services\RedirectService;
 use Lovillela\BlogApp\Config\Permissions\UserPermissions;
 use Lovillela\BlogApp\Models\Users\UserIdentity;
+use Lovillela\BlogApp\Models\Views\ViewData;
+use Lovillela\BlogApp\Config\Views\ViewPath;
 
-final class PostController {
+final class PostController extends BaseController{
 
   private PostManagementService $postService;
   private RedirectService $redirectService;
   private AuthManagerService $authManagerService;
-  private $messages = array();
-  private $posts = array();
-  private $data = array();
+  private ViewRenderService $viewRenderService;
+  private ViewData $viewData;
   private array $dependencyContainer;
 
   public function __construct(array $dependencyContainer) {
@@ -24,35 +25,42 @@ final class PostController {
     $this->postService = $this->dependencyContainer['PostManagementService'];
     $this->redirectService = $this->dependencyContainer['RedirectService'];
     $this->authManagerService = $this->dependencyContainer['AuthManagerService'];
+    $this->viewRenderService = $this->dependencyContainer['ViewRenderService'];
   }
 
   public function index() {
-    $this->messages = [
+
+    $headTitle = 'All Posts';
+
+    $posts = $this->getAllPosts();
+
+    $bodyData = [
       'title' => 'Post Home',
       'headerText' => 'Post Home',
       'errorMessage' => '',
       'generalMessage' => '',
+      'posts' => $posts,
     ];
 
-    $this->posts = $this->getAllPosts();
-
-    $render = new ViewRenderService(__DIR__ . '/../Views/Frontend/PostHomeView.php');
-    $render->render($this->messages, $this->posts);
+    $viewData = $this->prepareView(ViewPath::FRONTEND_POST_HOME, $headTitle, $bodyData);
+    $this->viewRenderService->render($viewData);
   }
 
   public function show($slug) {
 
-    $this->data = $this->getPostBySlug($slug);
+    $post = $this->getPostBySlug($slug);
+
+    $headTitle = $post['title'];
     
-    $this->messages = [
-      'title' => $this->data['title'],
-      'headerText' => $this->data['title'],
+    $bodyData = [
+      'title' => $post['title'],
+      'content' => $post['content'],
       'errorMessage' => '',
       'generalMessage' => '',
     ];
 
-    $render = new ViewRenderService(__DIR__ . '/../Views/Frontend/PostView.php');
-    $render->render($this->messages, $this->data);
+    $viewData = $this->prepareView(ViewPath::FRONTEND_POST, $headTitle, $bodyData);
+    $this->viewRenderService->render($viewData);
   }
 
   public function redirectToTrailingSlash($slug) {

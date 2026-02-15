@@ -16,7 +16,7 @@
 
 <div name="post">
   <?php 
-    if (isset($data)) {
+    if (isset($content)) {
         echo('<br>');
         echo($content);
         echo('<br> <br>');
