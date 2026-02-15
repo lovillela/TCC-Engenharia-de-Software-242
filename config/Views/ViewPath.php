@@ -7,6 +7,7 @@ enum ViewPath: string{
   private const BASE_PATH = __DIR__ . '/../../src/Views/';
 
   case BASE_VIEW = 'BaseView.php';
+  /**************************************************************************/
   /**
    * Admin views
    */
@@ -16,7 +17,7 @@ enum ViewPath: string{
   /**
    * Fim/End Admin Views
    */
-
+  /**************************************************************************/
   /**
    * Frontend views
    */
@@ -30,6 +31,7 @@ enum ViewPath: string{
   /**
    * Fim/End Admin Views
    */
+  /**************************************************************************/
   public function getPath() : string {
     return self::BASE_PATH . $this->value;
   }

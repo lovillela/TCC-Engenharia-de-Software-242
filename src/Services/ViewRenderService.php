@@ -3,7 +3,7 @@
 namespace Lovillela\BlogApp\Services;
 
 use Exception;
-use Lovillela\BlogApp\Models\Views\ViewData\ViewData;
+use Lovillela\BlogApp\Models\Views\ViewData;
 use Lovillela\BlogApp\Config\Views\ViewPath;
 
 final class ViewRenderService{
@@ -25,13 +25,14 @@ final class ViewRenderService{
     ob_start();
 
     if (!empty($viewData->bodyData)) {
-      extract($viewData->bodyData);
+      $localbodyData = $viewData->bodyData;
+      extract($localbodyData);
     }
 
     include $viewData->viewFilePath;
 
     $headTitle = $viewData->headTitle;
-    $baseView = ViewPath::BASE_VIEW->value;
+    $baseView = ViewPath::BASE_VIEW->getPath();
 
     $this->addSecurityHeaders();
 
@@ -39,7 +40,7 @@ final class ViewRenderService{
      * Termina a bufferização e limpeza
      * Finishes buffering and cleanup
      */
-    $bodyData = ob_get_clean();
+    $renderedContent = ob_get_clean();
 
     return (include $baseView);
   }
@@ -73,13 +74,12 @@ final class ViewRenderService{
     /**
      * Política CSP: apenas conteúdos, scripts e estilos do mesmo domínio serão carregados.
      * No caso de object, apenas por garantia mesmo. Será ajustado se necessário.
+     * Nota: quebras de linha não são permitidas.
      * CSP policy: content, scripts and styles from the same doamin will be loaded.
      * In the case of an object, just to be safe. Will be adjuestd if necessary.
+     * Note: line breaks are not allowed.
      */
-    header("Content-Security-Policy: default-src 'self';
-                    script-src 'self';
-                    object-src 'none';
-                    style-src 'self';");
+    header("Content-Security-Policy: default-src 'self'; script-src 'self'; object-src 'none'; style-src 'self';");
 
   }
 }

@@ -6,6 +6,6 @@
   <title><?php echo($headTitle) ?></title>
 </head>
 <body>
-  <?php echo($bodyData) ?>
+  <?php echo($renderedContent) ?>
 </body>
 </html>
