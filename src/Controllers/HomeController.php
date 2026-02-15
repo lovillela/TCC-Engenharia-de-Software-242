@@ -2,12 +2,10 @@
 namespace Lovillela\BlogApp\Controllers;
 
 use Lovillela\BlogApp\Services\ViewRenderService;
-use Lovillela\BlogApp\Models\Views\ViewData;
 use Lovillela\BlogApp\Config\Views\ViewPath;
 
-final class HomeController{
+final class HomeController extends BaseController{
 
-  private ViewData $viewData;
   private array $dependencyContainer;
   private ViewRenderService $viewRenderService;
 
@@ -26,8 +24,8 @@ final class HomeController{
       'generalMessage' => '',
     ];
 
-    $this->viewData = new ViewData(ViewPath::FRONTEND_HOMEPAGE->getPath(), $headTitle, $bodyData);
+    $viewData = $this->prepareView(ViewPath::FRONTEND_HOMEPAGE, $headTitle, $bodyData);
     
-    $this->viewRenderService->render($this->viewData);
+    $this->viewRenderService->render($viewData);
   }
 }
