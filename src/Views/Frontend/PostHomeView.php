@@ -16,9 +16,9 @@
 
 <div name="posts">
   <?php 
-    if (isset($data)) {
+    if (isset($posts)) {
 
-      foreach ($data as $post) {
+      foreach ($posts as $post) {
         echo('<h2>'. $post['title'] . '</h2>'); 
         echo('<br>');
         echo($post['content']);
