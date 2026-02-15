@@ -13,7 +13,7 @@ class RouteMatchService
   public function __construct($router, $route, array $dependencyContainer) {
     $this->router = $router;
     $this->dependencyContainer = $dependencyContainer;
-    $this->inputSanitization = $this->$dependencyContainer['InputSanitizationService'];
+    $this->inputSanitization = $this->dependencyContainer['InputSanitizationService'];
     $this->route = $this->sanitize($route);
   }
   public function routeMatch() {
@@ -42,7 +42,7 @@ class RouteMatchService
     return \call_user_func_array([$controller, $method], $routeMatch['params']);
   }
 
-private function sanitize($route) {
-  return $this->inputSanitization->urlRouteSanitize($route);
-}
+  private function sanitize($route) {
+    return $this->inputSanitization->urlRouteSanitize($route);
+  }
 }  
