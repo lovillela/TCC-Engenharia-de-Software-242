@@ -69,75 +69,95 @@ final class PostController extends BaseController{
 
   public function addPostAction() {
 
-    if (!$this->authManagerService->isSessionActive()) {
-      $this->authManagerService->destroySession();
-      $this->redirectService->redirectToHome();
-    }
-
     $userData = $this->authManagerService->getUserData();
 
-    if (!isset($userData) || !$this->authManagerService->canCreatePost($userData)) {
+    if (!$this->authManagerService->isSessionActive() || !isset($userData) 
+        || !$this->authManagerService->canCreatePost($userData) || !$this->authManagerService->validateCsrfToken($_POST['csrfToken'])) {
       $this->authManagerService->destroySession();
       $this->redirectService->redirectToHome();
+      exit;
     }
-
+ 
     $title = $_POST['postTitle'];
     $text = $_POST['blogPost'];
     
     $response = $this->postService->create($title, $text, $userData->userId);
 
-     $this->messages = [
+    $headTitle = 'Add Post';
+
+    $bodyData = [
       'title' => 'Post Form',
       'headerText' => 'Post Form',
       'errorMessage' => $response['Message'],
       'generalMessage' => '',
     ];
 
-    $render = new ViewRenderService(__DIR__ . '/../Views/Frontend/PostFormView.php');
-    $render->render($this->messages);
+    $viewData = $this->prepareView(ViewPath::FRONTEND_POSTFORM, $headTitle, $bodyData);
+    $this->viewRenderService->render($viewData);
   }
 
   public function deletePostAction(int $postId) {
 
-    if (!$this->authManagerService->isSessionActive()) {
-      $this->authManagerService->destroySession();
-      $this->redirectService->redirectToHome();
-    }
-
     $userData = $this->authManagerService->getUserData();
 
-    if (!isset($userData) || !$this->authManagerService->canDeletePost($userData, $postId)) {
-    
-      $response = 'Cannot delete';
+    if (!$this->authManagerService->isSessionActive() || !isset($userData) 
+        || !$this->authManagerService->canDeletePost($userData, $postId) 
+        || !$this->authManagerService->validateCsrfToken($_POST['csrfToken'])) {
 
-      $this->messages = [
+      $headTitle = 'Post Form';
+
+      $bodyData = [
       'title' => 'Post Form',
       'headerText' => 'Post Form',
-      'errorMessage' => $response,
+      'errorMessage' => 'Cannot Delete',
       'generalMessage' => '',
       ];
 
-      $render = new ViewRenderService(__DIR__ . '/../Views/Frontend/PostFormView.php');
-      $render->render($this->messages);
+      $viewData = $this->prepareView(ViewPath::FRONTEND_POSTFORM, $headTitle, $bodyData);
+      $this->viewRenderService->render($viewData);
+
+      exit;
+      
     }
 
     $this->postService->delete($postId, $userData->userId);
 
-    $render = new ViewRenderService(__DIR__ . '/../Views/Frontend/PostFormView.php');
-    $render->render($this->messages);
+    $headTitle = 'Post Form';
+      
+      $bodyData = [
+      'title' => 'Post Form',
+      'headerText' => 'Post Form',
+      'errorMessage' => '',
+      'generalMessage' => 'Deleted',
+      ];
+
+    $viewData = $this->prepareView(ViewPath::FRONTEND_POSTFORM, $headTitle, $bodyData);
+    $this->viewRenderService->render($viewData);
   }
 
   public function addPostForm() {
 
-    $this->messages = [
+    $userData = $this->authManagerService->getUserData();
+
+     if (!$this->authManagerService->isSessionActive() || !isset($userData) 
+        || !$this->authManagerService->canCreatePost($userData)) {
+      $this->authManagerService->destroySession();
+      $this->redirectService->redirectToHome();
+      exit;
+    }
+
+    $headTitle = 'Post Form';
+
+    $bodyData = [
       'title' => 'Post Form',
       'headerText' => 'Post Form',
       'errorMessage' => '',
       'generalMessage' => '',
+      'csrfToken' => $this->authManagerService->getCsrfToken(),
     ];
 
-    $render = new ViewRenderService(__DIR__ . '/../Views/Frontend/PostFormView.php');
-    $render->render($this->messages);
+    $viewData = $this->prepareView(ViewPath::FRONTEND_POSTFORM, $headTitle, $bodyData);
+    $this->viewRenderService->render($viewData);
   }
 
   public function editPostForm(int $postId) : Returntype {
