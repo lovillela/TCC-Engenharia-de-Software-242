@@ -14,6 +14,8 @@
 
   <form action="/admin/create/user/" method="post">
 
+    <input type="hidden" name="csrfToken" id="csrfToken" value="<?php echo($csrfToken); ?>">
+
     Username: <input type="text" name="newUser" id="newUser_Admin" required> <br>
     Password: <input type="password" name="newUserPassword" id="newUserPassword_Admin" required> <br>
     email: <input type="email" name="newUserEmail" id="newUserEmail_Admin" required> <br>

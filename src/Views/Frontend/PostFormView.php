@@ -16,6 +16,8 @@
 
 <form action="/post/add/" method="post">
 
+  <input type="hidden" name="csrfToken" id="csrfToken" value="<?php echo($csrfToken); ?>">
+
   Title: <input type="text" name="postTitle" id="postTitle" required> <br>
   
   Text: <br>
