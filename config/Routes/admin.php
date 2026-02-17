@@ -9,6 +9,6 @@ $router->map('POST', 'login/', 'AuthController#login', 'adminLogin');
 $router->map('GET', 'dashboard/', 'AdminController#dashboard', 'adminDashboard');
 $router->map('GET', 'logout/', 'AuthController#logout');
 $router->map('GET', 'create/user/', 'AdminController#userCreatorForm');
-$router->map('POST', 'create/user/', 'AdminController#createUser');
+$router->map('POST', 'create/user/', 'AdminController#createUserAction');
 
 return $router;

@@ -7,99 +7,118 @@ use Lovillela\BlogApp\Config\Permissions\UserPermissions;
 use Lovillela\BlogApp\Services\UserManagementService;
 use Lovillela\BlogApp\Services\ViewRenderService;
 use Lovillela\BlogApp\Services\RedirectService;
+use Lovillela\BlogApp\Config\Views\ViewPath;
 
-final class AdminController{
+final class AdminController extends BaseController{
 
-  private array $messages;
   private array $dependencyContainer;
   private UserManagementService $userManagementService;
   private RedirectService $redirectService;
   private AuthManagerService $authManagerService;
-  private $render;
-
+  private ViewRenderService $viewRenderService;
+  
   public function __construct(array $dependencyContainer) {
     $this->dependencyContainer = $dependencyContainer;
     $this->userManagementService = $this->dependencyContainer['UserService'];
     $this->redirectService = $this->dependencyContainer['RedirectService'];
     $this->authManagerService = $this->dependencyContainer['AuthManagerService'];
+    $this->viewRenderService = $this->dependencyContainer['ViewRenderService'];
   }
   public function index() {
     
-    $this->messages=[
+    $headTitle = 'Admin Login';
+
+    $bodyData=[
       'title' => 'Admin Login',
       'loginHeaderText' => 'Admin Login Page',
       'errorMessage' => '',
       'csrfToken' => $this->authManagerService->getCsrfToken(),
     ];
 
-    $viewRender = new ViewRenderService(__DIR__ . '/../Views/Admin/LoginView.php');
-    $viewRender->render(messages: $this->messages);
+    $viewData = $this->prepareView(ViewPath::ADMIN_LOGIN, $headTitle, $bodyData);
+
+    $this->viewRenderService->render($viewData);
   }
 
   public function dashboard(){
-    $this->messages=[
+  
+    if (!$this->authManagerService->isSessionActive()) {
+      $this->authManagerService->destroySession();
+      $this->redirectService->redirectToHome();
+      exit;
+    }
+  
+    $headTitle = 'Admin Dashboard';
+
+    $bodyData = [
       'title' => 'Admin Dashboard',
       'headerText' => 'Admin Dashboard',
       'errorMessage' => '',
       'generalMessage' => '',
     ];
 
-    $userManagement = new UserManagementService();
-    
-    if(!($userManagement->adminPrivilegeCheck())){
-      //User session already destroyed on adminPrivilegeCheck
-      $this->
-      $this->redirectService->redirectToHome();
-      exit();
-    }
+    $viewData = $this->prepareView(ViewPath::ADMIN_DASHBOARD, $headTitle, $bodyData);
 
-    $viewRender = new ViewRenderService(__DIR__ . '/../Views/Admin/DashBoardView.php');
-    $viewRender->render(messages: $this->messages);
+    $this->viewRenderService->render($viewData);
+    
   }
 
   public function userCreatorForm(){
-    $this->messages=[
-      'title' => 'User Creator',
-      'headerText' => 'User Creator',
-      'errorMessage' => '', 
-    ];
-
-    $userManagement = new UserManagementService();
     
-    if(!($userManagement->adminPrivilegeCheck())){
-      //User session already destroyed on adminPrivilegeCheck
-      RedirectService::redirectToHome();
-      exit();
+    if (!$this->authManagerService->isSessionActive()) {
+      $this->authManagerService->destroySession();
+      $this->redirectService->redirectToHome();
+      exit;
     }
 
-    $viewRender = new ViewRenderService(__DIR__ . '/../Views/Admin/AddUserView.php');
-    $viewRender->render($this->messages);
-  }
+    $headTitle = 'User Creator';
 
-  public function createUser() {
-
-    $this->messages=[
+    $bodyData=[
       'title' => 'User Creator',
       'headerText' => 'User Creator',
-      'errorMessage' => '', 
+      'errorMessage' => '',
+      'csrfToken' => $this->authManagerService->getCsrfToken(), 
+    ];
+
+    $viewData = $this->prepareView(ViewPath::ADMIN_ADD_USER, $headTitle, $bodyData);
+
+    $this->viewRenderService->render($viewData);
+        
+  }
+
+  public function createUserAction() {
+
+    if (!$this->authManagerService->isSessionActive() || !$this->authManagerService->validateCsrfToken($_POST['csrfToken'])) {
+      $this->authManagerService->destroySession();
+      $this->redirectService->redirectToHome();
+      exit;
+    }
+
+    $headTitle = 'User Creator';
+
+    $bodyData=[
+      'title' => 'User Creator',
+      'headerText' => 'User Creator',
+      'errorMessage' => '',
+      'generalMessage' => '',
+      'csrfToken' => $this->authManagerService->getCsrfToken(),
     ];
 
     $username = trim($_POST['newUser']);
     $password = trim($_POST['newUserPassword']);
     $email = trim($_POST['newUserEmail']);
-    $role = $_POST['userRole'];
 
     $response = $this->userManagementService->create($username, $password, 
                                               $email, UserPermissions::Admin->value);
 
     if ($response['Status'] != 1) {
-      $this->messages['errorMessage'] = $response['Message'];
+      $bodyData['errorMessage'] = $response['Message'];
     }else{
-      $this->messages['generalMessage'] = $response['Message'];
+      $bodyData['generalMessage'] = $response['Message'];
     }
 
-    $viewRender = new ViewRenderService(__DIR__ . '/../Views/Admin/AddUserView.php');
-    $viewRender->render($this->messages);
+    $viewData = $this->prepareView(ViewPath::ADMIN_ADD_USER, $headTitle, $bodyData);
+    $this->viewRenderService->render($viewData);
 
   }
 
