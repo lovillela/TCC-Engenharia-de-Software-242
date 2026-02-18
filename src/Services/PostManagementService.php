@@ -18,7 +18,7 @@ class PostManagementService {
   private const BATCH_SIZE = 1000;
 
   public function __construct(PostRepository $postRepository, SlugService $slugService, 
-                              InputSanitizationService $sanitizationService ,Connection $connection){
+                              InputSanitizationService $sanitizationService, Connection $connection){
     
     $this->postRepository = $postRepository;
     $this->slugService = $slugService;
@@ -72,6 +72,27 @@ class PostManagementService {
         $this->slugService->deleteInRange(array($postId), $this::ENTITY);
         $this->postRepository->delete($postId);
       }
+
+      $this->connection->commit();
+      
+    } catch (\Throwable $th) {
+      $this->connection->rollBack();
+      //throw $th;
+    }
+  }
+
+  public function update(string $title, string $text, string $slug, int $postId) {
+    try {
+      
+      $this->connection->beginTransaction();
+      
+      $title = $this->sanitizationService->postTitleSanitize($title);
+      $text = $this->sanitizationService->postContentSanitize($text);
+      $slug = $this->sanitizationService->slugSanitize($slug);
+      
+      $postId = $this->sanitizationService->idSanitize($postId);
+
+      $this->postRepository->update($title, $text, $slug, $postId);
 
       $this->connection->commit();
       
