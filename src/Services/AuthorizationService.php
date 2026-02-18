@@ -34,5 +34,11 @@ final class AuthorizationService {
 
     return $ownerId === $userData->userId ? true : false;
   }
+
+  public function canEditPost(UserIdentity $userData, int $postId) {
+    $ownerId = $this->postManagementService->getOwnershipById($postId);
+
+    return $ownerId === $userData->userId ? true : false;
+  }
   
 }
