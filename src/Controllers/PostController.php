@@ -6,8 +6,6 @@ use Lovillela\BlogApp\Services\AuthManagerService;
 use Lovillela\BlogApp\Services\ViewRenderService;
 use Lovillela\BlogApp\Services\PostManagementService;
 use Lovillela\BlogApp\Services\RedirectService;
-use Lovillela\BlogApp\Config\Permissions\UserPermissions;
-use Lovillela\BlogApp\Models\Users\UserIdentity;
 use Lovillela\BlogApp\Models\Views\ViewData;
 use Lovillela\BlogApp\Config\Views\ViewPath;
 
@@ -17,7 +15,6 @@ final class PostController extends BaseController{
   private RedirectService $redirectService;
   private AuthManagerService $authManagerService;
   private ViewRenderService $viewRenderService;
-  private ViewData $viewData;
   private array $dependencyContainer;
 
   public function __construct(array $dependencyContainer) {
@@ -72,7 +69,8 @@ final class PostController extends BaseController{
     $userData = $this->authManagerService->getUserData();
 
     if (!$this->authManagerService->isSessionActive() || !isset($userData) 
-        || !$this->authManagerService->canCreatePost($userData) || !$this->authManagerService->validateCsrfToken($_POST['csrfToken'])) {
+        || !$this->authManagerService->canCreatePost($userData) 
+        || !$this->authManagerService->validateCsrfToken($_POST['csrfToken'])) {
       $this->authManagerService->destroySession();
       $this->redirectService->redirectToHome();
       exit;
@@ -139,7 +137,7 @@ final class PostController extends BaseController{
 
     $userData = $this->authManagerService->getUserData();
 
-     if (!$this->authManagerService->isSessionActive() || !isset($userData) 
+    if (!$this->authManagerService->isSessionActive() || !isset($userData) 
         || !$this->authManagerService->canCreatePost($userData)) {
       $this->authManagerService->destroySession();
       $this->redirectService->redirectToHome();
@@ -160,8 +158,74 @@ final class PostController extends BaseController{
     $this->viewRenderService->render($viewData);
   }
 
-  public function editPostForm(int $postId) : Returntype {
+  public function editPostForm(int $postId) {
+
+    $userData = $this->authManagerService->getUserData();
+
+    if (!$this->authManagerService->isSessionActive() || !isset($userData) 
+        || !$this->postService->getOwnershipById($postId)) {
+      $this->authManagerService->destroySession();
+      $this->redirectService->redirectToHome();
+      exit;
+    }
+
+    $postContent = $this->postService->getPostById($postId);
+
+    if (!isset($postContent)) {
+      $this->redirectService->redirectToUserDashboard();
+      exit;
+    }
+
+    $headTitle = 'Edit Post';
+
+    $bodyData = [
+      'title' => 'Edit Post',
+      'headerText' => 'Edit Post',
+      'errorMessage' => '',
+      'generalMessage' => '',
+      'csrfToken' => $this->authManagerService->getCsrfToken(),
+      'postTitle' => $postContent['title'],
+      'slugUrl' => $postContent['slug'],
+      'blogPost' => $postContent['content'],
+    ];
+
+    $viewData = $this->prepareView(ViewPath::FRONTEND_EDIT_POSTFORM, $headTitle, $bodyData);
+    $this->viewRenderService->render($viewData);
+  }
+
+  public function editPostAction(int $postId) {
     
+    $userData = $this->authManagerService->getUserData();
+
+    if (!$this->authManagerService->isSessionActive() || !isset($userData) 
+        || $this->postService->getOwnershipById($postId) !== $userData->userId) {
+      $this->authManagerService->destroySession();
+      $this->redirectService->redirectToHome();
+      exit;
+    }
+
+    $postContent = $this->postService->getPostById($postId);
+
+    if (!isset($postContent)) {
+      $this->redirectService->redirectToUserDashboard();
+      exit;
+    }
+
+    $headTitle = 'Edit Post';
+
+    $bodyData = [
+      'title' => 'Edit Post',
+      'headerText' => 'Edit Post',
+      'errorMessage' => '',
+      'generalMessage' => '',
+      'csrfToken' => $this->authManagerService->getCsrfToken(),
+      'postTitle' => $postContent['title'],
+      'slugUrl' => $postContent['slug'],
+      'blogPost' => $postContent['content'],
+    ];
+
+    $viewData = $this->prepareView(ViewPath::FRONTEND_EDIT_POSTFORM, $headTitle, $bodyData);
+    $this->viewRenderService->render($viewData);
   }
 
   private function getPostBySlug(string $slug){

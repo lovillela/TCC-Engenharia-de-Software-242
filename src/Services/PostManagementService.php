@@ -82,6 +82,7 @@ class PostManagementService {
   }
 
   public function update(string $title, string $text, string $slug, int $postId) {
+    
     try {
       
       $this->connection->beginTransaction();
@@ -98,7 +99,6 @@ class PostManagementService {
       
     } catch (\Throwable $th) {
       $this->connection->rollBack();
-      //throw $th;
     }
   }
 
@@ -149,11 +149,11 @@ class PostManagementService {
     }
   }
 
-  public function getAllPosts(){
+  public function getAllPosts(): array{
     return $this->postRepository->getAllPosts();
   }
 
-  public function getPostBySlug(string $slug): ?array{
+  public function getPostBySlug(string $slug): ?array {
 
     $post = $this->postRepository->getPostBySlug($slug);
 
@@ -166,11 +166,15 @@ class PostManagementService {
     return $post;
   }
 
+  public function getPostById(int $postId): ?array {
+    return $this->postRepository->getPostByID($postId);
+  }
+
   public function getOwnershipById(int $postId): ?int {
     return $this->postRepository->getOwnership($postId);
   }
 
-  private static function databaseExceptionHandler(Throwable $e)   {
+  private static function databaseExceptionHandler(Throwable $e): array {
     $errors= [
       \Doctrine\DBAL\Exception\ConnectionException::class => 'Connection Error!',
       \Doctrine\DBAL\Exception\UniqueConstraintViolationException::class => 'Slug Already exists. Choose another title.',

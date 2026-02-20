@@ -20,7 +20,7 @@
 
   Title: <input type="text" name="postTitle" id="postTitle" required> <br>
 
-  Slug: 
+  Slug:
   <input type="text" name="slugUrl" id="slugUrl" required> <br>
   
   Text: <br>
