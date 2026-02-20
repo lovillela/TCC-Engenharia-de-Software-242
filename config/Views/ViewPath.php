@@ -28,6 +28,7 @@ enum ViewPath: string{
   case FRONTEND_POST_HOME = 'Frontend/PostHomeView.php';
   case FRONTEND_POST = 'Frontend/PostView.php';
   case FRONTEND_SIGNUP = 'Frontend/SignupView.php';
+  case FRONTEND_EDIT_POSTFORM = 'Frontend/PostFormEditView.php';
   /**
    * Fim/End Admin Views
    */

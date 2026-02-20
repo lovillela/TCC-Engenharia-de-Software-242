@@ -23,6 +23,6 @@
   Text: <br>
   <textarea name="blogPost" id="blogPost" cols="30" rows="10"></textarea>
   
-  <button type="submit">create</button>
+  <button type="submit">Create</button>
 
 </form>
