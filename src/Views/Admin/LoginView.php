@@ -1,6 +1,6 @@
 <h2><?php echo ($loginHeaderText);?></h2>
 <div name="loginForm">
-  <form action="/admin/login/" method="post">
+  <form action="" method="post">
   
     <input type="hidden" name="csrfToken" id="csrfToken" value="<?php echo($csrfToken); ?>">
     

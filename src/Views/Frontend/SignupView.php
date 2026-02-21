@@ -16,7 +16,7 @@
 
   <h1><?php echo($headerText) ?></h1>
 
-  <form action="/signup/" method="post">
+  <form action="" method="post">
 
     Username: <input type="text" name="newUser" id="newUser_Regular" required> <br>
     Password: <input type="password" name="newUserPassword" id="newUserPassword_Regular" required> <br>

@@ -12,7 +12,7 @@
 
   <p>Add a new User</p>
 
-  <form action="/admin/create/user/" method="post">
+  <form action="" method="post">
 
     <input type="hidden" name="csrfToken" id="csrfToken" value="<?php echo($csrfToken); ?>">
 
