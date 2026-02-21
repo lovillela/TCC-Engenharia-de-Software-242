@@ -17,10 +17,10 @@ $router->map('GET', '/signup/', 'RegularUserController#signUpPage', 'regularSign
 $router->map('POST', '/signup/', 'RegularUserController#signUpAction', 'regularSignUpAction');
 $router->map('GET', '/login/', 'RegularUserController#index', 'regularUserIndex');
 $router->map(method: 'GET', route: '/post/add/', target: 'PostController#addPostForm', name: 'addPostForm');
-$router->map(method: 'GET', route: '/post/edit/[:id]', target: 'PostController#editPostForm', name: 'editPostForm');
+$router->map(method: 'GET', route: '/post/edit/[:postId]', target: 'PostController#editPostForm', name: 'editPostForm');
 $router->map('GET', '/dashboard/', 'RegularUserController#dashboard', 'regularUserDashboard');
 $router->map(method: 'POST', route: '/post/add/', target: 'PostController#addPostAction', name: 'addPostAction');
-$router->map(method: 'POST', route: '/post/update/[:id]', target: 'PostController#editPostAction', name: 'updatePostAction');
+$router->map(method: 'POST', route: '/post/update/[:postId]', target: 'PostController#editPostAction', name: 'updatePostAction');
 //Individual Posts
 $router->map(method: 'GET', route: '/post/[:slug]/', target: 'PostController#show', name: 'showPost');
 $router->map(method: 'GET', route: '/post/[:slug]', target: 'PostController#redirectToTrailingSlash', name: 'showPostRedirect');

@@ -14,7 +14,7 @@
 
 <h1><?php echo($headerText) ?></h1>
 
-<form action="/post/edit/" method="post">
+<form action="/post/edit/<?php echo($postId);?>" method="post">
 
   <input type="hidden" name="csrfToken" id="csrfToken" value="<?php echo($csrfToken); ?>">
 
@@ -26,7 +26,7 @@
   <input type="text" name="slugUrl" id="slugUrl" value="<?php echo($slugUrl);?>" required> <br>
   
   Text: <br>
-  <textarea name="blogPost" id="blogPost" cols="30" rows="10" value="<?php echo($blogPost);?>"></textarea>
+  <textarea name="blogPost" id="blogPost" cols="30" rows="10"><?php echo($blogPost);?></textarea>
   
   <button type="submit">create</button>
 
