@@ -28,6 +28,6 @@
   Text: <br>
   <textarea name="blogPost" id="blogPost" cols="30" rows="10"><?php echo($blogPost);?></textarea>
   
-  <button type="submit">create</button>
+  <button type="submit">edit</button>
 
 </form>
