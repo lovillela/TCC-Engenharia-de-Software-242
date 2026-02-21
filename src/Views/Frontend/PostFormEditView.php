@@ -18,13 +18,13 @@
 
   <input type="hidden" name="csrfToken" id="csrfToken" value="<?php echo($csrfToken); ?>">
 
-  Title: <input type="text" name="postTitle" id="postTitle" required> <br>
+  Title: <input type="text" name="postTitle" id="postTitle" value="<?php echo($postTitle);?>" required> <br>
 
   Slug:
-  <input type="text" name="slugUrl" id="slugUrl" required> <br>
+  <input type="text" name="slugUrl" id="slugUrl" value="<?php echo($slugUrl);?>" required> <br>
   
   Text: <br>
-  <textarea name="blogPost" id="blogPost" cols="30" rows="10"></textarea>
+  <textarea name="blogPost" id="blogPost" cols="30" rows="10" value="<?php echo($blogPost);?>"></textarea>
   
   <button type="submit">create</button>
 
