@@ -212,6 +212,13 @@ final class PostController extends BaseController{
       exit;
     }
 
+    $title = $_POST['postTitle'];
+    $text = $_POST['blogPost'];
+    $slug = $_POST['slugUrl'];
+    $postId = $_POST['postId'];
+
+    $response = $this->postService->update($title, $text, $slug, $postId);
+
     $headTitle = 'Edit Post';
 
     $bodyData = [
@@ -220,10 +227,10 @@ final class PostController extends BaseController{
       'errorMessage' => '',
       'generalMessage' => '',
       'csrfToken' => $this->authManagerService->getCsrfToken(),
-      'postTitle' => $postContent['title'],
-      'slugUrl' => $postContent['slug'],
-      'blogPost' => $postContent['content'],
-      'postId' => $postContent['id'],
+      'postTitle' => $title,
+      'slugUrl' => $slug,
+      'blogPost' => $text,
+      'postId' => $postId,
     ];
 
     $viewData = $this->prepareView(ViewPath::FRONTEND_EDIT_POSTFORM, $headTitle, $bodyData);

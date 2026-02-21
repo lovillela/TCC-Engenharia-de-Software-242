@@ -20,7 +20,7 @@ $router->map(method: 'GET', route: '/post/add/', target: 'PostController#addPost
 $router->map(method: 'GET', route: '/post/edit/[:postId]', target: 'PostController#editPostForm', name: 'editPostForm');
 $router->map('GET', '/dashboard/', 'RegularUserController#dashboard', 'regularUserDashboard');
 $router->map(method: 'POST', route: '/post/add/', target: 'PostController#addPostAction', name: 'addPostAction');
-$router->map(method: 'POST', route: '/post/update/[:postId]', target: 'PostController#editPostAction', name: 'updatePostAction');
+$router->map(method: 'POST', route: '/post/edit/[:postId]', target: 'PostController#editPostAction', name: 'updatePostAction');
 //Individual Posts
 $router->map(method: 'GET', route: '/post/[:slug]/', target: 'PostController#show', name: 'showPost');
 $router->map(method: 'GET', route: '/post/[:slug]', target: 'PostController#redirectToTrailingSlash', name: 'showPostRedirect');

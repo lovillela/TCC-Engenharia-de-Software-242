@@ -96,9 +96,11 @@ class PostManagementService {
       $this->postRepository->update($title, $text, $slug, $postId);
 
       $this->connection->commit();
+      return true;
       
     } catch (\Throwable $th) {
       $this->connection->rollBack();
+      return false;
     }
   }
 
