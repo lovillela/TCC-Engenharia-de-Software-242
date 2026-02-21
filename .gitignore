@@ -35,3 +35,6 @@
 #Personal files
 /references/
 /tests/
+
+#Cache
+/cache
