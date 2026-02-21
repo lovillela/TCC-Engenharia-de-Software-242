@@ -187,6 +187,7 @@ final class PostController extends BaseController{
       'postTitle' => $postContent['title'],
       'slugUrl' => $postContent['slug'],
       'blogPost' => $postContent['content'],
+      'postId' => $postContent['id'],
     ];
 
     $viewData = $this->prepareView(ViewPath::FRONTEND_EDIT_POSTFORM, $headTitle, $bodyData);
@@ -222,6 +223,7 @@ final class PostController extends BaseController{
       'postTitle' => $postContent['title'],
       'slugUrl' => $postContent['slug'],
       'blogPost' => $postContent['content'],
+      'postId' => $postContent['id'],
     ];
 
     $viewData = $this->prepareView(ViewPath::FRONTEND_EDIT_POSTFORM, $headTitle, $bodyData);

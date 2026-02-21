@@ -18,6 +18,8 @@
 
   <input type="hidden" name="csrfToken" id="csrfToken" value="<?php echo($csrfToken); ?>">
 
+  <input type="hidden" name="postId" id="postId" value="<?php echo($postId);?>">
+
   Title: <input type="text" name="postTitle" id="postTitle" value="<?php echo($postTitle);?>" required> <br>
 
   Slug:
