@@ -163,7 +163,7 @@ final class PostController extends BaseController{
     $userData = $this->authManagerService->getUserData();
 
     if (!$this->authManagerService->isSessionActive() || !isset($userData) 
-        || !$this->postService->getOwnershipById($postId) !== $userData->userId) {
+        || $this->postService->getOwnershipById($postId) !== $userData->userId) {
       $this->authManagerService->destroySession();
       $this->redirectService->redirectToHome();
       exit;
