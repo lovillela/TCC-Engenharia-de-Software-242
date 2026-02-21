@@ -13,7 +13,7 @@ class PostRepository{
   
   //Selects
   private string $selectAllPostsQuery = 'SELECT `title`, `content` FROM `post` LIMIT 50';
-  private string $selectPostByID_Query = 'SELECT `title`, `content`, `slug` FROM `post` WHERE `id` = ?';
+  private string $selectPostByID_Query = 'SELECT `id`, `title`, `content`, `slug` FROM `post` WHERE `id` = ?';
   private string $selectPostBySlugQuery = 'SELECT `title`, `content` FROM `post` WHERE `slug` = ?';
   private string $selectPostsByUserId = 'SELECT `id_post` FROM `post_users` WHERE `id_user` = ?';
   private string $selectPostIdsInRange = 'SELECT DISTINCT `id_post` FROM `post_users` WHERE `id_post` IN (?)';
