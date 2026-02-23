@@ -2,27 +2,30 @@
 namespace Lovillela\BlogApp\Controllers;
 
 use Lovillela\BlogApp\Services\ViewRenderService;
+use Lovillela\BlogApp\Config\Views\ViewPath;
 
-final class HomeController{
+final class HomeController extends BaseController{
 
-    private array $messages;
-    private $viewRenderer;
-    private array $dependencyContainer;
+  private array $dependencyContainer;
+  private ViewRenderService $viewRenderService;
 
-    public function __construct(array $dependencyContainer) {
-    $this->dependencyContainer = $dependencyContainer;
+  public function __construct(array $dependencyContainer) {
+  $this->dependencyContainer = $dependencyContainer;
+  $this->viewRenderService = $this->dependencyContainer['ViewRenderService'];
   }
-    public function index(){
-      
-      $this->viewRenderer = new ViewRenderService(__DIR__ . '/../Views/Frontend/HomePageView.php');
+  public function index(){
+    
+    $headTitle = 'Blog App - Home Page';
 
-      $this->messages=[
+    $bodyData=[
       'title' => 'Blog App - Home Page',
-      'headerText' => 'Home Page',
+      'allPostsLink' => 'All Posts',
       'errorMessage' => '',
       'generalMessage' => '',
-      ];
+    ];
 
-      $this->viewRenderer->render($this->messages);
-    }
+    $viewData = $this->prepareView(ViewPath::FRONTEND_HOMEPAGE, $headTitle, $bodyData);
+    
+    $this->viewRenderService->render($viewData);
+  }
 }

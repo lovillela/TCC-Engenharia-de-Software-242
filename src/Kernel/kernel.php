@@ -2,23 +2,26 @@
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
+use Lovillela\BlogApp\Services\CsrfService;
+use Lovillela\BlogApp\Services\SlugService;
+use Lovillela\BlogApp\Services\SessionService;
+use Lovillela\BlogApp\Services\RedirectService;
+use Lovillela\BlogApp\Services\RouteMatchService;
+use Lovillela\BlogApp\Services\ViewRenderService;
 use Lovillela\BlogApp\Repositories\PostRepository;
 use Lovillela\BlogApp\Repositories\SlugRepository;
 use Lovillela\BlogApp\Repositories\UserRepository;
-use Lovillela\BlogApp\Services\AuthenticationControlService;
 use Lovillela\BlogApp\Services\AuthManagerService;
 use Lovillela\BlogApp\Services\AuthorizationService;
-use Lovillela\BlogApp\Services\CsrfService;
 use Lovillela\BlogApp\Services\PostManagementService;
-use Lovillela\BlogApp\Services\RouteMatchService;
-use Lovillela\BlogApp\Services\SlugService;
-use Lovillela\BlogApp\Services\InputSanitizationService;
-use Lovillela\BlogApp\Services\SessionService;
 use Lovillela\BlogApp\Services\UserManagementService;
-use Lovillela\BlogApp\Services\RedirectService;
+use Lovillela\BlogApp\Services\InputSanitizationService;
+use Lovillela\BlogApp\Services\AuthenticationControlService;
 
 /** @var \Doctrine\DBAL\Connection $connection */
 $connection = require_once __DIR__ . '/../../src/Services/DatabaseConnectionService.php';
+
+$renderService = new ViewRenderService();
 
 $redirectService = new RedirectService();
 
@@ -69,6 +72,7 @@ $dependencyContainer = [
   'AuthManagerService' => $authManagerService,
   'RedirectService' => $redirectService,
   'CsrfService' => $csrfService,
+  'ViewRenderService' => $renderService,
 ];
 
 $routerMain = require_once __DIR__ . '/../../config/Routes/main.php';

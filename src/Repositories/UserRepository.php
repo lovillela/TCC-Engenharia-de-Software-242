@@ -18,13 +18,13 @@ final class UserRepository
   private string $userExistsQuery = 'SELECT EXISTS(SELECT 1 FROM `users` WHERE `username` = ?) as usernameExists';
   private string $emailExistsQuery = 'SELECT EXISTS(SELECT 1 FROM `users` WHERE `email` = ?) as emailExists';
   private string $checkUserCurrentSession = 'SELECT * FROM `users` WHERE `username` = ?';
-  private string $getUserInfoQueryEmail = 'SELECT `id`, `username`, `email`, `password`, `isActive` FROM 
+  private string $getUserInfoQueryEmail = 'SELECT `id`, `username`, `email`, `password` ,`isActive`, `permissions` FROM 
                                           `users` WHERE (`email` = ? AND isActive = 1)';
   private string $getUserInfoQueryUsername = 'SELECT `id`, `username`, `email`, `password`, `isActive` FROM 
                                               `users` WHERE (`username` = ? AND isActive = 1)';
   private string $getUserIdByUsernameQuery = 'SELECT `id` FROM `users` WHERE `username` = ?';
   private string $getUserPostsQuery = 'SELECT `id_post` FROM `post_users` WHERE `id_user` = ?';
-  private string $getUserPermissionsByIdQuery = 'SELECT `permissions` FROM `users` WHERE `id_user` = ?';
+  private string $getUserPermissionsByIdQuery = 'SELECT `permissions` FROM `users` WHERE `id` = ?';
 
   //Deletes
   private string $deleteUserQuery = 'DELETE FROM `users` WHERE `id` = ?';

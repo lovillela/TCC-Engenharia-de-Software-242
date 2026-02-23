@@ -38,6 +38,10 @@ final class InputSanitizationService{
     return trim(strip_tags($title));
   }
 
+  public function slugSanitize(string $slug): string{
+    return preg_replace('/[^a-zA-Z0-9\-]/', '', $slug);
+  }
+
   public function idSanitize(int $id): int {
     return (int)preg_replace('/[^0-9]/', '', $id);
   }

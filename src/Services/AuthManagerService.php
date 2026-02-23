@@ -77,6 +77,10 @@ final class AuthManagerService {
     return $this->authorizationService->canDeletePost($userData, $postId);
   }
 
+  public function canEditPost(UserIdentity $userData, int $postId) {
+    return $this->authorizationService->canEditPost($userData, $postId);
+  }
+
   public function destroySession() {
     $this->sessionService->destroy();
   }

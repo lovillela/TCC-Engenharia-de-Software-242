@@ -1,42 +1,34 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><?php echo($title); ?></title>
-</head>
-<body>
-  <div>
+<div>
 
-    <?php 
-      if (!empty($messages['errorMessage'])) {
-        echo($messages['errorMessage']);
-      }
+  <?php 
+    if (!empty($errorMessage)) {
+      echo($errorMessage);
+    }
 
-      if (!empty($messages['generalMessage'])) {
-        echo($messages['generalMessage']);
-      }
-    ?>
+    if (!empty($generalMessage)) {
+      echo($generalMessage);
+    }
+  ?>
 
-    <p>Add a new User</p>
+  <p>Add a new User</p>
 
-    <form action="/admin/create/user/" method="post">
+  <form action="" method="post">
 
-      Username: <input type="text" name="newUser" id="newUser_Admin" required> <br>
-      Password: <input type="password" name="newUserPassword" id="newUserPassword_Admin" required> <br>
-      email: <input type="email" name="newUserEmail" id="newUserEmail_Admin" required> <br>
-      
-      Role: <br>
-            <input type="radio" name="userRole" id="role-admin" value="1" required> Admin <br>
-            <input type="radio" name="userRole" id="role-moderator" value="2"> Moderator <br>
-            <input type="radio" name="userRole" id="role-user" value="3">  User <br>
-            
-      <button type="submit">Create</button>
+    <input type="hidden" name="csrfToken" id="csrfToken" value="<?php echo($csrfToken); ?>">
 
-    </form>
+    Username: <input type="text" name="newUser" id="newUser_Admin" required> <br>
+    Password: <input type="password" name="newUserPassword" id="newUserPassword_Admin" required> <br>
+    email: <input type="email" name="newUserEmail" id="newUserEmail_Admin" required> <br>
+    
+    Role: <br>
+          <input type="radio" name="userRole" id="role-admin" value="1" required> Admin <br>
+          <input type="radio" name="userRole" id="role-moderator" value="2"> Moderator <br>
+          <input type="radio" name="userRole" id="role-user" value="3">  User <br>
+          
+    <button type="submit">Create</button>
 
-    <a href="/admin/dashboard/">Return to Dashboard</a>
+  </form>
 
-  </div>
-</body>
-</html>
+  <a href="/admin/dashboard/">Return to Dashboard</a>
+
+</div>

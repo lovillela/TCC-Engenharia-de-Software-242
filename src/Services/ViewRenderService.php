@@ -3,30 +3,46 @@
 namespace Lovillela\BlogApp\Services;
 
 use Exception;
+use Lovillela\BlogApp\Models\Views\ViewData;
+use Lovillela\BlogApp\Config\Views\ViewPath;
 
-class ViewRenderService{
+final class ViewRenderService{
 
-  private $viewFile;
-
-  public function __construct(string $requestedView){
-    $this->viewFile = $requestedView;
+  public function __construct(){
   }
 
-  public function render(array $messages, ?array $data = NULL){
+  public function render(ViewData $viewData){
 
-    extract($messages);
-
-    if (isset($data)) {
-      extract($data);
+    if (!(file_exists($viewData->viewFilePath))) {
+      //throw new Exception((string)$e . "\nView file not found", 1);
+      exit();
     }
     
-    if (!(file_exists($this->viewFile))) {
-      throw new Exception((string)$e . "\nView file not found", 1);
+    /**
+     * Inicia a bufferização
+     * Initiates buffering
+     */
+    ob_start();
+
+    if (!empty($viewData->bodyData)) {
+      $localbodyData = $viewData->bodyData;
+      extract($localbodyData);
     }
+
+    include $viewData->viewFilePath;
+
+    $headTitle = $viewData->headTitle;
+    $baseView = ViewPath::BASE_VIEW->getPath();
 
     $this->addSecurityHeaders();
 
-    return (include $this->viewFile);
+    /**
+     * Termina a bufferização e limpeza
+     * Finishes buffering and cleanup
+     */
+    $renderedContent = ob_get_clean();
+
+    return (include $baseView);
   }
 
   /**
@@ -58,13 +74,12 @@ class ViewRenderService{
     /**
      * Política CSP: apenas conteúdos, scripts e estilos do mesmo domínio serão carregados.
      * No caso de object, apenas por garantia mesmo. Será ajustado se necessário.
+     * Nota: quebras de linha não são permitidas.
      * CSP policy: content, scripts and styles from the same doamin will be loaded.
      * In the case of an object, just to be safe. Will be adjuestd if necessary.
+     * Note: line breaks are not allowed.
      */
-    header("Content-Security-Policy: default-src 'self';
-                    script-src 'self';
-                    object-src 'none';
-                    style-src 'self';");
+    header("Content-Security-Policy: default-src 'self'; script-src 'self'; object-src 'none'; style-src 'self';");
 
   }
 }

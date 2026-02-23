@@ -18,7 +18,7 @@ class PostManagementService {
   private const BATCH_SIZE = 1000;
 
   public function __construct(PostRepository $postRepository, SlugService $slugService, 
-                              InputSanitizationService $sanitizationService ,Connection $connection){
+                              InputSanitizationService $sanitizationService, Connection $connection){
     
     $this->postRepository = $postRepository;
     $this->slugService = $slugService;
@@ -81,6 +81,29 @@ class PostManagementService {
     }
   }
 
+  public function update(string $title, string $text, string $slug, int $postId) {
+    
+    try {
+      
+      $this->connection->beginTransaction();
+      
+      $title = $this->sanitizationService->postTitleSanitize($title);
+      $text = $this->sanitizationService->postContentSanitize($text);
+      $slug = $this->sanitizationService->slugSanitize($slug);
+      
+      $postId = $this->sanitizationService->idSanitize($postId);
+
+      $this->postRepository->update($title, $text, $slug, $postId);
+
+      $this->connection->commit();
+      return true;
+      
+    } catch (\Throwable $th) {
+      $this->connection->rollBack();
+      return false;
+    }
+  }
+
   public function deleteAllUserPostsByUserId(int $userId) {
     
     try {
@@ -128,28 +151,29 @@ class PostManagementService {
     }
   }
 
-  public function getAllPosts(){
+  public function getAllPosts(): array{
     return $this->postRepository->getAllPosts();
   }
 
-  public function getPostBySlug(string $slug): ?array{
+  public function getPostBySlug(string $slug): ?array {
 
     $post = $this->postRepository->getPostBySlug($slug);
 
-    if (!isset($post)) {
-      return null;
-    }
+    return $post ? $this->sanitizationService->displayPostSanitize($post) : null;
+  }
 
-    $post = $this->sanitizationService->displayPostSanitize($post);
+  public function getPostById(int $postId): ?array {
 
-    return $post;
+    $post = $this->postRepository->getPostByID($postId);
+
+    return $post ? $this->sanitizationService->displayPostSanitize($post) : null;
   }
 
   public function getOwnershipById(int $postId): ?int {
     return $this->postRepository->getOwnership($postId);
   }
 
-  private static function databaseExceptionHandler(Throwable $e)   {
+  private static function databaseExceptionHandler(Throwable $e): array {
     $errors= [
       \Doctrine\DBAL\Exception\ConnectionException::class => 'Connection Error!',
       \Doctrine\DBAL\Exception\UniqueConstraintViolationException::class => 'Slug Already exists. Choose another title.',

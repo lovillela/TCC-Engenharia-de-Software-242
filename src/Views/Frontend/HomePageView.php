@@ -1,19 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><?php echo($title); ?></title>
-</head>
-<body>
+<div>
+  <a href="/post/">  <?php echo ($allPostsLink); ?>  </a>
+</div>
 
-      <div>
-        <?php echo ($headerText); ?>  <a href="/post/">  Posts  </a>
-      </div>
+<br> 
 
-      <br> 
-
-      <a href="/signup/">Signup</a> <br>
-      <a href="/login/">Login</a>
-</body>
-</html>
+<a href="/signup/">Signup</a> <br>
+<a href="/login/">Login</a>

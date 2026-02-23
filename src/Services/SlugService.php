@@ -21,12 +21,24 @@ final class SlugService {
     * Substitui espaços em branco com traço '-'
     */
     $slugURL = str_replace(' ', '-', strtolower($title));
-    $slugURL = $this->sanitizationService->urlInputSanitize($slugURL);
+    $slugURL = $this->sanitizationService->slugSanitize($slugURL);
 
     /*
     * If the slug for the entity already exists
     * Se a slug URL para a entidade já existir
     */
+    if ($this->slugRepository->exists($entity, $slugURL)) {
+      $slugURL = $slugURL . '-' . bin2hex(random_bytes(5));
+    }
+
+    return $slugURL;
+  }
+
+  public function update(string $entity, string $title) : string {
+
+    $slugURL = str_replace(' ', '-', strtolower($title));
+    $slugURL = $this->sanitizationService->slugSanitize($slugURL);
+
     if ($this->slugRepository->exists($entity, $slugURL)) {
       $slugURL = $slugURL . '-' . bin2hex(random_bytes(5));
     }

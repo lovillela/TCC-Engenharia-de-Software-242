@@ -2,28 +2,34 @@
 
 namespace Lovillela\BlogApp\Controllers;
 
+use Lovillela\BlogApp\Config\Views\ViewPath;
 use Lovillela\BlogApp\Services\AuthManagerService;
 use Lovillela\BlogApp\Services\RedirectService;
 use Lovillela\BlogApp\Services\UserManagementService;
-use Lovillela\BlogApp\Services\ViewRenderService;
 use Lovillela\BlogApp\Config\Permissions\UserPermissions;
+use Lovillela\BlogApp\Services\ViewRenderService;
+use Lovillela\BlogApp\Models\Views\ViewData;
 
-final class RegularUserController{
-  private array $messages;
+final class RegularUserController extends BaseController{
   private array $dependencyContainer;
   private UserManagementService $userManagementService;
   private RedirectService $redirectService;
   private AuthManagerService $authManagerService;
+  private ViewRenderService $viewRenderService;
 
   public function __construct(array $dependencyContainer) {
     $this->dependencyContainer = $dependencyContainer;
     $this->userManagementService = $this->dependencyContainer['UserService'];
     $this->redirectService = $this->dependencyContainer['RedirectService'];
     $this->authManagerService = $this->dependencyContainer['AuthManagerService'];
+    $this->viewRenderService = $this->dependencyContainer['ViewRenderService'];
   }
   
   public function index() {
-    $this->messages = [
+  
+    $headTitle = 'Login';
+
+    $bodyData = [
       'title' => 'Login',
       'headerText' => 'Login',
       'errorMessage' => '',
@@ -31,13 +37,15 @@ final class RegularUserController{
       'csrfToken' => $this->authManagerService->getCsrfToken(),
     ];
 
-    $viewRender = new ViewRenderService(__DIR__ . '/../Views/Frontend/LoginViewRegularUser.php');
-    $viewRender->render($this->messages);
+    $viewData = $this->prepareView(ViewPath::FRONTEND_LOGIN_REGULAR_USER, $headTitle, $bodyData);
+    $this->viewRenderService->render($viewData);
   }
 
   public function signUpAction(){
 
-    $this->messages = [
+    $headTitle = 'SignUp page';
+
+    $bodyData = [
       'title' => 'SignUp page',
       'headerText' => 'SignUp page',
       'errorMessage' => '',
@@ -56,26 +64,28 @@ final class RegularUserController{
                                               $email, UserPermissions::RegularUser->value);
 
     if ($response['Status'] != 1) {
-      $this->messages['errorMessage'] = $response['Message'];
+      $bodyData['errorMessage'] = $response['Message'];
     }else{
-      $this->messages['generalMessage'] = $response['Message'];
+      $bodyData['generalMessage'] = $response['Message'];
     }
 
-    $viewRender = new ViewRenderService(__DIR__ . '/../Views/Frontend/SignupView.php');
-    $viewRender->render($this->messages);
+    $viewData = $this->prepareView(ViewPath::FRONTEND_SIGNUP, $headTitle, $bodyData);
+    $this->viewRenderService->render($viewData);
   }
 
   public function signUpPage(){
 
-    $this->messages = [
+    $headTitle = 'SignUp page';
+
+    $bodyData = [
       'title' => 'SignUp page',
       'headerText' => 'SignUp page',
       'errorMessage' => '',
       'generalMessage' => '',
     ];
 
-    $viewRender = new ViewRenderService(__DIR__ . '/../Views/Frontend/SignupView.php');
-    $viewRender->render($this->messages);
+    $viewData = $this->prepareView(ViewPath::FRONTEND_SIGNUP, $headTitle, $bodyData);
+    $this->viewRenderService->render($viewData);
   }
 
   /**
@@ -83,18 +93,17 @@ final class RegularUserController{
    * @return void
    */
   public function dashboard(){
-    $this->messages = [
+    
+    $headTitle = 'Dashboard';
+
+    $bodyData = [
       'title' => 'Dashboard',
       'headerText' => 'Dashboard',
       'errorMessage' => '',
       'generalMessage' => '',
     ];
     
-    /**
-     * Verificar Autorização
-     * Check authorization
-     */
-
+    
     if (!$this->authManagerService->isSessionActive()) {
       $this->authManagerService->destroySession();
       $this->redirectService->redirectToHome();
@@ -107,8 +116,9 @@ final class RegularUserController{
       $this->redirectService->redirectToHome();
     }
 
-    $render = new ViewRenderService(__DIR__ . '/../Views/Frontend/DashBoardViewRegularUser.php');
-    $render->render($this->messages);
+    $viewData = $this->prepareView(ViewPath::FRONTEND_DASHBOARD_REGULARUSER, $headTitle, $bodyData);
+    $this->viewRenderService->render($viewData);
+    
   }
 
 }

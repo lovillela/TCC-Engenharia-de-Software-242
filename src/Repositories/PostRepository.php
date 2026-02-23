@@ -13,12 +13,15 @@ class PostRepository{
   
   //Selects
   private string $selectAllPostsQuery = 'SELECT `title`, `content` FROM `post` LIMIT 50';
-  private string $selectPostByID_Query = 'SELECT `title`, `content` FROM `post` WHERE `id` = ?';
+  private string $selectPostByID_Query = 'SELECT `id`, `title`, `content`, `slug` FROM `post` WHERE `id` = ?';
   private string $selectPostBySlugQuery = 'SELECT `title`, `content` FROM `post` WHERE `slug` = ?';
   private string $selectPostsByUserId = 'SELECT `id_post` FROM `post_users` WHERE `id_user` = ?';
   private string $selectPostIdsInRange = 'SELECT DISTINCT `id_post` FROM `post_users` WHERE `id_post` IN (?)';
   private string $selectOwnership = 'SELECT `id_user` FROM `post_users` WHERE `id_post` = ?';
   private string $selectOwnershipCount = 'SELECT COUNT (*) FROM `post_users` WHERE `id_post` = ?';
+
+  //Updates
+  private string $editPostQuery = 'UPDATE `post` SET `title` = ?, `content` = ?, `slug` = ? WHERE `id` = ?';
 
   //Deletes
   private string $deletePost = 'DELETE FROM `post` WHERE id = ?';
@@ -59,6 +62,17 @@ class PostRepository{
     $deletePostStmt->bindValue(1, $postId);
 
     return (bool) $deletePostStmt->executeStatement();
+  }
+
+  public function update(string $title, string $content, string $slug, int $postId): bool {
+    
+    $editPostStmt = $this->connection->prepare($this->editPostQuery);
+    $editPostStmt->bindValue(1, $title);
+    $editPostStmt->bindValue(2, $content);
+    $editPostStmt->bindValue(3, $slug);
+    $editPostStmt->bindValue(4, $postId);
+    
+    return (bool)$editPostStmt->executeStatement();
   }
 
   public function deletePostUserRelationship(int $postId, int $userId) : bool {
