@@ -159,17 +159,14 @@ class PostManagementService {
 
     $post = $this->postRepository->getPostBySlug($slug);
 
-    if (!isset($post)) {
-      return null;
-    }
-
-    $post = $this->sanitizationService->displayPostSanitize($post);
-
-    return $post;
+    return $post ? $this->sanitizationService->displayPostSanitize($post) : null;
   }
 
   public function getPostById(int $postId): ?array {
-    return $this->sanitizationService->displayPostSanitize($this->postRepository->getPostByID($postId)) ? : null;
+
+    $post = $this->postRepository->getPostByID($postId);
+
+    return $post ? $this->sanitizationService->displayPostSanitize($post) : null;
   }
 
   public function getOwnershipById(int $postId): ?int {
