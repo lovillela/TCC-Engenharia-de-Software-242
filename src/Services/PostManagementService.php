@@ -169,7 +169,7 @@ class PostManagementService {
   }
 
   public function getPostById(int $postId): ?array {
-    return $this->postRepository->getPostByID($postId);
+    return $this->sanitizationService->displayPostSanitize($this->postRepository->getPostByID($postId)) ? : null;
   }
 
   public function getOwnershipById(int $postId): ?int {
