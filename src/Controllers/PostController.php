@@ -119,18 +119,9 @@ final class PostController extends BaseController{
     }
 
     $this->postService->delete($postId, $userData->userId);
-
-    $headTitle = 'Post Form';
-      
-      $bodyData = [
-      'title' => 'Post Form',
-      'headerText' => 'Post Form',
-      'errorMessage' => '',
-      'generalMessage' => 'Deleted',
-      ];
-
-    $viewData = $this->prepareView(ViewPath::FRONTEND_POSTFORM, $headTitle, $bodyData);
-    $this->viewRenderService->render($viewData);
+    $this->redirectService->redirectToUserDashboard();
+    exit;
+    
   }
 
   public function addPostForm() {
