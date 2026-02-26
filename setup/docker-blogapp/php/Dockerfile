@@ -15,6 +15,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Install PHP extensions
 RUN docker-php-ext-install \
     pdo_mysql \
+    zip \
     mbstring
 
 # Modify www-data user to match host user
