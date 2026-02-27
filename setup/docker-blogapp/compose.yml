@@ -5,6 +5,8 @@ services:
       context: ./apache
       dockerfile: Dockerfile
     container_name: apache-httpd
+    depends_on:
+      - php
     networks:
       - web
     ports:
@@ -17,6 +19,9 @@ services:
     build:
       context: ./php
       dockerfile: Dockerfile
+      args:
+        LOCAL_UID: ${UID:-1000}
+        LOCAL_GID: ${GID:-1000}
     container_name: php-fpm
     networks:
       - database
@@ -27,27 +32,30 @@ services:
   mysql:
     container_name: mysql-db
     image: mysql:8.4
+    user: "${UID:-1000}:${GID:-1000}"
     networks:
       - database
     volumes:
       - ${HOME}/database:/var/lib/mysql
+      - ../blog_app_SCHEMA.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ../blog_app_DATA.sql:/docker-entrypoint-initdb.d/02-data.sql
     environment:
-      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MYSQL_ROOT_HOST: '%'
       MYSQL_DATABASE: blog_app      # Create initial database
       MYSQL_USER: blogApp         # Create application user
-      MYSQL_PASSWORD: b667IeRK2c9M4zQ8P2c9TnUN8zACLw7R     # Application user password
+      MYSQL_PASSWORD: ${DB_PASSWORD}     # Application user password
 
   phpmyadmin:
     container_name: phpmyadmin
     image: phpmyadmin:latest
     networks:
       - database
-    ports:
-      - 8090:80
+      - web
     environment:
       PMA_HOST: mysql-db  # Tell phpMyAdmin where MySQL is
       PMA_PORT: 3306
+      PMA_ABSOLUTE_URI: https://blog-app.com/phpmyadmin/
 
 networks:
     database:
