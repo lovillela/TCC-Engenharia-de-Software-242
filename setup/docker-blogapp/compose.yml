@@ -39,12 +39,13 @@ services:
       - ${HOME}/database:/var/lib/mysql
       - ../blog_app_SCHEMA.sql:/docker-entrypoint-initdb.d/01-schema.sql
       - ../blog_app_DATA.sql:/docker-entrypoint-initdb.d/02-data.sql
+      - ./mysql/tcc-mysql.cnf:/etc/mysql/conf.d/tcc-mysql.cnf:ro #Arquivo de config, modo readonly
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-      MYSQL_ROOT_HOST: '%'
-      MYSQL_DATABASE: blog_app      # Create initial database
-      MYSQL_USER: blogApp         # Create application user
-      MYSQL_PASSWORD: ${DB_PASSWORD}     # Application user password
+      MYSQL_ROOT_HOST: 'localhost' # Acesso root apenas pelo container
+      MYSQL_DATABASE: blog_app      # Banco de dados da aplicação
+      MYSQL_USER: blogApp         # Usuário da aplicação
+      MYSQL_PASSWORD: ${DB_PASSWORD}     # Senha do usuário da aplicação
 
   phpmyadmin:
     container_name: phpmyadmin
@@ -53,7 +54,7 @@ services:
       - database
       - web
     environment:
-      PMA_HOST: mysql-db  # Tell phpMyAdmin where MySQL is
+      PMA_HOST: mysql-db  # Rede do banco
       PMA_PORT: 3306
       PMA_ABSOLUTE_URI: https://blog-app.com/phpmyadmin/
 

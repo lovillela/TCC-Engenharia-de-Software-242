@@ -1,0 +1,18 @@
+[mysqld]
+# Memória do innodb, mais do que o suficiente neste contexto, mas não mata ninguém
+#Aumenta-se conforme a necessidade, para reduzir I/O
+innodb_buffer_pool_size = 256M
+
+# Buffers de conexão, por sessão
+sort_buffer_size = 2M #Para ordenar sem índice
+join_buffer_size = 2M #para operaçõs de join sem índice
+
+#Quantidade máxima de conexões simultâneas
+max_connections = 100
+
+# Para desabilitar carregamento de arquivos
+# já é padrão, mas melhor deixar claro que deve estar desativado
+local-infile = 0
+
+#Arquivo de log de transações
+innodb_redo_log_capacity = 128M
