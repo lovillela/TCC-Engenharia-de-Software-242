@@ -13,7 +13,7 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - ../../public/:/var/www/html #Alterado para ser igual à estrutura no container PHP
+      - ../../public/:/var/www/html/public #Alterado para ser igual à estrutura no container PHP
 
   php:
     build:
