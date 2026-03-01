@@ -38,3 +38,6 @@
 
 #Cache
 /cache
+
+#PHP info
+info.php
