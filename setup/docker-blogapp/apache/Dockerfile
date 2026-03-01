@@ -1,4 +1,4 @@
-FROM httpd:latest
+FROM httpd:2.4
 
 # Enable required Apache modules and add Listen directive for HTTPS
 RUN sed -i \

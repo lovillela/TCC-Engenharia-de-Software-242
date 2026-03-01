@@ -48,7 +48,7 @@ services:
 
   phpmyadmin:
     container_name: phpmyadmin
-    image: phpmyadmin:latest
+    image: phpmyadmin:5.2
     networks:
       - database
       - web
