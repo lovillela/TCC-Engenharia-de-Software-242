@@ -10,6 +10,8 @@ RUN sed -i \
     -e 's/#LoadModule ssl_module/LoadModule ssl_module/' \
     -e 's/#LoadModule http2_module/LoadModule http2_module/' \
     -e 's/#LoadModule headers_module/LoadModule headers_module/' \
+    -e 's/#LoadModule mod_deflate/LoadModule mod_deflate/' \
+    -e 's/#LoadModule filter_module/LoadModule filter_module/' \
     /usr/local/apache2/conf/httpd.conf && \
     echo "Listen 443" >> /usr/local/apache2/conf/httpd.conf && \
     echo "ServerName localhost" >> /usr/local/apache2/conf/httpd.conf
