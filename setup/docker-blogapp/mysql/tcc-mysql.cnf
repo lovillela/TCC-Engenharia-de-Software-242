@@ -3,7 +3,11 @@
 #Configurações importantes do mysql
 
 #Apenas conexões locais, externas serão negadas
-bind-address = 127.0.0.1
+#dado que o mysql está rodando no docker sem portas configuradas
+#e apenas na rede database, apenas quem estiver nessa rede vai poder se comunicar
+#bind-address = 0.0.0.0 
+#ou
+bind-address = mysql-db #hostname do container do banco
 
 # Memória do innodb, mais do que o suficiente neste contexto, mas não mata ninguém
 #Aumenta-se conforme a necessidade, para reduzir I/O
