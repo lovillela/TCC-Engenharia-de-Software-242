@@ -36,8 +36,8 @@ RUN echo "expose_php = Off" >> /usr/local/etc/php/conf.d/z-tcc.ini && \
     echo "opcache.enable=1" >> /usr/local/etc/php/conf.d/z-tcc.ini && \
     echo "opcache.memory_consumption=128" >> /usr/local/etc/php/conf.d/z-tcc.ini && \
     echo "opcache.interned_strings_buffer=8" >> /usr/local/etc/php/conf.d/z-tcc.ini && \
-    echo "opcache.max_accelerated_files=4000" >> /usr/local/etc/php/conf.d/z-tcc.ini
-
+    echo "opcache.max_accelerated_files=4000" >> /usr/local/etc/php/conf.d/z-tcc.ini && \
+    echo "memory_limit = 512M" >> /usr/local/etc/php/conf.d/z-tcc.ini
 #RUN echo 
 
 # Modificando o www-data para ser igual ao host
