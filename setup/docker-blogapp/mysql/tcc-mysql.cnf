@@ -1,0 +1,57 @@
+[mysqld]
+
+#Configurações importantes do mysql
+
+#Apenas conexões locais, externas serão negadas
+#dado que o mysql está rodando no docker sem portas configuradas
+#e apenas na rede database, apenas quem estiver nessa rede vai poder se comunicar
+#bind-address = 0.0.0.0 
+#ou
+bind-address = mysql-db #hostname do container do banco
+
+# Memória do innodb, mais do que o suficiente neste contexto, mas não mata ninguém
+#Aumenta-se conforme a necessidade, para reduzir I/O
+innodb_buffer_pool_size = 256M
+
+# Buffers de conexão, por sessão
+sort_buffer_size = 2M #Para ordenar sem índice
+join_buffer_size = 2M #para operaçõs de join sem índice
+
+#Quantidade máxima de conexões simultâneas
+max_connections = 100
+
+# Para desabilitar carregamento de arquivos
+# já é padrão, mas melhor deixar claro que deve estar desativado
+local-infile = 0
+
+#Arquivo de log de transações
+# Em servidores que compartilham app + db ~50% do innodb_buffer_pool_size
+innodb_redo_log_capacity = 128M
+
+# Já é ativo por padrão, mas é melhor deixar explícito
+#Cada tabela é salva em seu próprio arquivo no disco
+innodb_file_per_table = 1
+
+#tempo em segundos para o banco fechar uma conexão inativa
+wait_timeout = 60
+
+# Quantidade de threads abertas para serem reaproveitadas
+#fórmula padrão -> 8 + (max_connections/100)
+thread_cache_size = 9
+
+#tamanho máxo do pacote de dados que o banco pode receber
+#padrão é 64M
+max_allowed_packet = 64M
+
+#Logs
+#Ativado log de consultas lentas, tempo setado em 1 segundo
+slow_query_log = 1
+long_query_time = 1
+#Ativa log de consultas que NÃO usaram índices
+#Bastante útil para descobrir gargalos
+log_queries_not_using_indexes = 1
+
+#Character set e collation do servidor
+#é igual ao que está definido no schema da aplicação
+character-set-server = utf8mb4
+collation-server = utf8mb4_0900_ai_ci
