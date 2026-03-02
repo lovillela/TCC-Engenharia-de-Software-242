@@ -6,7 +6,8 @@ services:
       dockerfile: Dockerfile
     container_name: apache-httpd
     depends_on:
-      - php
+      php:
+        condition: service_started
     networks:
       - web
     ports:
@@ -24,7 +25,8 @@ services:
         LOCAL_GID: ${GID:-1000}
     container_name: php-fpm
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     networks:
       - database
       - web
@@ -48,13 +50,24 @@ services:
       MYSQL_DATABASE: blog_app      # Banco de dados da aplicação
       MYSQL_USER: blogApp         # Usuário da aplicação
       MYSQL_PASSWORD: ${DB_PASSWORD}     # Senha do usuário da aplicação
+    #para garantir que o banco esteja 100%
+    #executa o comando ping no localhost no utilitário mysqladmin
+    # a cada 5s, e tenta novamente depois de 5s rodando (max 5 tentativas)
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 2s
 
   phpmyadmin:
     container_name: phpmyadmin
     image: phpmyadmin:5.2
     depends_on:
-      - mysql
-      - apache
+      mysql:
+        condition: service_healthy
+      apache:
+        condition: service_started
     networks:
       - database
       - web
