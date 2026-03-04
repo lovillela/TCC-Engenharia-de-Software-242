@@ -7,6 +7,7 @@ use Lovillela\BlogApp\Services\AuthenticationControlService;
 use Lovillela\BlogApp\Services\AuthorizationService;
 use Lovillela\BlogApp\Models\Users\UserIdentity;
 use Lovillela\BlogApp\Services\CsrfService;
+use Psr\Log\LoggerInterface;
 
 /**
  * Ponto de entrada para os serviços de Autenticação e Autorização.
@@ -20,15 +21,18 @@ final class AuthManagerService {
   private AuthenticationControlService $authenticationService;
   private AuthorizationService $authorizationService;
   private CsrfService $csrfService;
+  private LoggerInterface $logger;
   
   public function __construct(SessionService  $sessionService, 
                               AuthenticationControlService $authenticationService, 
                               AuthorizationService $authorizationService,
-                              CsrfService $csrfService) {
+                              CsrfService $csrfService,
+                              LoggerInterface $logger) {
     $this->sessionService = $sessionService;
     $this->authenticationService = $authenticationService;
     $this->authorizationService = $authorizationService;
     $this->csrfService = $csrfService;
+    $this->logger = $logger;
   }
 
   public function login(string $email, string $password) : bool {
@@ -36,6 +40,7 @@ final class AuthManagerService {
     $userIdentity = $this->authenticationService->authenticate($email, $password);
 
     if (!isset($userIdentity)) {
+      $this->logger->warning('UserIdentity data not defined',  ['user' => $email] );
       return false;
     }
 

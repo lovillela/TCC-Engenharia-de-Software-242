@@ -7,6 +7,7 @@ use Lovillela\BlogApp\Config\Permissions\UserPermissions;
 use Lovillela\BlogApp\Repositories\UserRepository;
 use Lovillela\BlogApp\Utils\PasswordHash;
 use Lovillela\BlogApp\Services\InputSanitizationService;
+use Psr\Log\LoggerInterface;
 
 class UserManagementService{
 
@@ -14,15 +15,18 @@ class UserManagementService{
   private PostManagementService $postService;
   private InputSanitizationService $sanitizationService;
   private Connection $connection;
+  private LoggerInterface $logger;
 
   public function __construct(UserRepository $userRepository,
                               PostManagementService $postService, 
                               InputSanitizationService $sanitizationService,
-                              Connection $connection){
+                              Connection $connection,
+                              LoggerInterface $logger){
     $this->userRepository = $userRepository;
     $this->postService = $postService;
     $this->sanitizationService = $sanitizationService;
     $this->connection = $connection;
+    $this->logger = $logger;
   }
   
   public function create(string $username, string $password, string $email, int $role /**Account role to be created*/) {

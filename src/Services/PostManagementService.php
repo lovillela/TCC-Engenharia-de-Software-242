@@ -7,6 +7,7 @@ use Lovillela\BlogApp\Repositories\PostRepository;
 use Throwable;
 use Lovillela\BlogApp\Services\SlugService;
 use Lovillela\BlogApp\Services\InputSanitizationService;
+use Psr\Log\LoggerInterface;
 
 class PostManagementService {
 
@@ -14,17 +15,21 @@ class PostManagementService {
   private SlugService $slugService;
   private InputSanitizationService $sanitizationService;
   private Connection $connection;
+  private LoggerInterface $logger;
   private const ENTITY = 'post';
   private const BATCH_SIZE = 1000;
 
-  public function __construct(PostRepository $postRepository, SlugService $slugService, 
-                              InputSanitizationService $sanitizationService, Connection $connection){
+  public function __construct(PostRepository $postRepository, 
+                              SlugService $slugService, 
+                              InputSanitizationService $sanitizationService, 
+                              Connection $connection,
+                              LoggerInterface $logger){
     
     $this->postRepository = $postRepository;
     $this->slugService = $slugService;
     $this->sanitizationService = $sanitizationService;
     $this->connection = $connection;
-    
+    $this->logger = $logger;
     }
 
   public function create(string $title, string $text, int $userID): array{
