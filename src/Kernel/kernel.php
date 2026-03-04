@@ -72,21 +72,11 @@ $authManagerService->setCsrfToken();
  * Container de dependências para uso nos controllers
  */
 $dependencyContainer = [
-  'Connection' => $connection,
-  'SlugService' => $slugService,
-  'SlugRepository' => $slugRepository,
   'PostManagementService' => $postService,
-  'PostRepository' => $postRepository,
-  'InputSanitizationService' => $sanitizationService,
-  'SessionService' => $sessionService,
-  'AuthenticationService' => $authenticationService,
-  'UserRepository' => $userRepository,
   'UserService' => $userService,
   'AuthManagerService' => $authManagerService,
   'RedirectService' => $redirectService,
-  'CsrfService' => $csrfService,
   'ViewRenderService' => $renderService,
-  LoggerInterface::class => $logger,
 ];
 
 $routerMain = require_once __DIR__ . '/../../config/Routes/main.php';
