@@ -3,10 +3,12 @@
 namespace Lovillela\BlogApp\Repositories;
 
 use Doctrine\DBAL\Connection;
+use Psr\Log\LoggerInterface;
 use Throwable;
 
 class PostRepository{
   private Connection $connection;
+  private LoggerInterface $logger;
   //Inserts
   private string $insertPostQuery = 'INSERT INTO `post` (`title`, `content`, `slug`) VALUES (?, ?, ?)';
   private string $insertPostUsersQuery = 'INSERT INTO `post_users` VALUES (?, ?) ';
@@ -35,8 +37,9 @@ class PostRepository{
   private string $deleteAllPostsInRange = 'DELETE FROM `post` WHERE `id` IN (?)';
   private string $deletePostUserRelationship = 'DELETE FROM `post_users` WHERE `id_post` = ? AND `id_user` = ?';
 
-  public function __construct(Connection $connection) {
+  public function __construct(Connection $connection, LoggerInterface $logger) {
     $this->connection = $connection;
+    $this->logger = $logger;
   }
 
   public function save(string $title, string $content, string $slug, int $userID) : int {

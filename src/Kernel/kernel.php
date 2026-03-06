@@ -18,38 +18,47 @@ use Lovillela\BlogApp\Services\UserManagementService;
 use Lovillela\BlogApp\Services\InputSanitizationService;
 use Lovillela\BlogApp\Services\AuthenticationControlService;
 use Monolog\Handler\StreamHandler;
-use Psr\Log\LoggerInterface;
 use Monolog\Logger;
+use Monolog\Processor\IntrospectionProcessor;
 
 /** @var \Doctrine\DBAL\Connection $connection */
 $connection = require_once __DIR__ . '/../../src/Services/DatabaseConnectionService.php';
 
-$logger = new Logger('BlogAppLog');
-$logger->pushHandler(new StreamHandler(__DIR__ . '/../../logs/app.log'));
+$securityLogger = new Logger('Security');
+$securityLogger->pushProcessor(new IntrospectionProcessor());
+$securityLogger->pushHandler(new StreamHandler(__DIR__ . '/../../logs/security.log'));
+
+$appLogger = new Logger('App');
+$appLogger->pushProcessor(new IntrospectionProcessor());
+$appLogger->pushHandler(new StreamHandler(__DIR__ . '/../../logs/app.log'));
+
+$infraLogger = new Logger('Infrastructure');
+$infraLogger->pushProcessor(new IntrospectionProcessor());
+$infraLogger->pushHandler(new StreamHandler(__DIR__ . '/../../logs/infrastructure.log'));
 
 $renderService = new ViewRenderService();
 
 $redirectService = new RedirectService();
 
-$userRepository = new UserRepository($connection);
+$userRepository = new UserRepository($connection, $infraLogger);
 
 $sanitizationService = new InputSanitizationService();
 
-$slugRepository = new SlugRepository($connection);
+$slugRepository = new SlugRepository($connection, $infraLogger);
 $slugService = new SlugService($slugRepository, $sanitizationService);
 
-$postRepository = new PostRepository($connection);
+$postRepository = new PostRepository($connection, $infraLogger);
 $postService = new PostManagementService($postRepository, 
                                             $slugService, 
                                     $sanitizationService, 
                                              $connection,
-                                                 $logger);
+                                                 $appLogger);
 
 $userService = new UserManagementService($userRepository,
                                             $postService,
                                     $sanitizationService, 
                                              $connection,
-                                                 $logger);
+                                                 $appLogger);
 
 $authenticationService = new AuthenticationControlService($userService);
 
@@ -64,7 +73,7 @@ $authManagerService = new AuthManagerService($sessionService,
                                             $authenticationService, 
                                             $authorizationService,
                                             $csrfService,
-                                            $logger);
+                                            $securityLogger);
                                           
 $authManagerService->setCsrfToken();                                            
                                           
@@ -77,6 +86,7 @@ $dependencyContainer = [
   'AuthManagerService' => $authManagerService,
   'RedirectService' => $redirectService,
   'ViewRenderService' => $renderService,
+  'InputSanitizationService' => $sanitizationService,
 ];
 
 $routerMain = require_once __DIR__ . '/../../config/Routes/main.php';

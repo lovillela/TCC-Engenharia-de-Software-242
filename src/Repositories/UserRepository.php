@@ -3,10 +3,12 @@
 namespace Lovillela\BlogApp\Repositories;
 
 use Doctrine\DBAL\Connection;
+use Psr\Log\LoggerInterface;
 
 final class UserRepository
 {
   private Connection $connection;
+  private LoggerInterface $logger;
 
   //Deletes
   private string $userCreatorQuery = 'INSERT INTO `users` (`username`, `email`, `password`, `permissions`, `isActive` ) 
@@ -30,8 +32,9 @@ final class UserRepository
   private string $deleteUserQuery = 'DELETE FROM `users` WHERE `id` = ?';
   private string $deleteUserbyUsernameQuery = 'DELETE FROM `users` WHERE `username` = ?';
   
-  public function __construct(Connection $connection){
+  public function __construct(Connection $connection, LoggerInterface $logger){
       $this->connection = $connection;
+      $this->logger = $logger;
   }
 
   public function create(string $username, string $password, string $email, int $role /**Account role to be created*/): bool {

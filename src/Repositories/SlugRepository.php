@@ -3,17 +3,20 @@
 namespace Lovillela\BlogApp\Repositories;
 
 use Doctrine\DBAL\Connection;
+use Psr\Log\LoggerInterface;
 
 class SlugRepository{
 
   private Connection $connection;
+  private LoggerInterface $logger;
   private string $checkExistsSlugQuery = 'SELECT 1 FROM `slug_map` WHERE (`entity_type` = ? AND `slug` = ?)';
   private string $getEntityIdQuery = 'SELECT `entity_id` FROM `slug_map` WHERE (`entity_type` = ? AND `slug` = ?)';
   private string $insertSlugMap = 'INSERT INTO `slug_map` (`entity_id`, `entity_type`, `slug`) VALUES (?, ?, ?)';
   private string $deleteFromSlugMapInRange = 'DELETE FROM `slug_map` WHERE `entity_id` IN (?) AND `entity_type` = (?)';
 
-  public function __construct(Connection $connection) {
+  public function __construct(Connection $connection, LoggerInterface $logger) {
     $this->connection = $connection;
+    $this->logger = $logger;
   }
 
   public function exists(string $entity, string $slug): bool {

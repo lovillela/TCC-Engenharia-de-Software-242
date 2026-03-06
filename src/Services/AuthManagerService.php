@@ -40,7 +40,7 @@ final class AuthManagerService {
     $userIdentity = $this->authenticationService->authenticate($email, $password);
 
     if (!isset($userIdentity)) {
-      $this->logger->warning('UserIdentity data not defined',  ['user' => $email] );
+      $this->logger->warning('UserIdentity não foi definido',  ['user' => $email]);
       return false;
     }
 
