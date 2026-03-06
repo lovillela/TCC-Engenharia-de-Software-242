@@ -17,6 +17,7 @@ use Lovillela\BlogApp\Services\PostManagementService;
 use Lovillela\BlogApp\Services\UserManagementService;
 use Lovillela\BlogApp\Services\InputSanitizationService;
 use Lovillela\BlogApp\Services\AuthenticationControlService;
+use Monolog\Handler\BufferHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\IntrospectionProcessor;
@@ -26,15 +27,14 @@ $connection = require_once __DIR__ . '/../../src/Services/DatabaseConnectionServ
 
 $securityLogger = new Logger('Security');
 $securityLogger->pushProcessor(new IntrospectionProcessor());
-$securityLogger->pushHandler(new StreamHandler(__DIR__ . '/../../logs/security.log'));
-
+$securityLogger->pushHandler(new BufferHandler(new StreamHandler(__DIR__ . '/../../logs/security.log')));
 $appLogger = new Logger('App');
 $appLogger->pushProcessor(new IntrospectionProcessor());
-$appLogger->pushHandler(new StreamHandler(__DIR__ . '/../../logs/app.log'));
+$appLogger->pushHandler(new BufferHandler(new StreamHandler(__DIR__ . '/../../logs/app.log')));
 
 $infraLogger = new Logger('Infrastructure');
 $infraLogger->pushProcessor(new IntrospectionProcessor());
-$infraLogger->pushHandler(new StreamHandler(__DIR__ . '/../../logs/infrastructure.log'));
+$infraLogger->pushHandler(new BufferHandler(new StreamHandler(__DIR__ . '/../../logs/infrastructure.log')));
 
 $renderService = new ViewRenderService();
 
