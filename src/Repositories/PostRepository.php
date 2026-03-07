@@ -3,6 +3,7 @@
 namespace Lovillela\BlogApp\Repositories;
 
 use Doctrine\DBAL\Connection;
+use Exception;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
@@ -69,13 +70,19 @@ class PostRepository{
 
   public function update(string $title, string $content, string $slug, int $postId): bool {
     
-    $editPostStmt = $this->connection->prepare($this->editPostQuery);
-    $editPostStmt->bindValue(1, $title);
-    $editPostStmt->bindValue(2, $content);
-    $editPostStmt->bindValue(3, $slug);
-    $editPostStmt->bindValue(4, $postId);
-    
-    return (bool)$editPostStmt->executeStatement();
+    try {
+      $editPostStmt = $this->connection->prepare($this->editPostQuery);
+      $editPostStmt->bindValue(1, $title);
+      $editPostStmt->bindValue(2, $content);
+      $editPostStmt->bindValue(3, $slug);
+      $editPostStmt->bindValue(4, $postId);
+      $editPostStmt->executeStatement();
+      return true;
+    } catch (Throwable $th) {
+        //throw $th;
+        $this->logger->error('Erro ao atualizar post!', ['id' => $postId, 'exception' => $th]);
+        throw new Exception('Erro ao atualizar post');
+    }
   }
 
   public function deletePostUserRelationship(int $postId, int $userId) : bool {

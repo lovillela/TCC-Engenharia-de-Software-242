@@ -3,6 +3,7 @@
 namespace Lovillela\BlogApp\Services;
 
 use Doctrine\DBAL\Connection;
+use Exception;
 use Lovillela\BlogApp\Repositories\PostRepository;
 use Throwable;
 use Lovillela\BlogApp\Services\SlugService;
@@ -101,11 +102,13 @@ class PostManagementService {
       $this->postRepository->update($title, $text, $slug, $postId);
 
       $this->connection->commit();
-      return true;
       
-    } catch (\Throwable $th) {
-      $this->connection->rollBack();
-      return false;
+      return ['status' => true, 'message' => 'Post atualizado com sucesso!'];
+      
+    } catch (Throwable $th) {
+        $this->connection->rollBack();
+        $this->logger->error('Erro ao atualizar post!', ['id' => $postId]);
+        return ['status' => false, 'message' => $th->getMessage()];
     }
   }
 
