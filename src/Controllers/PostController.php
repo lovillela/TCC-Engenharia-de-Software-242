@@ -222,7 +222,8 @@ final class PostController extends BaseController{
       'slugUrl' => $slug,
       'blogPost' => $text,
       'postId' => $postId,
-      'response' => $response,
+      'status' => $response['status'],
+      'message' => $response['message'],
     ];
 
     $viewData = $this->prepareView(ViewPath::FRONTEND_EDIT_POSTFORM, $headTitle, $bodyData);

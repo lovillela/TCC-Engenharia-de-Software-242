@@ -35,11 +35,6 @@ class PostManagementService {
 
   public function create(string $title, string $text, int $userID): array{
     
-    /**
-     * Checar autorização e autenticação antes
-     * Check authorization and authentication prior
-     */
-    
     $title = $this->sanitizationService->postTitleSanitize($title);
     $text = $this->sanitizationService->postContentSanitize($text);
 
@@ -55,11 +50,13 @@ class PostManagementService {
 
       $this->connection->commit();
 
-      return (array('Status' => 1, 'Message' => 'Post Created Succesfully!'));
+      return ['status' => true, 'message' => 'Post criado com sucesso!'];
+      
 
-    }catch(Throwable $e){
-        $this->connection->rollBack();
-        return $this->databaseExceptionHandler($e);
+    }catch(Throwable $th){
+      $this->connection->rollBack();
+      $this->logger->error('Erro ao deletar post!', []);
+      return ['status' => false, 'message' => $th->getMessage()];
     }
   }
 
@@ -80,10 +77,13 @@ class PostManagementService {
       }
 
       $this->connection->commit();
+
+      return ['status' => true, 'message' => 'Post deletado com sucesso!'];
       
-    } catch (\Throwable $th) {
+    } catch (Throwable $th) {
       $this->connection->rollBack();
-      //throw $th;
+      $this->logger->error('Erro ao deletar post!', ['id' => $postId]);
+      return ['status' => false, 'message' => $th->getMessage()];
     }
   }
 
@@ -154,8 +154,8 @@ class PostManagementService {
 
       $this->connection->commit();
     } catch (\Throwable $th) {
-      //throw $th;
-      $this->connection->rollBack();
+        $this->connection->rollBack();
+        return ['status' => true, 'message' => 'Post posts deletados com sucesso!'];
     }
   }
 
@@ -180,17 +180,5 @@ class PostManagementService {
   public function getOwnershipById(int $postId): ?int {
     return $this->postRepository->getOwnership($postId);
   }
-
-  private static function databaseExceptionHandler(Throwable $e): array {
-    $errors= [
-      \Doctrine\DBAL\Exception\ConnectionException::class => 'Connection Error!',
-      \Doctrine\DBAL\Exception\UniqueConstraintViolationException::class => 'Slug Already exists. Choose another title.',
-      \Doctrine\DBAL\Exception\SyntaxErrorException::class => 'Syntax Error. The developer messed up!'
-    ];
-
-    $message = $errors[get_class(object: $e)] ?? 'General Error';
-
-    return array('Status' => 0, 'Message' => $message);
-  }
-
+  
 }

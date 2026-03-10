@@ -45,52 +45,73 @@ class PostRepository{
 
   public function save(string $title, string $content, string $slug, int $userID) : int {
 
-    $sqlStatmentPostCreation = $this->connection->prepare($this->insertPostQuery);
-    $sqlStatmentPostCreation->bindValue(1, $title);
-    $sqlStatmentPostCreation->bindValue(2, $content);
-    $sqlStatmentPostCreation->bindValue(3, $slug);
-    $sqlStatmentPostCreation->executeStatement();
+    try {
 
-    $postID = (int) $this->connection->lastInsertId();
+      $sqlStatmentPostCreation = $this->connection->prepare($this->insertPostQuery);
+      $sqlStatmentPostCreation->bindValue(1, $title);
+      $sqlStatmentPostCreation->bindValue(2, $content);
+      $sqlStatmentPostCreation->bindValue(3, $slug);
+      $sqlStatmentPostCreation->executeStatement();
 
-    $sqlStatmentPostUsers = $this->connection->prepare($this->insertPostUsersQuery);
-    $sqlStatmentPostUsers->bindValue(1, $userID);
-    $sqlStatmentPostUsers->bindValue(2, $postID);
-    $sqlStatmentPostUsers->executeStatement();
+      $postID = (int) $this->connection->lastInsertId();
 
-    return $postID;
+      $sqlStatmentPostUsers = $this->connection->prepare($this->insertPostUsersQuery);
+      $sqlStatmentPostUsers->bindValue(1, $userID);
+      $sqlStatmentPostUsers->bindValue(2, $postID);
+      $sqlStatmentPostUsers->executeStatement();
+
+      return $postID;
+
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao criar post!', ['exception' => $th]);
+        throw new Exception('Erro ao criar post');
+    }
   }
 
-  public function delete(int $postId): bool {
-    $deletePostStmt = $this->connection->prepare($this->deletePost);
-    $deletePostStmt->bindValue(1, $postId);
+  public function delete(int $postId) {
 
-    return (bool) $deletePostStmt->executeStatement();
+    try {
+
+      $deletePostStmt = $this->connection->prepare($this->deletePost);
+      $deletePostStmt->bindValue(1, $postId);
+      $deletePostStmt->executeStatement();
+
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao criar post!', ['exception' => $th]);
+        throw new Exception('Erro ao criar post');
+    }
   }
 
-  public function update(string $title, string $content, string $slug, int $postId): bool {
+  public function update(string $title, string $content, string $slug, int $postId) {
     
     try {
+
       $editPostStmt = $this->connection->prepare($this->editPostQuery);
       $editPostStmt->bindValue(1, $title);
       $editPostStmt->bindValue(2, $content);
       $editPostStmt->bindValue(3, $slug);
       $editPostStmt->bindValue(4, $postId);
       $editPostStmt->executeStatement();
-      return true;
+      
     } catch (Throwable $th) {
-        //throw $th;
         $this->logger->error('Erro ao atualizar post!', ['id' => $postId, 'exception' => $th]);
         throw new Exception('Erro ao atualizar post');
     }
   }
 
-  public function deletePostUserRelationship(int $postId, int $userId) : bool {
-    $deletePostUserRelationshipStmt = $this->connection->prepare($this->deletePostUserRelationship);
-    $deletePostUserRelationshipStmt->bindValue(1, $postId);
-    $deletePostUserRelationshipStmt->bindValue(2, $userId);
+  public function deletePostUserRelationship(int $postId, int $userId) {
 
-    return (bool)$deletePostUserRelationshipStmt->executeStatement();
+    try {
+
+      $deletePostUserRelationshipStmt = $this->connection->prepare($this->deletePostUserRelationship);
+      $deletePostUserRelationshipStmt->bindValue(1, $postId);
+      $deletePostUserRelationshipStmt->bindValue(2, $userId);
+      $deletePostUserRelationshipStmt->executeStatement();
+
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao deletar post!', ['id' => $postId, 'exception' => $th]);
+        throw new Exception('Erro ao deletar post');
+    }
   }
 
   public function deleteAllPostUserRelantionship(int $userId): bool {
