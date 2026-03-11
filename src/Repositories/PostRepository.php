@@ -77,8 +77,8 @@ class PostRepository{
       $deletePostStmt->executeStatement();
 
     } catch (Throwable $th) {
-        $this->logger->error('Erro ao criar post!', ['exception' => $th]);
-        throw new Exception('Erro ao criar post');
+        $this->logger->error('Erro ao deletar post!', ['postId' => $postId, 'exception' => $th]);
+        throw new Exception('Erro ao deletar post');
     }
   }
 
