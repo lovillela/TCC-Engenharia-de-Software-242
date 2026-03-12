@@ -6,7 +6,6 @@ use Lovillela\BlogApp\Services\AuthManagerService;
 use Lovillela\BlogApp\Services\ViewRenderService;
 use Lovillela\BlogApp\Services\PostManagementService;
 use Lovillela\BlogApp\Services\RedirectService;
-use Lovillela\BlogApp\Models\Views\ViewData;
 use Lovillela\BlogApp\Config\Views\ViewPath;
 
 final class PostController extends BaseController{
@@ -47,6 +46,11 @@ final class PostController extends BaseController{
 
     $post = $this->getPostBySlug($slug);
 
+    if (!isset($post)) {
+      $this->redirectService->redirectToHome();
+      exit;
+    }
+
     $headTitle = $post['title'];
     
     $bodyData = [
@@ -58,10 +62,6 @@ final class PostController extends BaseController{
 
     $viewData = $this->prepareView(ViewPath::FRONTEND_POST, $headTitle, $bodyData);
     $this->viewRenderService->render($viewData);
-  }
-
-  public function redirectToTrailingSlash($slug) {
-    $this->redirectService->redirectToTrailingSlash();
   }
 
   public function addPostAction() {
@@ -80,6 +80,11 @@ final class PostController extends BaseController{
     $text = $_POST['blogPost'];
     
     $response = $this->postService->create($title, $text, $userData->userId);
+
+    if (!isset($response)) {
+      $this->redirectService->redirectToUserDashboard();
+      exit;
+    }
 
     $headTitle = 'Add Post';
 
