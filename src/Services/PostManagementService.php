@@ -31,7 +31,7 @@ class PostManagementService {
     $this->sanitizationService = $sanitizationService;
     $this->connection = $connection;
     $this->logger = $logger;
-    }
+  }
 
   public function create(string $title, string $text, int $userID): array{
     
@@ -55,7 +55,7 @@ class PostManagementService {
 
     }catch(Throwable $th){
       $this->connection->rollBack();
-      $this->logger->error('Erro ao deletar post!', []);
+      $this->logger->error('Erro ao criar post!', []);
       return ['status' => false, 'message' => $th->getMessage()];
     }
   }
@@ -107,7 +107,7 @@ class PostManagementService {
       
     } catch (Throwable $th) {
         $this->connection->rollBack();
-        $this->logger->error('Erro ao atualizar post!', ['id' => $postId]);
+        $this->logger->warning('Erro ao atualizar post!', ['id' => $postId]);
         return ['status' => false, 'message' => $th->getMessage()];
     }
   }
@@ -155,30 +155,54 @@ class PostManagementService {
       $this->connection->commit();
     } catch (\Throwable $th) {
         $this->connection->rollBack();
-        return ['status' => true, 'message' => 'Post posts deletados com sucesso!'];
+        $this->logger->warning('Erro ao deletar posts do usuário!', ['userId' => $userId]);
+        return ['status' => false, 'message' => 'Erro ao deletar posts!'];
     }
   }
 
-  public function getAllPosts(): array{
-    return $this->postRepository->getAllPosts();
+  public function getAllPosts(): ?array{
+
+    try {
+      return $this->postRepository->getAllPosts();
+    } catch (Throwable $th) {
+      $this->logger->warning('Erro ao ler todos os posts!', []);
+      return [];
+    }
   }
 
   public function getPostBySlug(string $slug): ?array {
 
-    $post = $this->postRepository->getPostBySlug($slug);
+    try {
+      $post = $this->postRepository->getPostBySlug($slug);
 
-    return $post ? $this->sanitizationService->displayPostSanitize($post) : null;
+      return $post ? $this->sanitizationService->displayPostSanitize($post) : null;
+
+    } catch (Throwable $th) {
+      $this->logger->warning('Erro ao ler post por slug!', ['slug' => $slug]);
+      return null;
+    }    
   }
 
   public function getPostById(int $postId): ?array {
+    try {
+      $post = $this->postRepository->getPostByID($postId);
 
-    $post = $this->postRepository->getPostByID($postId);
+      return $post ? $this->sanitizationService->displayPostSanitize($post) : null;
 
-    return $post ? $this->sanitizationService->displayPostSanitize($post) : null;
+    } catch (Throwable $th) {
+      $this->logger->warning('Erro ao ler o post por id!', ['postId' => $postId]);
+      return null;
+    }
+
   }
 
   public function getOwnershipById(int $postId): ?int {
-    return $this->postRepository->getOwnership($postId);
+    try {
+      return $this->postRepository->getOwnership($postId);
+    } catch (Throwable $th) {
+      $this->logger->warning('Erro ao ler autoria do post!', ['postId' => $postId]);
+      return null;
+    }
   }
   
 }
