@@ -26,10 +26,15 @@ final class PostController extends BaseController{
 
   public function index() {
 
+    $posts = $this->postService->getAllPosts();
+
+    if (!isset($posts)) {
+      $this->redirectService->redirectToHome();
+      exit;
+    }
+
     $headTitle = 'All Posts';
-
-    $posts = $this->getAllPosts();
-
+    
     $bodyData = [
       'title' => 'Post Home',
       'headerText' => 'Post Home',
@@ -44,7 +49,7 @@ final class PostController extends BaseController{
 
   public function show($slug) {
 
-    $post = $this->getPostBySlug($slug);
+    $post = $this->postService->getPostBySlug($slug);
 
     if (!isset($post)) {
       $this->redirectService->redirectToHome();
@@ -234,13 +239,6 @@ final class PostController extends BaseController{
 
     $viewData = $this->prepareView(ViewPath::FRONTEND_EDIT_POSTFORM, $headTitle, $bodyData);
     $this->viewRenderService->render($viewData);
-  }
-
-  private function getPostBySlug(string $slug){
-    return $this->postService->getPostBySlug($slug);
-  }
-  private function getAllPosts(){
-    return $this->postService->getAllPosts();
   }
 
 }
