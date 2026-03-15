@@ -111,10 +111,10 @@ final class AdminController extends BaseController{
     $response = $this->userManagementService->create($username, $password, 
                                               $email, UserPermissions::Admin->value);
 
-    if ($response['Status'] != 1) {
-      $bodyData['errorMessage'] = $response['Message'];
+    if (!$response['status']) {
+      $bodyData['errorMessage'] = $response['message'];
     }else{
-      $bodyData['generalMessage'] = $response['Message'];
+      $bodyData['generalMessage'] = $response['message'];
     }
 
     $viewData = $this->prepareView(ViewPath::ADMIN_ADD_USER, $headTitle, $bodyData);
