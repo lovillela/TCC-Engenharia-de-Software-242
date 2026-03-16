@@ -18,7 +18,8 @@
         "doctrine/dbal": "^4.4",
         "doctrine/migrations": "^3.9",
         "ezyang/htmlpurifier": "^4.0",
-        "vlucas/phpdotenv": "^5.6"
+        "vlucas/phpdotenv": "^5.6",
+        "monolog/monolog":"^3.10"
     },
     "require-dev": {
         "phpmetrics/phpmetrics": "^2.9"

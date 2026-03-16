@@ -17,29 +17,48 @@ use Lovillela\BlogApp\Services\PostManagementService;
 use Lovillela\BlogApp\Services\UserManagementService;
 use Lovillela\BlogApp\Services\InputSanitizationService;
 use Lovillela\BlogApp\Services\AuthenticationControlService;
+use Monolog\Handler\BufferHandler;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
+use Monolog\Processor\IntrospectionProcessor;
 
 /** @var \Doctrine\DBAL\Connection $connection */
 $connection = require_once __DIR__ . '/../../src/Services/DatabaseConnectionService.php';
+
+$securityLogger = new Logger('Security');
+$securityLogger->pushProcessor(new IntrospectionProcessor());
+$securityLogger->pushHandler(new BufferHandler(new StreamHandler(__DIR__ . '/../../logs/security.log')));
+$appLogger = new Logger('App');
+$appLogger->pushProcessor(new IntrospectionProcessor());
+$appLogger->pushHandler(new BufferHandler(new StreamHandler(__DIR__ . '/../../logs/app.log')));
+
+$infraLogger = new Logger('Infrastructure');
+$infraLogger->pushProcessor(new IntrospectionProcessor());
+$infraLogger->pushHandler(new BufferHandler(new StreamHandler(__DIR__ . '/../../logs/infrastructure.log')));
 
 $renderService = new ViewRenderService();
 
 $redirectService = new RedirectService();
 
-$userRepository = new UserRepository($connection);
+$userRepository = new UserRepository($connection, $infraLogger);
 
 $sanitizationService = new InputSanitizationService();
 
-$slugRepository = new SlugRepository($connection);
+$slugRepository = new SlugRepository($connection, $infraLogger);
 $slugService = new SlugService($slugRepository, $sanitizationService);
 
-$postRepository = new PostRepository($connection);
-$postService = new PostManagementService($postRepository, $slugService, 
-                                          $sanitizationService, $connection);
+$postRepository = new PostRepository($connection, $infraLogger);
+$postService = new PostManagementService($postRepository, 
+                                            $slugService, 
+                                    $sanitizationService, 
+                                             $connection,
+                                                 $appLogger);
 
 $userService = new UserManagementService($userRepository,
-                                        $postService,
-                                        $sanitizationService, 
-                                         $connection);
+                                            $postService,
+                                    $sanitizationService, 
+                                             $connection,
+                                                 $appLogger);
 
 $authenticationService = new AuthenticationControlService($userService);
 
@@ -53,26 +72,21 @@ $sessionService->start();
 $authManagerService = new AuthManagerService($sessionService, 
                                             $authenticationService, 
                                             $authorizationService,
-                                            $csrfService);
+                                            $csrfService,
+                                            $securityLogger);
                                           
 $authManagerService->setCsrfToken();                                            
                                           
-
+/**
+ * Container de dependências para uso nos controllers
+ */
 $dependencyContainer = [
-  'Connection' => $connection,
-  'SlugService' => $slugService,
-  'SlugRepository' => $slugRepository,
   'PostManagementService' => $postService,
-  'PostRepository' => $postRepository,
-  'InputSanitizationService' => $sanitizationService,
-  'SessionService' => $sessionService,
-  'AuthenticationService' => $authenticationService,
-  'UserRepository' => $userRepository,
   'UserService' => $userService,
   'AuthManagerService' => $authManagerService,
   'RedirectService' => $redirectService,
-  'CsrfService' => $csrfService,
   'ViewRenderService' => $renderService,
+  'InputSanitizationService' => $sanitizationService,
 ];
 
 $routerMain = require_once __DIR__ . '/../../config/Routes/main.php';

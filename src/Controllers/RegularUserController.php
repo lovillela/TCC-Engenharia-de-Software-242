@@ -8,7 +8,6 @@ use Lovillela\BlogApp\Services\RedirectService;
 use Lovillela\BlogApp\Services\UserManagementService;
 use Lovillela\BlogApp\Config\Permissions\UserPermissions;
 use Lovillela\BlogApp\Services\ViewRenderService;
-use Lovillela\BlogApp\Models\Views\ViewData;
 
 final class RegularUserController extends BaseController{
   private array $dependencyContainer;
@@ -63,10 +62,10 @@ final class RegularUserController extends BaseController{
     $response = $this->userManagementService->create($username, $password, 
                                               $email, UserPermissions::RegularUser->value);
 
-    if ($response['Status'] != 1) {
-      $bodyData['errorMessage'] = $response['Message'];
+    if ($response['status'] != true) {
+      $bodyData['errorMessage'] = $response['message'];
     }else{
-      $bodyData['generalMessage'] = $response['Message'];
+      $bodyData['generalMessage'] = $response['message'];
     }
 
     $viewData = $this->prepareView(ViewPath::FRONTEND_SIGNUP, $headTitle, $bodyData);

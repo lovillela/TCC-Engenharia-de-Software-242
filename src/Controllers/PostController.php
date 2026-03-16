@@ -6,7 +6,6 @@ use Lovillela\BlogApp\Services\AuthManagerService;
 use Lovillela\BlogApp\Services\ViewRenderService;
 use Lovillela\BlogApp\Services\PostManagementService;
 use Lovillela\BlogApp\Services\RedirectService;
-use Lovillela\BlogApp\Models\Views\ViewData;
 use Lovillela\BlogApp\Config\Views\ViewPath;
 
 final class PostController extends BaseController{
@@ -27,10 +26,15 @@ final class PostController extends BaseController{
 
   public function index() {
 
+    $posts = $this->postService->getAllPosts();
+
+    if (!isset($posts)) {
+      $this->redirectService->redirectToHome();
+      exit;
+    }
+
     $headTitle = 'All Posts';
-
-    $posts = $this->getAllPosts();
-
+    
     $bodyData = [
       'title' => 'Post Home',
       'headerText' => 'Post Home',
@@ -45,7 +49,12 @@ final class PostController extends BaseController{
 
   public function show($slug) {
 
-    $post = $this->getPostBySlug($slug);
+    $post = $this->postService->getPostBySlug($slug);
+
+    if (!isset($post)) {
+      $this->redirectService->redirectToHome();
+      exit;
+    }
 
     $headTitle = $post['title'];
     
@@ -58,10 +67,6 @@ final class PostController extends BaseController{
 
     $viewData = $this->prepareView(ViewPath::FRONTEND_POST, $headTitle, $bodyData);
     $this->viewRenderService->render($viewData);
-  }
-
-  public function redirectToTrailingSlash($slug) {
-    $this->redirectService->redirectToTrailingSlash();
   }
 
   public function addPostAction() {
@@ -80,6 +85,11 @@ final class PostController extends BaseController{
     $text = $_POST['blogPost'];
     
     $response = $this->postService->create($title, $text, $userData->userId);
+
+    if (!isset($response)) {
+      $this->redirectService->redirectToUserDashboard();
+      exit;
+    }
 
     $headTitle = 'Add Post';
 
@@ -190,7 +200,8 @@ final class PostController extends BaseController{
     $userData = $this->authManagerService->getUserData();
 
     if (!$this->authManagerService->isSessionActive() || !isset($userData) 
-        || $this->postService->getOwnershipById($postId) !== $userData->userId) {
+        || $this->postService->getOwnershipById($postId) !== $userData->userId 
+        || $this->authManagerService->validateCsrfToken($_POST['csrfToken']) ) {
       $this->authManagerService->destroySession();
       $this->redirectService->redirectToHome();
       exit;
@@ -222,17 +233,12 @@ final class PostController extends BaseController{
       'slugUrl' => $slug,
       'blogPost' => $text,
       'postId' => $postId,
+      'status' => $response['status'],
+      'message' => $response['message'],
     ];
 
     $viewData = $this->prepareView(ViewPath::FRONTEND_EDIT_POSTFORM, $headTitle, $bodyData);
     $this->viewRenderService->render($viewData);
-  }
-
-  private function getPostBySlug(string $slug){
-    return $this->postService->getPostBySlug($slug);
-  }
-  private function getAllPosts(){
-    return $this->postService->getAllPosts();
   }
 
 }

@@ -3,54 +3,86 @@
 namespace Lovillela\BlogApp\Repositories;
 
 use Doctrine\DBAL\Connection;
+use Psr\Log\LoggerInterface;
+use Throwable;
+use Exception;
 
 class SlugRepository{
 
   private Connection $connection;
+  private LoggerInterface $logger;
   private string $checkExistsSlugQuery = 'SELECT 1 FROM `slug_map` WHERE (`entity_type` = ? AND `slug` = ?)';
   private string $getEntityIdQuery = 'SELECT `entity_id` FROM `slug_map` WHERE (`entity_type` = ? AND `slug` = ?)';
   private string $insertSlugMap = 'INSERT INTO `slug_map` (`entity_id`, `entity_type`, `slug`) VALUES (?, ?, ?)';
   private string $deleteFromSlugMapInRange = 'DELETE FROM `slug_map` WHERE `entity_id` IN (?) AND `entity_type` = (?)';
 
-  public function __construct(Connection $connection) {
+  public function __construct(Connection $connection, LoggerInterface $logger) {
     $this->connection = $connection;
+    $this->logger = $logger;
   }
 
   public function exists(string $entity, string $slug): bool {
 
-    $existsStmt = $this->connection->prepare($this->checkExistsSlugQuery);
-    $existsStmt->bindValue(1, $entity);
-    $existsStmt->bindValue(2, $slug);
-    
-    return (bool) $existsStmt->executeQuery()->fetchOne();
+    try {
+      $existsStmt = $this->connection->prepare($this->checkExistsSlugQuery);
+      $existsStmt->bindValue(1, $entity);
+      $existsStmt->bindValue(2, $slug);
+      
+      return (bool) $existsStmt->executeQuery()->fetchOne();
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao verificar existência do slug!', 
+                                ['entity' => $entity, 'slug' => $slug, 'exception' => $th]);
+          throw new Exception('Erro ao verificar existência do slug!');     
+    }  
   }
 
   public function findEntityId(string $entity, string $slug){
 
-    $entityIdSearch = $this->connection->prepare($this->getEntityIdQuery);
-    $entityIdSearch->bindValue(1, $entity);
-    $entityIdSearch->bindValue(2, $slug);
+    try {
+      $entityIdSearch = $this->connection->prepare($this->getEntityIdQuery);
+      $entityIdSearch->bindValue(1, $entity);
+      $entityIdSearch->bindValue(2, $slug);
 
-    $searchResult = $entityIdSearch->executeQuery()->fetchOne();
+      $searchResult = $entityIdSearch->executeQuery()->fetchOne();
 
-    return $searchResult ? (int) $searchResult : null;
+      return $searchResult ? (int) $searchResult : null;
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao verificar o id da entidade', 
+                                ['entity' => $entity, 'slug' => $slug, 'exception' => $th]);
+          throw new Exception('Erro ao verificar o id da entidade');     
+    }
+
   }
 
-  public function save(string $entity, string $slug, int $id): int {
+  public function save(string $entity, string $slug, int $id) {
 
-    $insertSlugMapStmt = $this->connection->prepare($this->insertSlugMap);
-    //id, entity, slug
-    $insertSlugMapStmt->bindValue(1, $id);
-    $insertSlugMapStmt->bindValue(2, $entity);
-    $insertSlugMapStmt->bindValue(3, $slug);
+    try {
+      $insertSlugMapStmt = $this->connection->prepare($this->insertSlugMap);
+      //id, entity, slug
+      $insertSlugMapStmt->bindValue(1, $id);
+      $insertSlugMapStmt->bindValue(2, $entity);
+      $insertSlugMapStmt->bindValue(3, $slug);
 
-    return $insertSlugMapStmt->executeStatement();
+      $insertSlugMapStmt->executeStatement();
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao salvar o slug!', 
+                                ['id' => $id, 'entity' => $entity, 'slug' => $slug, 'exception' => $th]);
+          throw new Exception('Erro ao salvar o slug!');     
+    }
   }
 
   public function deleteSlugsInRange(array $entityIds, string $entity): bool {
-    return (bool)$this->connection->executeStatement($this->deleteFromSlugMapInRange,
-                                        [$entityIds, $entity],
-                                        [$this->connection::PARAM_INT_ARRAY,
-                                                $this->connection::PARAM_STR]);
+
+    try {
+      return $this->connection->executeStatement($this->deleteFromSlugMapInRange,
+                                          [$entityIds, $entity],
+                                          [$this->connection::PARAM_INT_ARRAY,
+                                                  $this->connection::PARAM_STR]);
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao deletar slugs!', 
+                                ['entity' => $entity, 'entityIds' => $entityIds,'exception' => $th]);
+          throw new Exception('Erro ao deletar slugs!');     
+    }
+
   }
 }

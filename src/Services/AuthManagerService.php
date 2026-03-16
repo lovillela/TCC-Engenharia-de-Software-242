@@ -7,6 +7,7 @@ use Lovillela\BlogApp\Services\AuthenticationControlService;
 use Lovillela\BlogApp\Services\AuthorizationService;
 use Lovillela\BlogApp\Models\Users\UserIdentity;
 use Lovillela\BlogApp\Services\CsrfService;
+use Psr\Log\LoggerInterface;
 
 /**
  * Ponto de entrada para os serviços de Autenticação e Autorização.
@@ -20,15 +21,18 @@ final class AuthManagerService {
   private AuthenticationControlService $authenticationService;
   private AuthorizationService $authorizationService;
   private CsrfService $csrfService;
+  private LoggerInterface $logger;
   
   public function __construct(SessionService  $sessionService, 
                               AuthenticationControlService $authenticationService, 
                               AuthorizationService $authorizationService,
-                              CsrfService $csrfService) {
+                              CsrfService $csrfService,
+                              LoggerInterface $logger) {
     $this->sessionService = $sessionService;
     $this->authenticationService = $authenticationService;
     $this->authorizationService = $authorizationService;
     $this->csrfService = $csrfService;
+    $this->logger = $logger;
   }
 
   public function login(string $email, string $password) : bool {
@@ -36,6 +40,7 @@ final class AuthManagerService {
     $userIdentity = $this->authenticationService->authenticate($email, $password);
 
     if (!isset($userIdentity)) {
+      $this->logger->warning('Falha no login - UserIdentity não foi definido',  ['email' => $email]);
       return false;
     }
 
@@ -58,7 +63,13 @@ final class AuthManagerService {
   }
 
   public function validateCsrfToken(string $csrfToken): bool {
-    return $this->csrfService->validate($csrfToken, $this->sessionService->getCsrfToken());
+
+    if (!$this->csrfService->validate($csrfToken, $this->sessionService->getCsrfToken())) {
+      $this->logger->warning('Falha ao validar o csrfToken! Acão bloqueada!', ['csrfToken' => $csrfToken]);
+      return false;
+    }
+
+    return true;
   }
 
   public function isSessionActive(): bool{
@@ -66,19 +77,43 @@ final class AuthManagerService {
   }
 
   public function isRegularUserDashboardAllowed(UserIdentity $userData) {
-    return $this->authorizationService->isRegularUserDashboardAllowed($userData); 
+
+    if (!$this->authorizationService->isRegularUserDashboardAllowed($userData)) {
+      $this->logger->alert('Acesso negado ao acessar dashboard de usuário', ['userId' => $userData->userId]);
+      return false;
+    }
+
+    return true;
   }
 
   public function canCreatePost(UserIdentity $userData) {
-    return $this->authorizationService->canCreatePost($userData);
+
+    if (!$this->authorizationService->canCreatePost($userData)) {
+      $this->logger->alert('Acesso negado ao criar post', ['userId' => $userData->userId]);
+      return false;
+    }
+
+    return true;
   }
 
   public function canDeletePost(UserIdentity $userData, int $postId) {
-    return $this->authorizationService->canDeletePost($userData, $postId);
+
+    if (!$this->authorizationService->canDeletePost($userData, $postId)) {
+      $this->logger->alert('Acesso negado ao deletar post', ['userId' => $userData->userId, 'postId' => $postId]);
+      return false;
+    }
+
+    return false;
   }
 
   public function canEditPost(UserIdentity $userData, int $postId) {
-    return $this->authorizationService->canEditPost($userData, $postId);
+
+    if (!$this->authorizationService->canEditPost($userData, $postId)) {
+      $this->logger->alert('Acesso negado ao editar post', ['userId' => $userData->userId, 'postId' => $postId]);
+      return false;
+    }
+
+    return true;  
   }
 
   public function destroySession() {

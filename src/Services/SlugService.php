@@ -46,15 +46,15 @@ final class SlugService {
     return $slugURL;
   }
 
-  public function deleteInRange(array $entityIds, string $entity): bool {
-    return $this->slugRepository->deleteSlugsInRange($entityIds, $entity);
+  public function deleteInRange(array $entityIds, string $entity) {
+    $this->slugRepository->deleteSlugsInRange($entityIds, $entity);
   }
 
   public function findContentId(string $entity, string $slug): int|null{
     return $this->slugRepository->findEntityId($entity, $slug);
   }
 
-  public function save(string $entity, string $slug, int $id): int {
-    return $this->slugRepository->save($entity, $slug, $id);
+  public function save(string $entity, string $slug, int $id) {
+    $this->slugRepository->save($entity, $slug, $id);
   }
 }

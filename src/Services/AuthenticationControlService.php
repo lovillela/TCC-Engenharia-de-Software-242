@@ -2,7 +2,6 @@
 
 namespace Lovillela\BlogApp\Services;
 
-use Lovillela\BlogApp\Repositories\UserRepository;
 use Lovillela\BlogApp\Models\Users\UserIdentity;
 use Lovillela\BlogApp\Config\Permissions\UserPermissions;
 

@@ -3,10 +3,13 @@
 namespace Lovillela\BlogApp\Repositories;
 
 use Doctrine\DBAL\Connection;
+use Exception;
+use Psr\Log\LoggerInterface;
 use Throwable;
 
 class PostRepository{
   private Connection $connection;
+  private LoggerInterface $logger;
   //Inserts
   private string $insertPostQuery = 'INSERT INTO `post` (`title`, `content`, `slug`) VALUES (?, ?, ?)';
   private string $insertPostUsersQuery = 'INSERT INTO `post_users` VALUES (?, ?) ';
@@ -35,165 +38,297 @@ class PostRepository{
   private string $deleteAllPostsInRange = 'DELETE FROM `post` WHERE `id` IN (?)';
   private string $deletePostUserRelationship = 'DELETE FROM `post_users` WHERE `id_post` = ? AND `id_user` = ?';
 
-  public function __construct(Connection $connection) {
+  public function __construct(Connection $connection, LoggerInterface $logger) {
     $this->connection = $connection;
+    $this->logger = $logger;
   }
 
   public function save(string $title, string $content, string $slug, int $userID) : int {
 
-    $sqlStatmentPostCreation = $this->connection->prepare($this->insertPostQuery);
-    $sqlStatmentPostCreation->bindValue(1, $title);
-    $sqlStatmentPostCreation->bindValue(2, $content);
-    $sqlStatmentPostCreation->bindValue(3, $slug);
-    $sqlStatmentPostCreation->executeStatement();
+    try {
 
-    $postID = (int) $this->connection->lastInsertId();
+      $sqlStatmentPostCreation = $this->connection->prepare($this->insertPostQuery);
+      $sqlStatmentPostCreation->bindValue(1, $title);
+      $sqlStatmentPostCreation->bindValue(2, $content);
+      $sqlStatmentPostCreation->bindValue(3, $slug);
+      $sqlStatmentPostCreation->executeStatement();
 
-    $sqlStatmentPostUsers = $this->connection->prepare($this->insertPostUsersQuery);
-    $sqlStatmentPostUsers->bindValue(1, $userID);
-    $sqlStatmentPostUsers->bindValue(2, $postID);
-    $sqlStatmentPostUsers->executeStatement();
+      $postID = (int) $this->connection->lastInsertId();
 
-    return $postID;
+      $sqlStatmentPostUsers = $this->connection->prepare($this->insertPostUsersQuery);
+      $sqlStatmentPostUsers->bindValue(1, $userID);
+      $sqlStatmentPostUsers->bindValue(2, $postID);
+      $sqlStatmentPostUsers->executeStatement();
+
+      return $postID;
+
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao criar post!', ['exception' => $th]);
+        throw new Exception('Erro ao criar post');
+    }
   }
 
-  public function delete(int $postId): bool {
-    $deletePostStmt = $this->connection->prepare($this->deletePost);
-    $deletePostStmt->bindValue(1, $postId);
+  public function delete(int $postId) {
 
-    return (bool) $deletePostStmt->executeStatement();
+    try {
+
+      $deletePostStmt = $this->connection->prepare($this->deletePost);
+      $deletePostStmt->bindValue(1, $postId);
+      $deletePostStmt->executeStatement();
+
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao deletar post!', ['postId' => $postId, 'exception' => $th]);
+        throw new Exception('Erro ao deletar post');
+    }
   }
 
-  public function update(string $title, string $content, string $slug, int $postId): bool {
+  public function update(string $title, string $content, string $slug, int $postId) {
     
-    $editPostStmt = $this->connection->prepare($this->editPostQuery);
-    $editPostStmt->bindValue(1, $title);
-    $editPostStmt->bindValue(2, $content);
-    $editPostStmt->bindValue(3, $slug);
-    $editPostStmt->bindValue(4, $postId);
-    
-    return (bool)$editPostStmt->executeStatement();
+    try {
+
+      $editPostStmt = $this->connection->prepare($this->editPostQuery);
+      $editPostStmt->bindValue(1, $title);
+      $editPostStmt->bindValue(2, $content);
+      $editPostStmt->bindValue(3, $slug);
+      $editPostStmt->bindValue(4, $postId);
+      $editPostStmt->executeStatement();
+      
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao atualizar post!', ['id' => $postId, 'exception' => $th]);
+        throw new Exception('Erro ao atualizar post');
+    }
   }
 
-  public function deletePostUserRelationship(int $postId, int $userId) : bool {
-    $deletePostUserRelationshipStmt = $this->connection->prepare($this->deletePostUserRelationship);
-    $deletePostUserRelationshipStmt->bindValue(1, $postId);
-    $deletePostUserRelationshipStmt->bindValue(2, $userId);
+  public function deletePostUserRelationship(int $postId, int $userId) {
 
-    return (bool)$deletePostUserRelationshipStmt->executeStatement();
+    try {
+
+      $deletePostUserRelationshipStmt = $this->connection->prepare($this->deletePostUserRelationship);
+      $deletePostUserRelationshipStmt->bindValue(1, $postId);
+      $deletePostUserRelationshipStmt->bindValue(2, $userId);
+      $deletePostUserRelationshipStmt->executeStatement();
+
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao deletar relação entre post e usuário!', 
+                              ['id' => $postId, 'userId' => $userId, 'exception' => $th]);
+        throw new Exception('Erro ao deletar relação entre post e usuário!');
+    }
   }
 
-  public function deleteAllPostUserRelantionship(int $userId): bool {
-    $deletePostUsersStmt = $this->connection->prepare(sql: $this->deletePostUsers);
-    $deletePostUsersStmt->bindValue(1, $userId);
+  public function deleteAllPostUserRelantionship(int $userId) {
 
-    return (bool) $deletePostUsersStmt->executeStatement();
+    try {
+
+      $deletePostUsersStmt = $this->connection->prepare(sql: $this->deletePostUsers);
+      $deletePostUsersStmt->bindValue(1, $userId);
+      $deletePostUsersStmt->executeStatement();
+
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao deletar as relações entre posts e usuário!', 
+                                ['userId' => $userId, 'exception' => $th]);
+          throw new Exception('Erro ao deletar as relações entre posts e usuário!');
+    }
+
   }
 
-  public function deleteAllUserReactionsByUserId(int $userId): bool {
-    $deleteAllUserReactionsStmt = $this->connection->prepare($this->deleteAllUserReactions);
-    $deleteAllUserReactionsStmt->bindValue(1, $userId);
+  public function deleteAllUserReactionsByUserId(int $userId){
 
-    return (bool)$deleteAllUserReactionsStmt->executeStatement();
+    try {
+
+      $deleteAllUserReactionsStmt = $this->connection->prepare($this->deleteAllUserReactions);
+      $deleteAllUserReactionsStmt->bindValue(1, $userId);
+      $deleteAllUserReactionsStmt->executeStatement();
+
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao deletar as reações do usuário!', 
+                                ['userId' => $userId, 'exception' => $th]);
+          throw new Exception('Erro ao deletar as reações do usuário!');      
+    }
   }
 
-  public function deleteAllUserCommentsByUserId(int $userId): bool {
-    $deleteAllUserCommentsStmt = $this->connection->prepare($this->deleteAllUserComments);
-    $deleteAllUserCommentsStmt->bindValue(1, $userId);
+  public function deleteAllUserCommentsByUserId(int $userId) {
 
-    return (bool)$deleteAllUserCommentsStmt->executeStatement();
+    try {
+
+      $deleteAllUserCommentsStmt = $this->connection->prepare($this->deleteAllUserComments);
+      $deleteAllUserCommentsStmt->bindValue(1, $userId);
+      $deleteAllUserCommentsStmt->executeStatement();
+
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao deletar os comentários do usuário!', 
+                                ['userId' => $userId, 'exception' => $th]);
+          throw new Exception('Erro ao deletar os comentários do usuário!');      
+    }
   }
 
-  public function deletePostCommentsInRange(array $postIds): bool {
-    return (bool)$this->connection->executeStatement($this->deleteAllPostCommentsInRange,
+  public function deletePostCommentsInRange(array $postIds) {
+
+    try {
+      
+      $this->connection->executeStatement($this->deleteAllPostCommentsInRange,
                                                 [$postIds],
                                                 [$this->connection::PARAM_INT_ARRAY]);
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao deletar os comentários dos posts!', 
+                                ['postIds' => $postIds, 'exception' => $th]);
+          throw new Exception('Erro ao deletar os comentários dos posts!');   
+    }
   }
 
-  public function deletePostReactionsInRange(array $postIds) : bool {
-    return (bool)$this->connection->executeStatement($this->deleteAllPostReactionsInRange,
-                                                      [$postIds],
-                                                      [$this->connection::PARAM_INT_ARRAY]);
+  public function deletePostReactionsInRange(array $postIds) {
+
+    try {
+      $this->connection->executeStatement($this->deleteAllPostReactionsInRange,
+                                          [$postIds],
+                                          [$this->connection::PARAM_INT_ARRAY]);
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao deletar reações dos posts!', 
+                                ['postIds' => $postIds, 'exception' => $th]);
+          throw new Exception('Erro ao deletar reações dos posts!');   
+    }
   }
 
-  public function deletePostCategoriesInRange(array $postIds) : bool {
-    return (bool)$this->connection->executeStatement($this->deleteAllPostCategoriesInRange,
-                                                      [$postIds],
-                                                      [$this->connection::PARAM_INT_ARRAY]);
+  public function deletePostCategoriesInRange(array $postIds) {
+    try {
+      $this->connection->executeStatement($this->deleteAllPostCategoriesInRange,
+                                            [$postIds],
+                                            [$this->connection::PARAM_INT_ARRAY]);
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao deletar as categorias dos posts!', 
+                                ['postIds' => $postIds, 'exception' => $th]);
+          throw new Exception('Erro ao deletar as categorias dos posts!');      
+    }    
   }
 
-  public function deletePostTagsInRange(array $postIds) : bool {
-    return (bool)$this->connection->executeStatement($this->deleteAllPostTagsInRange,
-                                                      [$postIds],
-                                                      [$this->connection::PARAM_INT_ARRAY]);
+  public function deletePostTagsInRange(array $postIds) {
+
+    try {
+
+      $this->connection->executeStatement($this->deleteAllPostTagsInRange,
+                                            [$postIds],
+                                            [$this->connection::PARAM_INT_ARRAY]);	      
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao deletar tags dos posts!', 
+                                ['postIds' => $postIds, 'exception' => $th]);
+          throw new Exception('Erro ao deletar tags dos posts!');     
+    }  
+    
   }
 
-  public function deleteAllPostsInRange(array $postIds) : bool {
-    return (bool)$this->connection->executeStatement($this->deleteAllPostsInRange,
-                                                      [$postIds],
-                                                      [$this->connection::PARAM_INT_ARRAY]);
+  public function deleteAllPostsInRange(array $postIds){
+
+    try {
+      $this->connection->executeStatement($this->deleteAllPostsInRange,
+                                              [$postIds],
+                                              [$this->connection::PARAM_INT_ARRAY]);
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao deletar posts em lote!', 
+                                ['postIds' => $postIds, 'exception' => $th]);
+          throw new Exception('Erro ao deletar posts em lote!');     
+    }  
   }
 
   public function getAllPosts(): array{
+    
+    try {
 
-    $posts = $this->connection->executeQuery($this->selectAllPostsQuery);
-    $posts = $posts->fetchAllAssociative();
+      $posts = $this->connection->executeQuery($this->selectAllPostsQuery);
+      $posts = $posts->fetchAllAssociative();
 
-    return $posts;
+      return $posts;
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao ler todos os posts', 
+                                ['exception' => $th]);
+          throw new Exception('Erro ao ler todos os posts!');     
+    }
+    
   }
 
   public function getPostBySlug(string $slug): array|null{
     
-    $getPost = $this->connection->prepare($this->selectPostBySlugQuery);
-    $getPost->bindValue(1, $slug);
+    try {
+      $getPost = $this->connection->prepare($this->selectPostBySlugQuery);
+      $getPost->bindValue(1, $slug);
 
-    return $getPost->executeQuery()->fetchAssociative() ?: null;
+      return $getPost->executeQuery()->fetchAssociative() ?: null;
+
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao ler post por slug!', 
+                                ['slug' => $slug, 'exception' => $th]);
+          throw new Exception('Erro ao ler post por slug!');     
+    }    
   }
 
   public function getPostByID(int $id): array|null {
+    try {
+      $getPost = $this->connection->prepare($this->selectPostByID_Query);
+      $getPost->bindValue(1, $id);
 
-    $getPost = $this->connection->prepare($this->selectPostByID_Query);
-    $getPost->bindValue(1, $id);
+      return $getPost->executeQuery()->fetchAssociative() ?: null;
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao ler post por id!', 
+                                ['id' => $id, 'exception' => $th]);
+          throw new Exception('Erro ao ler post por id!');     
+    }
 
-    return $getPost->executeQuery()->fetchAssociative() ?: null;
   }
 
   public function getUsersPostsByUserId(int $userId): array {
-    $selectPostsByUserIdStmt = $this->connection->prepare($this->selectPostsByUserId);
-    $selectPostsByUserIdStmt->bindValue(1, $userId);
+    try {
+      $selectPostsByUserIdStmt = $this->connection->prepare($this->selectPostsByUserId);
+      $selectPostsByUserIdStmt->bindValue(1, $userId);
 
-    return $selectPostsByUserIdStmt->executeQuery()->fetchAllAssociative() ?: null;
+      return $selectPostsByUserIdStmt->executeQuery()->fetchAllAssociative() ?: null;
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao ler posts do usuário!', 
+                                ['userId' => $userId, 'exception' => $th]);
+          throw new Exception('Erro ao ler posts do usuário!');     
+    }    
   }
 
   public function getPostIdsInRange(array $postIds): array {
-    return $this->connection->executeQuery($this->selectPostIdsInRange, 
+    try {
+      return $this->connection->executeQuery($this->selectPostIdsInRange, 
                                           [$postIds], 
                                           [$this->connection::PARAM_INT_ARRAY])->fetchAllAssociative();
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao ler posts em lote!', 
+                                ['postIds' => $postIds, 'exception' => $th]);
+          throw new Exception('Erro ao ler posts em lote!');     
+    }    
+   
   }
 
   public function getOwnershipCount(int $postId): int {
-    $getOwnershipCountQuery = $this->connection->prepare($this->selectOwnershipCount);
-    $getOwnershipCountQuery->bindValue(1, $postId);
-    return (int)$getOwnershipCountQuery->executeQuery()->fetchOne();
+
+    try {
+      $getOwnershipCountQuery = $this->connection->prepare($this->selectOwnershipCount);
+      $getOwnershipCountQuery->bindValue(1, $postId);
+
+      return (int)$getOwnershipCountQuery->executeQuery()->fetchOne();
+
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao ler quantidade de autores do post!', 
+                                ['postId' => $postId, 'exception' => $th]);
+          throw new Exception('Erro ao ler quantidade de autores do post!');     
+    }  
+
   }
   public function getOwnership(int $postId): ?int {
-    $selectOwnershipStmt = $this->connection->prepare($this->selectOwnership);
-    $selectOwnershipStmt->bindValue(1, $postId);
-    $ownerId = $selectOwnershipStmt->executeQuery()->fetchOne();
-    
-    return ($ownerId !== false ) ? (int)$ownerId : null;
-  }
 
-  private static function databaseExceptionHandler(Throwable $e)   {
-    $errors= [
-      \Doctrine\DBAL\Exception\ConnectionException::class => 'Connection Error!',
-      \Doctrine\DBAL\Exception\UniqueConstraintViolationException::class => 'Slug Already exists. Choose another title.',
-      \Doctrine\DBAL\Exception\SyntaxErrorException::class => 'Syntax Error. The developer messed up!'
-    ];
+    try {
+      $selectOwnershipStmt = $this->connection->prepare($this->selectOwnership);
+      $selectOwnershipStmt->bindValue(1, $postId);
+      $ownerId = $selectOwnershipStmt->executeQuery()->fetchOne();
+      
+      return ($ownerId !== false ) ? (int)$ownerId : null;
 
-    $message = $errors[get_class(object: $e)] ?? 'General Error';
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao ler autoria do post!', 
+                                ['postId' => $postId, 'exception' => $th]);
+          throw new Exception('Erro ao ler autoria do post!');     
+    }
 
-    return array('Status' => 0, 'Message' => $message);
   }
   
 }

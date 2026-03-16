@@ -3,10 +3,12 @@
 namespace Lovillela\BlogApp\Services;
 
 use Doctrine\DBAL\Connection;
+use Exception;
 use Lovillela\BlogApp\Repositories\PostRepository;
 use Throwable;
 use Lovillela\BlogApp\Services\SlugService;
 use Lovillela\BlogApp\Services\InputSanitizationService;
+use Psr\Log\LoggerInterface;
 
 class PostManagementService {
 
@@ -14,25 +16,24 @@ class PostManagementService {
   private SlugService $slugService;
   private InputSanitizationService $sanitizationService;
   private Connection $connection;
+  private LoggerInterface $logger;
   private const ENTITY = 'post';
   private const BATCH_SIZE = 1000;
 
-  public function __construct(PostRepository $postRepository, SlugService $slugService, 
-                              InputSanitizationService $sanitizationService, Connection $connection){
+  public function __construct(PostRepository $postRepository, 
+                              SlugService $slugService, 
+                              InputSanitizationService $sanitizationService, 
+                              Connection $connection,
+                              LoggerInterface $logger){
     
     $this->postRepository = $postRepository;
     $this->slugService = $slugService;
     $this->sanitizationService = $sanitizationService;
     $this->connection = $connection;
-    
-    }
+    $this->logger = $logger;
+  }
 
   public function create(string $title, string $text, int $userID): array{
-    
-    /**
-     * Checar autorização e autenticação antes
-     * Check authorization and authentication prior
-     */
     
     $title = $this->sanitizationService->postTitleSanitize($title);
     $text = $this->sanitizationService->postContentSanitize($text);
@@ -49,11 +50,13 @@ class PostManagementService {
 
       $this->connection->commit();
 
-      return (array('Status' => 1, 'Message' => 'Post Created Succesfully!'));
+      return ['status' => true, 'message' => 'Post criado com sucesso!'];
+      
 
-    }catch(Throwable $e){
-        $this->connection->rollBack();
-        return $this->databaseExceptionHandler($e);
+    }catch(Throwable $th){
+      $this->connection->rollBack();
+      $this->logger->error('Erro ao criar post!', []);
+      return ['status' => false, 'message' => $th->getMessage()];
     }
   }
 
@@ -74,10 +77,13 @@ class PostManagementService {
       }
 
       $this->connection->commit();
+
+      return ['status' => true, 'message' => 'Post deletado com sucesso!'];
       
-    } catch (\Throwable $th) {
+    } catch (Throwable $th) {
       $this->connection->rollBack();
-      //throw $th;
+      $this->logger->error('Erro ao deletar post!', ['id' => $postId]);
+      return ['status' => false, 'message' => $th->getMessage()];
     }
   }
 
@@ -96,11 +102,13 @@ class PostManagementService {
       $this->postRepository->update($title, $text, $slug, $postId);
 
       $this->connection->commit();
-      return true;
       
-    } catch (\Throwable $th) {
-      $this->connection->rollBack();
-      return false;
+      return ['status' => true, 'message' => 'Post atualizado com sucesso!'];
+      
+    } catch (Throwable $th) {
+        $this->connection->rollBack();
+        $this->logger->warning('Erro ao atualizar post!', ['id' => $postId]);
+        return ['status' => false, 'message' => $th->getMessage()];
     }
   }
 
@@ -146,43 +154,55 @@ class PostManagementService {
 
       $this->connection->commit();
     } catch (\Throwable $th) {
-      //throw $th;
-      $this->connection->rollBack();
+        $this->connection->rollBack();
+        $this->logger->warning('Erro ao deletar posts do usuário!', ['userId' => $userId]);
+        return ['status' => false, 'message' => 'Erro ao deletar posts!'];
     }
   }
 
-  public function getAllPosts(): array{
-    return $this->postRepository->getAllPosts();
+  public function getAllPosts(): ?array{
+
+    try {
+      return $this->postRepository->getAllPosts();
+    } catch (Throwable $th) {
+      $this->logger->warning('Erro ao ler todos os posts!', []);
+      return [];
+    }
   }
 
   public function getPostBySlug(string $slug): ?array {
 
-    $post = $this->postRepository->getPostBySlug($slug);
+    try {
+      $post = $this->postRepository->getPostBySlug($slug);
 
-    return $post ? $this->sanitizationService->displayPostSanitize($post) : null;
+      return $post ? $this->sanitizationService->displayPostSanitize($post) : null;
+
+    } catch (Throwable $th) {
+      $this->logger->warning('Erro ao ler post por slug!', ['slug' => $slug]);
+      return null;
+    }    
   }
 
   public function getPostById(int $postId): ?array {
+    try {
+      $post = $this->postRepository->getPostByID($postId);
 
-    $post = $this->postRepository->getPostByID($postId);
+      return $post ? $this->sanitizationService->displayPostSanitize($post) : null;
 
-    return $post ? $this->sanitizationService->displayPostSanitize($post) : null;
+    } catch (Throwable $th) {
+      $this->logger->warning('Erro ao ler o post por id!', ['postId' => $postId]);
+      return null;
+    }
+
   }
 
   public function getOwnershipById(int $postId): ?int {
-    return $this->postRepository->getOwnership($postId);
+    try {
+      return $this->postRepository->getOwnership($postId);
+    } catch (Throwable $th) {
+      $this->logger->warning('Erro ao ler autoria do post!', ['postId' => $postId]);
+      return null;
+    }
   }
-
-  private static function databaseExceptionHandler(Throwable $e): array {
-    $errors= [
-      \Doctrine\DBAL\Exception\ConnectionException::class => 'Connection Error!',
-      \Doctrine\DBAL\Exception\UniqueConstraintViolationException::class => 'Slug Already exists. Choose another title.',
-      \Doctrine\DBAL\Exception\SyntaxErrorException::class => 'Syntax Error. The developer messed up!'
-    ];
-
-    $message = $errors[get_class(object: $e)] ?? 'General Error';
-
-    return array('Status' => 0, 'Message' => $message);
-  }
-
+  
 }
