@@ -17,10 +17,12 @@ class RedirectService{
   public function redirectToUserDashboard() {
     $dashboardLink = "https://$_SERVER[HTTP_HOST]/dashboard/";
     header('Location: ' . $dashboardLink);
+    exit;
   }
 
   public function redirectToAdminDashboard() {
     $dashboardLink = "https://$_SERVER[HTTP_HOST]/admin/dashboard/";
     header('Location: ' . $dashboardLink);
+    exit;
   }
 }
