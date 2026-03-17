@@ -4,7 +4,6 @@ namespace Lovillela\BlogApp\Controllers;
 
 use Lovillela\BlogApp\Services\AuthManagerService;
 use Lovillela\BlogApp\Services\RedirectService;
-use Lovillela\BlogApp\Config\Permissions\UserPermissions;
 
 final class AuthController{
 
@@ -33,10 +32,10 @@ final class AuthController{
     unset($_POST['password'], $this->password);
     $userData = $this->authManagerService->getUserData();
 
-    if ($userData->permissions->value === UserPermissions::RegularUser->value) {
+    if ($this->authManagerService->isRegularUserDashboardAllowed($userData)) {
       $this->redirectService->redirectToUserDashboard();
-    }elseif ($userData->permissions->value === UserPermissions::Admin->value || 
-            $userData->permissions->value === UserPermissions::Moderator->value) {
+    }elseif ($this->authManagerService->isAdmin($userData) || 
+            $this->authManagerService->isModerator($userData)) {
       $this->redirectService->redirectToAdminDashboard();
     }
 

@@ -42,7 +42,8 @@ final class AdminController extends BaseController{
 
   public function dashboard(){
   
-    if (!$this->authManagerService->isSessionActive()) {
+    if (!$this->authManagerService->isSessionActive() ||
+        !$this->authManagerService->isAdmin($this->authManagerService->getUserData())) {
       $this->authManagerService->destroySession();
       $this->redirectService->redirectToHome();
       exit;
@@ -65,7 +66,8 @@ final class AdminController extends BaseController{
 
   public function userCreatorForm(){
     
-    if (!$this->authManagerService->isSessionActive()) {
+    if (!$this->authManagerService->isSessionActive() ||
+        !$this->authManagerService->isAdmin($this->authManagerService->getUserData())) {
       $this->authManagerService->destroySession();
       $this->redirectService->redirectToHome();
       exit;
@@ -88,7 +90,9 @@ final class AdminController extends BaseController{
 
   public function createUserAction() {
 
-    if (!$this->authManagerService->isSessionActive() || !$this->authManagerService->validateCsrfToken($_POST['csrfToken'])) {
+    if (!$this->authManagerService->isSessionActive() || 
+        !$this->authManagerService->validateCsrfToken($_POST['csrfToken']) ||
+        !$this->authManagerService->isAdmin($this->authManagerService->getUserData())) {
       $this->authManagerService->destroySession();
       $this->redirectService->redirectToHome();
       exit;
