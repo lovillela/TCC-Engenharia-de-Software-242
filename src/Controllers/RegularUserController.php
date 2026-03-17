@@ -49,13 +49,15 @@ final class RegularUserController extends BaseController{
       'headerText' => 'SignUp page',
       'errorMessage' => '',
       'generalMessage' => '',
+      'csrfToken' => $this->authManagerService->getCsrfToken(),
     ];
 
     $username = trim($_POST['newUser']);
     $email = trim($_POST['newUserEmail']);
     $password = trim($_POST['newUserPassword']);
 
-    if (empty($username) || empty($email) || empty($password)) {
+    if (empty($username) || empty($email) || empty($password) || 
+        !$this->authManagerService->validateCsrfToken($_POST['csrfToken'])) {
       $this->redirectService->redirectToHome();
     }
     
@@ -81,6 +83,7 @@ final class RegularUserController extends BaseController{
       'headerText' => 'SignUp page',
       'errorMessage' => '',
       'generalMessage' => '',
+      'csrfToken' => $this->authManagerService->getCsrfToken(),
     ];
 
     $viewData = $this->prepareView(ViewPath::FRONTEND_SIGNUP, $headTitle, $bodyData);
@@ -100,6 +103,7 @@ final class RegularUserController extends BaseController{
       'headerText' => 'Dashboard',
       'errorMessage' => '',
       'generalMessage' => '',
+      'csrfToken' => $this->authManagerService->getCsrfToken(),
     ];
     
     
