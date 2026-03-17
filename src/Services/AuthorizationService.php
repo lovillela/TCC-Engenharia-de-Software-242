@@ -23,6 +23,18 @@ final class AuthorizationService {
     return ($permission === UserPermissions::RegularUser->value) ? true : false;
   }
 
+  public function isAdmin(UserIdentity $userData) : bool {
+    $permission = $this->userManagementService->getUserPermissionsById($userData->userId);
+
+    return ($permission === UserPermissions::Admin->value) ? true : false ;
+  }
+
+  public function isModerator(UserIdentity $userData) : bool {
+    $permission = $this->userManagementService->getUserPermissionsById($userData->userId);
+
+    return ($permission === UserPermissions::Moderator->value) ? true : false ;
+  }  
+
   public function canCreatePost(UserIdentity $userData): bool{
     $permission = $this->userManagementService->getUserPermissionsById($userData->userId);
 

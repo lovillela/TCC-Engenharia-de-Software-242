@@ -76,10 +76,28 @@ final class AuthManagerService {
     return $this->sessionService->isActive();
   }
 
-  public function isRegularUserDashboardAllowed(UserIdentity $userData) {
+  public function isRegularUserDashboardAllowed(UserIdentity $userData): bool {
 
     if (!$this->authorizationService->isRegularUserDashboardAllowed($userData)) {
       $this->logger->alert('Acesso negado ao acessar dashboard de usuário', ['userId' => $userData->userId]);
+      return false;
+    }
+
+    return true;
+  }
+
+  public function isAdmin(UserIdentity $userData) :bool {
+    if (!$this->authorizationService->isAdmin($userData)) {
+      $this->logger->alert('Acesso negado à função administrativa!', ['userId' => $userData->userId]);
+      return false;
+    }
+
+    return true;
+  }
+
+    public function isModerator(UserIdentity $userData) :bool {
+    if (!$this->authorizationService->isModerator($userData)) {
+      $this->logger->alert('Acesso negado à função de moderação!', ['userId' => $userData->userId]);
       return false;
     }
 
