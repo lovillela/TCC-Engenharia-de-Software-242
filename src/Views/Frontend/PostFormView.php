@@ -21,7 +21,9 @@
   Title: <input type="text" name="postTitle" id="postTitle" required> <br>
   
   Text: <br>
-  <textarea name="blogPost" id="blogPost" cols="30" rows="10"></textarea>
+  <!--<textarea name="blogPost" id="blogPost" cols="30" rows="10"></textarea>-->
+
+  <?php require_once __DIR__ . "/../Partial/QuillPartialView.php" ?>
   
   <button type="submit">Create</button>
 
