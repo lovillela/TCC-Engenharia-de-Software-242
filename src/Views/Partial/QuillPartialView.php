@@ -10,14 +10,14 @@
 
 <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 <script>
-  let quill = new Quill('#quill-container', {
+  let quill = new Quill('quill-container', {
     theme: 'snow',
     placeholder: 'Seu texto aqui',
     modules: {
         toolbar: [
             ['bold', 'italic', 'underline'],
             [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-            ['link', 'clean']
+            ['link', 'clean', 'code-block']
         ]
     }
   });
