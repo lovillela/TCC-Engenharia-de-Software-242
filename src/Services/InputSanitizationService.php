@@ -63,7 +63,7 @@ final class InputSanitizationService{
      * É possível utilizar, mas é uma biblioteca pesada.
      * This may be used, it is a heavy library however.
      */
-    //$post['content'] = $this->postContentSanitize($post['content']);
+    $post['content'] = $this->postContentSanitize($post['content']);
 
     return $post;
   }
