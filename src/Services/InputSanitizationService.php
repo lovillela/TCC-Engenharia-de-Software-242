@@ -20,6 +20,7 @@ final class InputSanitizationService{
     $this->htmlPurifierConfig = HTMLPurifier_Config::createDefault();
     $this->htmlPurifierConfig->set('Cache.SerializerPath', $this::CACHE_PATH);
     $this->htmlPurifierConfig->set('HTML.Allowed', $this::ALLOWED_TAGS);
+    $this->htmlPurifierConfig->set('Core.EscapeInvalidTags', true);
     $this->htmlPurifier = new HTMLPurifier($this->htmlPurifierConfig);
   }
   public function urlRouteSanitize(string $url): string{
