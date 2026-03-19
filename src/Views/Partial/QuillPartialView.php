@@ -2,11 +2,11 @@
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css">
 
-<div id="quill-container">
+<div id="quill-container" style="height: 300px; background: #fff; border-radius: 4px;">
 
 </div>
 
-<input type="hidden" name="content" id="quill-input">
+<input type="hidden" name="blogPost" id="quill-input">
 
 <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 <script>
