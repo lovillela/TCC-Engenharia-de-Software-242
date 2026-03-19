@@ -3,16 +3,16 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css">
 
 <div id="quill-container" style="height: 300px; background: #fff; border-radius: 4px;">
-
+  <?php echo isset($blogPost) ? $blogPost : ''; ?>
 </div>
 
 <input type="hidden" name="blogPost" id="quill-input">
 
 <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 <script>
-  var quill = new Quill('#quill-container', {
+  let quill = new Quill('#quill-container', {
     theme: 'snow',
-    placeholder: 'Escreva algo incrível...',
+    placeholder: 'Seu texto aqui',
     modules: {
         toolbar: [
             ['bold', 'italic', 'underline'],
@@ -25,7 +25,7 @@
   let quillForm = document.getElementById('quill-container').closest('form');
 
   if (quillForm) {
-    form.addEventListener('submit', function(){
+    quillForm.addEventListener('submit', function(){
       let quillInput = document.getElementById('quill-input');
       quillInput.value = quill.getSemanticHTML();
     });
