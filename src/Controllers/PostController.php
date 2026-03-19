@@ -86,7 +86,7 @@ final class PostController extends BaseController{
     
     $response = $this->postService->create($title, $text, $userData->userId);
 
-    if (!isset($response)) {
+    if (!isset($response) || $response['status'] === false) {
       $this->redirectService->redirectToUserDashboard();
       exit;
     }
@@ -96,8 +96,9 @@ final class PostController extends BaseController{
     $bodyData = [
       'title' => 'Post Form',
       'headerText' => 'Post Form',
-      'errorMessage' => $response['Message'],
+      'errorMessage' => $response['message'],
       'generalMessage' => '',
+      'text' => $response['text'],
     ];
 
     $viewData = $this->prepareView(ViewPath::FRONTEND_POSTFORM, $headTitle, $bodyData);
@@ -229,10 +230,10 @@ final class PostController extends BaseController{
       'errorMessage' => '',
       'generalMessage' => '',
       'csrfToken' => $this->authManagerService->getCsrfToken(),
-      'postTitle' => $title,
-      'slugUrl' => $slug,
-      'blogPost' => $text,
-      'postId' => $postId,
+      'postTitle' => $response['title'],
+      'slugUrl' => $response['slug'],
+      'blogPost' => $response['text'],
+      'postId' => $response['postId'],
       'status' => $response['status'],
       'message' => $response['message'],
     ];

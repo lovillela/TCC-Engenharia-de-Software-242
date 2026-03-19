@@ -50,7 +50,7 @@ class PostManagementService {
 
       $this->connection->commit();
 
-      return ['status' => true, 'message' => 'Post criado com sucesso!'];
+      return ['status' => true, 'message' => 'Post criado com sucesso!', 'title' => $title,'text' => $text];
       
 
     }catch(Throwable $th){
@@ -103,7 +103,12 @@ class PostManagementService {
 
       $this->connection->commit();
       
-      return ['status' => true, 'message' => 'Post atualizado com sucesso!'];
+      return ['status' => true, 
+              'message' => 'Post atualizado com sucesso!',
+              'title' => $title,
+              'text' => $text,
+              'slug' => $slug,
+              'postId' => $postId];
       
     } catch (Throwable $th) {
         $this->connection->rollBack();
