@@ -12,7 +12,7 @@ final class InputSanitizationService{
   private HTMLPurifier_Config $htmlPurifierConfig;
   private const CACHE_PATH = __DIR__ . '/../../cache/htmlpurifier/';
   private const ALLOWED_TAGS = 'a[href|style],b,blockquote,br,code,div[style],' .
-                             'h1,h2,h3,h4,h5,h6,hr,i,img[src],li,ol,p,strong,' .
+                             'h1,h2,h3,h4,h5,h6,hr,i,img[src],li,ol,p,pre,strong,' .
                              'table,tbody,td,th,thead,tr,ul';
 
   public function __construct() {
@@ -20,6 +20,7 @@ final class InputSanitizationService{
     $this->htmlPurifierConfig = HTMLPurifier_Config::createDefault();
     $this->htmlPurifierConfig->set('Cache.SerializerPath', $this::CACHE_PATH);
     $this->htmlPurifierConfig->set('HTML.Allowed', $this::ALLOWED_TAGS);
+    $this->htmlPurifierConfig->set('Core.EscapeInvalidTags', true);
     $this->htmlPurifier = new HTMLPurifier($this->htmlPurifierConfig);
   }
   public function urlRouteSanitize(string $url): string{
@@ -62,7 +63,7 @@ final class InputSanitizationService{
      * É possível utilizar, mas é uma biblioteca pesada.
      * This may be used, it is a heavy library however.
      */
-    //$post['content'] = $this->postContentSanitize($post['content']);
+    $post['content'] = $this->postContentSanitize($post['content']);
 
     return $post;
   }

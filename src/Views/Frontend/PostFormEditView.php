@@ -26,7 +26,9 @@
   <input type="text" name="slugUrl" id="slugUrl" value="<?php echo($slugUrl);?>" required> <br>
   
   Text: <br>
-  <textarea name="blogPost" id="blogPost" cols="30" rows="10"><?php echo($blogPost);?></textarea>
+  <!--<textarea name="blogPost" id="blogPost" cols="30" rows="10"><?php /*echo($blogPost);*/?></textarea>-->
+
+  <?php require_once $textEditor ?>
   
   <button type="submit">edit</button>
 
