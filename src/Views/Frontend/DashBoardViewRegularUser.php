@@ -2,3 +2,5 @@
 <a href="/logout/">Logout</a>
 <br>
 <a href="/dashboard/post/add/">Add a new blog post </a>
+
+<?php require_once $postList;?>
