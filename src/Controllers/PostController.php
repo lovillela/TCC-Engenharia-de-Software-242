@@ -99,6 +99,7 @@ final class PostController extends BaseController{
       'errorMessage' => $response['message'],
       'generalMessage' => '',
       'text' => $response['text'],
+      'textEditor' => ViewPath::PARTIAL_TEXT_EDITOR->getPath(),
     ];
 
     $viewData = $this->prepareView(ViewPath::FRONTEND_POSTFORM, $headTitle, $bodyData);
@@ -154,6 +155,7 @@ final class PostController extends BaseController{
       'errorMessage' => '',
       'generalMessage' => '',
       'csrfToken' => $this->authManagerService->getCsrfToken(),
+      'textEditor' => ViewPath::PARTIAL_TEXT_EDITOR->getPath(),
     ];
 
     $viewData = $this->prepareView(ViewPath::FRONTEND_POSTFORM, $headTitle, $bodyData);
@@ -190,6 +192,7 @@ final class PostController extends BaseController{
       'slugUrl' => $postContent['slug'],
       'blogPost' => $postContent['content'],
       'postId' => $postContent['id'],
+      'textEditor' => ViewPath::PARTIAL_TEXT_EDITOR->getPath(),
     ];
 
     $viewData = $this->prepareView(ViewPath::FRONTEND_EDIT_POSTFORM, $headTitle, $bodyData);
@@ -236,6 +239,7 @@ final class PostController extends BaseController{
       'postId' => $response['postId'],
       'status' => $response['status'],
       'message' => $response['message'],
+      'textEditor' => ViewPath::PARTIAL_TEXT_EDITOR->getPath(),
     ];
 
     $viewData = $this->prepareView(ViewPath::FRONTEND_EDIT_POSTFORM, $headTitle, $bodyData);

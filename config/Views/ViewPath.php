@@ -30,9 +30,18 @@ enum ViewPath: string{
   case FRONTEND_SIGNUP = 'Frontend/SignupView.php';
   case FRONTEND_EDIT_POSTFORM = 'Frontend/PostFormEditView.php';
   /**
-   * Fim/End Admin Views
+   * Fim/End Frontend Views
    */
   /**************************************************************************/
+  /**
+   * Partial views
+   */
+  case PARTIAL_TEXT_EDITOR = 'Partial/QuillPartialView.php';
+    /**
+   * Fim/End Partial Views
+   */
+  /**************************************************************************/
+  
   public function getPath() : string {
     return self::BASE_PATH . $this->value;
   }

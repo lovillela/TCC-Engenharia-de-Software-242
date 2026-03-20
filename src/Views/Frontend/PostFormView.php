@@ -23,7 +23,7 @@
   Text: <br>
   <!--<textarea name="blogPost" id="blogPost" cols="30" rows="10"></textarea>-->
 
-  <?php require_once __DIR__ . "/../Partial/QuillPartialView.php" ?>
+  <?php require_once $textEditor ?>
   
   <button type="submit">Create</button>
 
