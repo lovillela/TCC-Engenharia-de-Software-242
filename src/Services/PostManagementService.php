@@ -201,6 +201,28 @@ class PostManagementService {
 
   }
 
+  public function getAllPostsByUserId(int $userId) {
+
+    try {
+      $userPostsData = [];
+      $userPosts = array_column($this->postRepository->getUsersPostsByUserId($userId), 'id_post');
+
+      if (!isset($userPosts)) {
+        return null;
+      }
+
+      foreach ($userPosts as $userPost) {
+        array_push($userPostsData, $this->getPostById($userPost));
+      }
+
+      return isset($$userPostsData) ? $userPostsData : null;
+    } catch (Throwable $th) {
+      $this->logger->notice('Erro ao ler posts do usuário', ['userId' => $userId]);
+      return null;
+    }
+    
+  }
+
   public function getOwnershipById(int $postId): ?int {
     try {
       return $this->postRepository->getOwnership($postId);
