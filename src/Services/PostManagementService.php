@@ -215,7 +215,7 @@ class PostManagementService {
         array_push($userPostsData, $this->getPostById($userPost));
       }
 
-      return isset($$userPostsData) ? $userPostsData : null;
+      return isset($userPostsData) ? $userPostsData : null;
     } catch (Throwable $th) {
       $this->logger->notice('Erro ao ler posts do usuário', ['userId' => $userId]);
       return null;
