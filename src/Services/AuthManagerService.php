@@ -121,7 +121,7 @@ final class AuthManagerService {
       return false;
     }
 
-    return false;
+    return true;
   }
 
   public function canEditPost(UserIdentity $userData, int $postId) {
