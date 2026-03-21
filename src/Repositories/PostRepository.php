@@ -21,7 +21,7 @@ class PostRepository{
   private string $selectPostsByUserId = 'SELECT `id_post` FROM `post_users` WHERE `id_user` = ?';
   private string $selectPostIdsInRange = 'SELECT DISTINCT `id_post` FROM `post_users` WHERE `id_post` IN (?)';
   private string $selectOwnership = 'SELECT `id_user` FROM `post_users` WHERE `id_post` = ?';
-  private string $selectOwnershipCount = 'SELECT COUNT (*) FROM `post_users` WHERE `id_post` = ?';
+  private string $selectOwnershipCount = 'SELECT COUNT(*) FROM `post_users` WHERE `id_post` = ?';
 
   //Joins
   private string $joinPost_PostUsers_ByUserId = 'SELECT `post`.`id`, `post`.`title` '
