@@ -3,6 +3,7 @@
 namespace Lovillela\BlogApp\Repositories;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ArrayParameterType;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Throwable;
@@ -174,7 +175,7 @@ class PostRepository{
       
       $this->connection->executeStatement($this->deleteAllPostCommentsInRange,
                                                 [$postIds],
-                                                [$this->connection::PARAM_INT_ARRAY]);
+                                                [ArrayParameterType::INTEGER]);
     } catch (Throwable $th) {
         $this->logger->error('Erro ao deletar os comentários dos posts!', 
                                 ['postIds' => $postIds, 'exception' => $th]);
@@ -187,7 +188,7 @@ class PostRepository{
     try {
       $this->connection->executeStatement($this->deleteAllPostReactionsInRange,
                                           [$postIds],
-                                          [$this->connection::PARAM_INT_ARRAY]);
+                                          [ArrayParameterType::INTEGER]);
     } catch (Throwable $th) {
         $this->logger->error('Erro ao deletar reações dos posts!', 
                                 ['postIds' => $postIds, 'exception' => $th]);
@@ -199,7 +200,7 @@ class PostRepository{
     try {
       $this->connection->executeStatement($this->deleteAllPostCategoriesInRange,
                                             [$postIds],
-                                            [$this->connection::PARAM_INT_ARRAY]);
+                                            [ArrayParameterType::INTEGER]);
     } catch (Throwable $th) {
         $this->logger->error('Erro ao deletar as categorias dos posts!', 
                                 ['postIds' => $postIds, 'exception' => $th]);
@@ -213,7 +214,7 @@ class PostRepository{
 
       $this->connection->executeStatement($this->deleteAllPostTagsInRange,
                                             [$postIds],
-                                            [$this->connection::PARAM_INT_ARRAY]);	      
+                                            [ArrayParameterType::INTEGER]);	      
     } catch (Throwable $th) {
         $this->logger->error('Erro ao deletar tags dos posts!', 
                                 ['postIds' => $postIds, 'exception' => $th]);
@@ -227,7 +228,7 @@ class PostRepository{
     try {
       $this->connection->executeStatement($this->deleteAllPostsInRange,
                                               [$postIds],
-                                              [$this->connection::PARAM_INT_ARRAY]);
+                                              [ArrayParameterType::INTEGER]);
     } catch (Throwable $th) {
         $this->logger->error('Erro ao deletar posts em lote!', 
                                 ['postIds' => $postIds, 'exception' => $th]);
@@ -310,7 +311,7 @@ class PostRepository{
     try {
       return $this->connection->executeQuery($this->selectPostIdsInRange, 
                                           [$postIds], 
-                                          [$this->connection::PARAM_INT_ARRAY])->fetchAllAssociative();
+                                          [ArrayParameterType::INTEGER])->fetchAllAssociative();
     } catch (Throwable $th) {
         $this->logger->error('Erro ao ler posts em lote!', 
                                 ['postIds' => $postIds, 'exception' => $th]);
