@@ -114,20 +114,8 @@ final class PostController extends BaseController{
         || !$this->authManagerService->canDeletePost($userData, $postId) 
         || !$this->authManagerService->validateCsrfToken($_POST['csrfToken'])) {
 
-      $headTitle = 'Post Form';
-
-      $bodyData = [
-      'title' => 'Post Form',
-      'headerText' => 'Post Form',
-      'errorMessage' => 'Cannot Delete',
-      'generalMessage' => '',
-      ];
-
-      $viewData = $this->prepareView(ViewPath::FRONTEND_POSTFORM, $headTitle, $bodyData);
-      $this->viewRenderService->render($viewData);
-
+      $this->redirectService->redirectToUserDashboard();
       exit;
-      
     }
 
     $this->postService->delete($postId, $userData->userId);

@@ -25,4 +25,6 @@ $router->map(method: 'POST', route: '/dashboard/post/edit/[:postId]', target: 'P
 $router->map(method: 'GET', route: '/post/[:slug]/', target: 'PostController#show', name: 'showPost');
 $router->map(method: 'GET', route: '/post/[:slug]', target: 'PostController#redirectToTrailingSlash', name: 'showPostRedirect');
 
+$router->map('POST', '/dashboard/post/delete/[:postId]', 'PostController#deletePostAction', 'deletePostAction');
+
 return $router;
