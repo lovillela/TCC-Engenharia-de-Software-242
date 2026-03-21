@@ -111,7 +111,7 @@ final class RegularUserController extends BaseController{
       $this->redirectService->redirectToHome();
     }
 
-    $userPosts = $this->postService->getAllPostsByUserId($userData->userId);
+    $userPosts = $this->postService->getAllPostsIdsAndTitlesByUserId($userData->userId);
 
     $headTitle = 'Dashboard';
 

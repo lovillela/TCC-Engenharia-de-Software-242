@@ -23,6 +23,13 @@ class PostRepository{
   private string $selectOwnership = 'SELECT `id_user` FROM `post_users` WHERE `id_post` = ?';
   private string $selectOwnershipCount = 'SELECT COUNT (*) FROM `post_users` WHERE `id_post` = ?';
 
+  //Joins
+  private string $joinPost_PostUsers_ByUserId = 'SELECT `post`.`id`, `post`.`title` '
+                                                .'FROM `post` '
+                                                .'INNER JOIN `post_users` '
+                                                .'ON `post`.`id` = `post_users`.`id_post` '
+                                                .'WHERE `post_users`.`id_user` = ? ';
+
   //Updates
   private string $editPostQuery = 'UPDATE `post` SET `title` = ?, `content` = ?, `slug` = ? WHERE `id` = ?';
 
@@ -284,6 +291,19 @@ class PostRepository{
                                 ['userId' => $userId, 'exception' => $th]);
           throw new Exception('Erro ao ler posts do usuário!');     
     }    
+  }
+
+  public function getAllPostsIdsAndTitlesByUserId(int $userId) {
+    try {
+      $joinPost_PostUsers_ByUserIdStmt = $this->connection->prepare($this->joinPost_PostUsers_ByUserId);
+      $joinPost_PostUsers_ByUserIdStmt->bindValue(1, $userId);
+
+      return $joinPost_PostUsers_ByUserIdStmt->executeQuery()->fetchAllAssociative() ?: null;
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao ler ids e títulos de posts do usuário!', 
+                                ['userId' => $userId, 'exception' => $th]);
+          throw new Exception('Erro ao ler ids e títulos de posts do usuário!'); 
+    }
   }
 
   public function getPostIdsInRange(array $postIds): array {

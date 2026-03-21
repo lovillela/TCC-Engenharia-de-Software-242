@@ -201,18 +201,19 @@ class PostManagementService {
 
   }
 
-  public function getAllPostsByUserId(int $userId) {
+  public function getAllPostsIdsAndTitlesByUserId(int $userId) {
 
     try {
       $userPostsData = [];
-      $userPosts = array_column($this->postRepository->getUsersPostsByUserId($userId), 'id_post');
+      $userPostsIdsAndTitles = $this->postRepository->getAllPostsIdsAndTitlesByUserId($userId);
 
-      if (!isset($userPosts)) {
+      if (!isset($userPostsIdsAndTitles)) {
         return null;
       }
 
-      foreach ($userPosts as $userPost) {
-        array_push($userPostsData, $this->getPostById($userPost));
+      foreach ($userPostsIdsAndTitles as $userPost) {
+        $userPost = $this->sanitizationService->displayPostSanitize($userPost);
+        array_push($userPostsData, ['id' => $userPost['id'], 'title' => $userPost['title']]);
       }
 
       return isset($userPostsData) ? $userPostsData : null;
