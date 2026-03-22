@@ -172,6 +172,7 @@ class PostManagementService {
       $this->postRepository->deletePostCommentsInRange([$postId]);
       $this->postRepository->deletePostReactionsInRange([$postId]);
       $this->postRepository->deleteAllUsersFromPost($postId);
+      $this->postRepository->delete($postId);
       $this->slugService->deleteInRange([$postId], $this::ENTITY);
     } catch (Throwable $th) {
         $this->connection->rollBack();
