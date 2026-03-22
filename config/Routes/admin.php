@@ -13,5 +13,6 @@ $router->map('GET', 'logout/', 'AuthController#logout');
 $router->map('GET', 'dashboard/create/user/', 'AdminController#userCreatorForm');
 $router->map('POST', 'dashboard/create/user/', 'AdminController#createUserAction');
 $router->map('GET', 'dashboard/list/posts/', 'AdminController#getAllUsersPosts');
+$router->map('POST', 'dashboard/post/delete/[:postId]', 'AdminController#deletePostByAdminAction');
 
 return $router;
