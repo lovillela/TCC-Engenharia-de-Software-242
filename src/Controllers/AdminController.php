@@ -42,8 +42,11 @@ final class AdminController extends BaseController{
 
   public function dashboard(){
   
-    if (!$this->authManagerService->isSessionActive() ||
-        !$this->authManagerService->isAdmin($this->authManagerService->getUserData())) {
+    $userData = $this->authManagerService->getUserData();
+
+    if (!$this->authManagerService->isSessionActive() || 
+        !isset($userData) || 
+        !$this->authManagerService->isAdmin($userData)){
       $this->authManagerService->destroySession();
       $this->redirectService->redirectToHome();
       exit;
@@ -56,6 +59,7 @@ final class AdminController extends BaseController{
       'headerText' => 'Admin Dashboard',
       'errorMessage' => '',
       'generalMessage' => '',
+      'csrfToken' => $this->authManagerService->getCsrfToken(),
     ];
 
     $viewData = $this->prepareView(ViewPath::ADMIN_DASHBOARD, $headTitle, $bodyData);
