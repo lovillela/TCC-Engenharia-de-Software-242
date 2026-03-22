@@ -167,6 +167,7 @@ class PostManagementService {
 
   public function deletePostByAdmin(int $postId) {
     try {
+      $this->connection->beginTransaction();
       $this->postRepository->deletePostCategoriesInRange([$postId]);
       $this->postRepository->deletePostTagsInRange([$postId]);
       $this->postRepository->deletePostCommentsInRange([$postId]);
