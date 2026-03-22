@@ -158,10 +158,25 @@ class PostManagementService {
       }
 
       $this->connection->commit();
-    } catch (\Throwable $th) {
+    } catch (Throwable $th) {
         $this->connection->rollBack();
         $this->logger->warning('Erro ao deletar posts do usuário!', ['userId' => $userId]);
         return ['status' => false, 'message' => 'Erro ao deletar posts!'];
+    }
+  }
+
+  public function deletePostByAdmin(int $postId) {
+    try {
+      $this->postRepository->deletePostCategoriesInRange([$postId]);
+      $this->postRepository->deletePostTagsInRange([$postId]);
+      $this->postRepository->deletePostCommentsInRange([$postId]);
+      $this->postRepository->deletePostReactionsInRange([$postId]);
+      $this->postRepository->deleteAllUsersFromPost($postId);
+      $this->slugService->deleteInRange([$postId], $this::ENTITY);
+    } catch (Throwable $th) {
+        $this->connection->rollBack();
+        $this->logger->error('Erro ao deletar post pelo admin!', ['id' => $postId]);
+        return ['status' => false, 'message' => $th->getMessage()];
     }
   }
 

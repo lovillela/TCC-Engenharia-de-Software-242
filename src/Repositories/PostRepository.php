@@ -46,6 +46,7 @@ class PostRepository{
   private string $deleteAllPostTagsInRange = 'DELETE FROM `post_tag` WHERE `id_post` IN (?)';
   private string $deleteAllPostsInRange = 'DELETE FROM `post` WHERE `id` IN (?)';
   private string $deletePostUserRelationship = 'DELETE FROM `post_users` WHERE `id_post` = ? AND `id_user` = ?';
+  private string $deleteAllUsersFromPostUserRelationship = 'DELETE FROM `post_users` WHERE `id_post` = ?';
 
   public function __construct(Connection $connection, LoggerInterface $logger) {
     $this->connection = $connection;
@@ -139,6 +140,18 @@ class PostRepository{
     }
 
   }
+
+  public function deleteAllUsersFromPost(int $postId) {
+    try {
+      $deleteAllUsersFromPostStmt = $this->connection->prepare($this->deleteAllUsersFromPostUserRelationship);
+      $deleteAllUsersFromPostStmt->bindValue(1, $postId);
+      $deleteAllUsersFromPostStmt->executeStatement();
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao deletar autores do post!', ['postId' => $postId, 'exception' => $th]);
+        throw new Exception('Erro ao deletar autores do post!');
+    }
+  }
+
 
   public function deleteAllUserReactionsByUserId(int $userId){
 
@@ -300,7 +313,7 @@ class PostRepository{
       $selectAllPostsIdsTitles = $this->connection->prepare($this->selectAllPostsForAdminQuery);
 
       return $selectAllPostsIdsTitles->executeQuery()->fetchAllAssociative();
-    } catch (\Throwable $th) {
+    } catch (Throwable $th) {
         $this->logger->error('Erro ao ler ids e títulos de posts de todos os usuários!', 
                                 ['exception' => $th]);
           throw new Exception('Erro ao ler ids e títulos de posts de todos os usuários!');
