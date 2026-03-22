@@ -123,6 +123,7 @@ final class RegularUserController extends BaseController{
       'csrfToken' => $this->authManagerService->getCsrfToken(),
       'userPosts' => $userPosts,
       'postList' => ViewPath::PARTIAL_POST_LIST->getPath(),
+      'deleteActionUrl' => '/dashboard/post/',
       ];
 
     $viewData = $this->prepareView(ViewPath::FRONTEND_DASHBOARD_REGULARUSER, $headTitle, $bodyData);

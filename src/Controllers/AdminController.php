@@ -155,9 +155,27 @@ final class AdminController extends BaseController{
       'csrfToken' => $this->authManagerService->getCsrfToken(),
       'userPosts' => $allUserPostsList,
       'postList' => ViewPath::PARTIAL_POST_LIST->getPath(),
+      'deleteUrlAction' => '/admin/dashboard/post/',
       ];
 
     $viewData = $this->prepareView(ViewPath::ADMIN_LIST_ALL_USERS_POSTS, $headTitle, $bodyData);
     $this->viewRenderService->render($viewData);
+  }
+
+  public function deletePostByAdminAction(int $postId) {
+    $userData = $this->authManagerService->getUserData();
+
+    
+    if (!isset($userData) ||
+        !$this->authManagerService->isSessionActive() ||
+        !$this->authManagerService->isAdmin($userData) ||
+        !$this->authManagerService->validateCsrfToken($_POST['csrfToken'])) {
+      
+      $this->authManagerService->destroySession();
+      $this->redirectService->redirectToHome();
+      exit;
+    }
+    $this->postService->deletePostByAdmin($postId);
+    $this->redirectService->redirectToAdminDashboard();
   }
  }
