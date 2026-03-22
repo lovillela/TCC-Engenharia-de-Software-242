@@ -116,7 +116,8 @@ final class AuthManagerService {
 
   public function canDeletePost(UserIdentity $userData, int $postId) {
 
-    if (!$this->authorizationService->canDeletePost($userData, $postId)) {
+    if (!$this->authorizationService->canDeletePost($userData, $postId) &&
+        !$this->authorizationService->isAdmin($userData)) {
       $this->logger->alert('Acesso negado ao deletar post', ['userId' => $userData->userId, 'postId' => $postId]);
       return false;
     }
