@@ -219,15 +219,6 @@ class PostManagementService {
 
   }
 
-  public function getAllUsers(): ?array {
-    try {
-      $allUsersData = [];
-      
-    } catch (\Throwable $th) {
-      //throw $th;
-    }
-  }
-
   public function getAllPostsIdsAndTitlesByUserId(int $userId): ?array{
 
     try {
