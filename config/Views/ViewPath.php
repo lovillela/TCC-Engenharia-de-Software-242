@@ -14,6 +14,7 @@ enum ViewPath: string{
   case ADMIN_ADD_USER = 'Admin/AddUserView.php';
   case ADMIN_DASHBOARD = 'Admin/DashBoardView.php';
   case ADMIN_LOGIN = 'Admin/LoginView.php';
+  case ADMIN_LIST_ALL_USERS_POSTS = 'Admin/ListAllUsersPostsView.php';
   /**
    * Fim/End Admin Views
    */

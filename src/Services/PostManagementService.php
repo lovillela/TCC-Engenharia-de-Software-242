@@ -224,6 +224,27 @@ class PostManagementService {
     
   }
 
+  public function getAllPostsIdsAndTitlesForAdmin() {
+    try {
+      $allUsersPostsIdsAndTitles= $this->postRepository->getAllPostsIdsAndTitlesForAdmin();
+      $allUsersPostsData = [];
+
+      if (!isset($allUsersPostsIdsAndTitles)) {
+        return null;
+      }
+
+      foreach ($allUsersPostsIdsAndTitles as $userPost) {
+        $userPost = $this->sanitizationService->displayPostSanitize($userPost);
+        array_push($allUsersPostsData, ['id' => $userPost['id'] ,'title' => $userPost['title']]);
+      }
+
+      return isset($allUsersPostsData) ? $allUsersPostsData : null;
+    } catch (Throwable $th) {
+      $this->logger->error('Erro ao ler id e títulos de posts de usuários');
+      return null;
+    }
+  }
+
   public function getOwnershipById(int $postId): ?int {
     try {
       return $this->postRepository->getOwnership($postId);

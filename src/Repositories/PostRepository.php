@@ -17,6 +17,7 @@ class PostRepository{
   
   //Selects
   private string $selectAllPostsQuery = 'SELECT `title`, `content` FROM `post` LIMIT 50';
+  private string $selectAllPostsForAdminQuery = 'SELECT `id`, `title` FROM `post`';
   private string $selectPostByID_Query = 'SELECT `id`, `title`, `content`, `slug` FROM `post` WHERE `id` = ?';
   private string $selectPostBySlugQuery = 'SELECT `title`, `content` FROM `post` WHERE `slug` = ?';
   private string $selectPostsByUserId = 'SELECT `id_post` FROM `post_users` WHERE `id_user` = ?';
@@ -292,6 +293,18 @@ class PostRepository{
                                 ['userId' => $userId, 'exception' => $th]);
           throw new Exception('Erro ao ler posts do usuário!');     
     }    
+  }
+
+  public function getAllPostsIdsAndTitlesForAdmin() {
+    try {
+      $selectAllPostsIdsTitles = $this->connection->prepare($this->selectAllPostsForAdminQuery);
+
+      return $selectAllPostsIdsTitles->executeQuery()->fetchAllAssociative();
+    } catch (\Throwable $th) {
+        $this->logger->error('Erro ao ler ids e títulos de posts de todos os usuários!', 
+                                ['exception' => $th]);
+          throw new Exception('Erro ao ler ids e títulos de posts de todos os usuários!');
+    }
   }
 
   public function getAllPostsIdsAndTitlesByUserId(int $userId) {

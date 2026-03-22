@@ -8,6 +8,7 @@ use Lovillela\BlogApp\Services\UserManagementService;
 use Lovillela\BlogApp\Services\ViewRenderService;
 use Lovillela\BlogApp\Services\RedirectService;
 use Lovillela\BlogApp\Config\Views\ViewPath;
+use Lovillela\BlogApp\Services\PostManagementService;
 
 final class AdminController extends BaseController{
 
@@ -16,6 +17,7 @@ final class AdminController extends BaseController{
   private RedirectService $redirectService;
   private AuthManagerService $authManagerService;
   private ViewRenderService $viewRenderService;
+  private PostManagementService $postService;
   
   public function __construct(array $dependencyContainer) {
     $this->dependencyContainer = $dependencyContainer;
@@ -23,6 +25,7 @@ final class AdminController extends BaseController{
     $this->redirectService = $this->dependencyContainer['RedirectService'];
     $this->authManagerService = $this->dependencyContainer['AuthManagerService'];
     $this->viewRenderService = $this->dependencyContainer['ViewRenderService'];
+    $this->postService = $this->dependencyContainer['PostManagementService'];
   }
   public function index() {
     
@@ -130,4 +133,31 @@ final class AdminController extends BaseController{
 
   }
 
+  public function getAllUsersPosts() {
+    $userData = $this->authManagerService->getUserData();
+
+    if (!isset($userData) ||
+        !$this->authManagerService->isSessionActive() ||
+        !$this->authManagerService->isAdmin($userData) ||
+        !$this->authManagerService->isSessionActive()) {
+      $this->redirectService->redirectToHome();
+    }
+
+    $allUserPostsList = $this->postService->getAllPostsIdsAndTitlesForAdmin();
+
+    $headTitle = 'Dashboard';
+
+    $bodyData = [
+      'title' => 'Dashboard',
+      'headerText' => 'Dashboard',
+      'errorMessage' => '',
+      'generalMessage' => '',
+      'csrfToken' => $this->authManagerService->getCsrfToken(),
+      'userPosts' => $allUserPostsList,
+      'postList' => ViewPath::PARTIAL_POST_LIST->getPath(),
+      ];
+
+    $viewData = $this->prepareView(ViewPath::ADMIN_LIST_ALL_USERS_POSTS, $headTitle, $bodyData);
+    $this->viewRenderService->render($viewData);
+  }
  }
