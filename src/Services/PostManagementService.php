@@ -174,6 +174,7 @@ class PostManagementService {
       $this->postRepository->deleteAllUsersFromPost($postId);
       $this->postRepository->delete($postId);
       $this->slugService->deleteInRange([$postId], $this::ENTITY);
+      $this->connection->commit();
     } catch (Throwable $th) {
         $this->connection->rollBack();
         $this->logger->error('Erro ao deletar post pelo admin!', ['id' => $postId]);
