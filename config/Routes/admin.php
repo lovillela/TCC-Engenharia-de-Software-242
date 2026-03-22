@@ -2,10 +2,12 @@
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-$router = new AltoRouter(basePath: '/admin/');
+$router = new AltoRouter();
 
-$router->map('GET', '', 'AdminController#index', 'admin');
-$router->map('POST', 'login/', 'AuthController#login', 'adminLogin');
+$router->setBasePath('/admin/');
+
+$router->map('GET', '/', 'AdminController#index', 'admin');
+$router->map('POST', '/', 'AuthController#login');
 $router->map('GET', 'dashboard/', 'AdminController#dashboard', 'adminDashboard');
 $router->map('GET', 'logout/', 'AuthController#logout');
 $router->map('GET', 'create/user/', 'AdminController#userCreatorForm');
