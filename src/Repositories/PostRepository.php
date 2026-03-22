@@ -295,7 +295,7 @@ class PostRepository{
 
   }
 
-  public function getUsersPostsByUserId(int $userId): array {
+  public function getUsersPostsByUserId(int $userId): ?array {
     try {
       $selectPostsByUserIdStmt = $this->connection->prepare($this->selectPostsByUserId);
       $selectPostsByUserIdStmt->bindValue(1, $userId);
@@ -312,7 +312,7 @@ class PostRepository{
     try {
       $selectAllPostsIdsTitles = $this->connection->prepare($this->selectAllPostsForAdminQuery);
 
-      return $selectAllPostsIdsTitles->executeQuery()->fetchAllAssociative();
+      return $selectAllPostsIdsTitles->executeQuery()->fetchAllAssociative() ?: null;
     } catch (Throwable $th) {
         $this->logger->error('Erro ao ler ids e títulos de posts de todos os usuários!', 
                                 ['exception' => $th]);
@@ -320,7 +320,7 @@ class PostRepository{
     }
   }
 
-  public function getAllPostsIdsAndTitlesByUserId(int $userId) {
+  public function getAllPostsIdsAndTitlesByUserId(int $userId): ?array {
     try {
       $joinPost_PostUsers_ByUserIdStmt = $this->connection->prepare($this->joinPost_PostUsers_ByUserId);
       $joinPost_PostUsers_ByUserIdStmt->bindValue(1, $userId);
