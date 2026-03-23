@@ -60,26 +60,28 @@ class UserManagementService{
     
   }
 
-  public function deleteByUserName(string $username) {
-    
-    $userId = $this->userRepository->findIdByUsername($username);
+  public function delete(int $userId) {
 
-    if (!$userId) {
-      return ['status' => false, 'message' => 'User not found'];
+    $userId = $this->sanitizationService->idSanitize($userId);
+    
+    if (!$this->userRepository->existsById($userId)) {
+      return ['status' => false, 'message' => 'Usuário não encontrado!'];
     }
   
     try {
       $this->connection->beginTransaction();
-      $this->postService->deleteAllUserPostsByUserId((int)$userId);
-      $this->userRepository->delete((int)$userId);
+      $this->userRepository->deleteUserReactions($userId);
+      $this->userRepository->deleteUserComments($userId);
+      $this->postService->deleteAllUserPostsByUserId($userId);
+      $this->userRepository->delete($userId);
       $this->connection->commit();
+      return ['status' => true, 'message' => 'Usuário deletado com sucesso!'];
     } catch (Throwable $th) {
       $this->connection->rollBack();
-      return ['status' => false, 'message' => 'Error deleting user'];
-      //throw $th;
+      $this->logger->error('Erro ao deletar usuário', ['userId' => $userId ,'exception' => $th]);
+      return ['status' => false, 'message' => 'Error ao deletar usuário'];
     }
     
-    return ['status' => true, 'message' => 'User deleted successfully'];
   }
 
   public function findByEmail(string $email): ?array {

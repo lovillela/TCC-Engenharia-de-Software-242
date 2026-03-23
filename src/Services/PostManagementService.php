@@ -118,12 +118,13 @@ class PostManagementService {
   }
 
   public function deleteAllUserPostsByUserId(int $userId) {
-    
+    /**
+     * Nota: beginTransaction, commit e rollback estão comentados
+     * para evitar problemas com a orquestração no user service
+     */
     try {
-      $this->connection->beginTransaction();
+      //$this->connection->beginTransaction();
 
-      $this->postRepository->deleteAllUserReactionsByUserId($userId);
-      $this->postRepository->deleteAllUserCommentsByUserId($userId);
       $userPosts = array_column($this->postRepository->getUsersPostsByUserId($userId), 'id_post');
 
       if (!empty($userPosts)) {
@@ -157,11 +158,11 @@ class PostManagementService {
 
       }
 
-      $this->connection->commit();
+      //$this->connection->commit();
     } catch (Throwable $th) {
-        $this->connection->rollBack();
-        $this->logger->warning('Erro ao deletar posts do usuário!', ['userId' => $userId]);
-        return ['status' => false, 'message' => 'Erro ao deletar posts!'];
+        //$this->connection->rollBack();
+        $this->logger->warning('Erro ao deletar posts do usuário!', ['userId' => $userId, 'exception' => $th->getMessage()]);
+        throw new Exception('Erro ao deletar posts do usuário!', 0 , $th);
     }
   }
 
@@ -178,7 +179,7 @@ class PostManagementService {
       $this->connection->commit();
     } catch (Throwable $th) {
         $this->connection->rollBack();
-        $this->logger->error('Erro ao deletar post pelo admin!', ['id' => $postId]);
+        $this->logger->error('Erro ao deletar post pelo admin!', ['id' => $postId, 'exception' => $th->getMessage()]);
         return ['status' => false, 'message' => $th->getMessage()];
     }
   }

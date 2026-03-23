@@ -190,6 +190,24 @@ final class AdminController extends BaseController{
     $this->viewRenderService->render($viewData);
   }
 
+  public function deleteUserAction(){
+    $userData = $this->authManagerService->getUserData();
+    
+    if (!isset($userData) ||
+        !$this->authManagerService->isSessionActive() ||
+        !$this->authManagerService->isAdmin($userData) ||
+        !$this->authManagerService->validateCsrfToken($_POST['csrfToken'])) {
+      
+      $this->authManagerService->destroySession();
+      $this->redirectService->redirectToHome();
+      exit;
+    }
+
+    $userId = trim($_POST['userId']);
+
+    $this->userManagementService->delete($userId);
+  }
+
   public function deletePostByAdminAction(int $postId) {
     $userData = $this->authManagerService->getUserData();
 
