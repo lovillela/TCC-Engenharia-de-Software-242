@@ -154,7 +154,7 @@ final class AdminController extends BaseController{
       'generalMessage' => '',
       'csrfToken' => $this->authManagerService->getCsrfToken(),
       'userPosts' => $allUserPostsList,
-      'postList' => ViewPath::PARTIAL_POST_LIST->getPath(),
+      'postListView' => ViewPath::PARTIAL_POST_LIST->getPath(),
       'deleteUrlAction' => '/admin/dashboard/post/',
       ];
 
@@ -182,7 +182,7 @@ final class AdminController extends BaseController{
       'generalMessage' => '',
       'csrfToken' => $this->authManagerService->getCsrfToken(),
       'users' => $allUsersList,
-      'userList' => ViewPath::PARTIAL_USER_LIST->getPath(),
+      'userListView' => ViewPath::PARTIAL_USER_LIST->getPath(),
       'deleteUrlAction' => '/admin/dashboard/user/',
       ];
 

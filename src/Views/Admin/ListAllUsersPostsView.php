@@ -3,4 +3,4 @@
 <br>
 <a href="/admin/dashboard/">Voltar ao Dashboard</a>
 
-<?php require_once $postList;?>
+<?php require_once $postListView;?>
