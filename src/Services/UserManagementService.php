@@ -89,5 +89,14 @@ class UserManagementService{
   public function getUserPermissionsById(int $userId) {
     return $this->userRepository->getUserPermissionsById($userId);
   }
+
+  public function getAllUsers() : ?array {
+    try {
+      return $this->userRepository->getAllUsers();
+    } catch (Throwable $th) {
+      $this->logger->error('Erro ao carregar lista de usuários', [$th->getMessage()]);
+      return null;
+    }
+  }
   
 }

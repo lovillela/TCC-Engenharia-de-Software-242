@@ -26,6 +26,7 @@ final class UserRepository
                                               `users` WHERE (`username` = ? AND isActive = 1)';
   private string $getUserIdByUsernameQuery = 'SELECT `id` FROM `users` WHERE `username` = ?';
   private string $getUserPermissionsByIdQuery = 'SELECT `permissions` FROM `users` WHERE `id` = ?';
+  private string $selectAllUsers = 'SELECT `id`, `username`, `email`, `permissions` FROM `users`';
   //Deletes
   private string $deleteUserQuery = 'DELETE FROM `users` WHERE `id` = ?';
   
@@ -161,6 +162,16 @@ final class UserRepository
         $this->logger->error('Erro ao ler premissões do usuário!', 
                                 ['exception' => $th]);
           throw new Exception('Erro ao ler premissões do usuário!');  
+    }
+  }
+
+  public function getAllUsers() : ?array {
+    try {
+      return $this->connection->executeQuery($this->selectAllUsers)->fetchAllAssociative();
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao ler todos os usuários!', 
+                                ['exception' => $th]);
+          throw new Exception('Erro ao ler todos os usuários!'); 
     }
   }
 }

@@ -162,6 +162,34 @@ final class AdminController extends BaseController{
     $this->viewRenderService->render($viewData);
   }
 
+  public function getAllUsers() {
+    $userData = $this->authManagerService->getUserData();
+
+    if (!isset($userData) ||
+        !$this->authManagerService->isSessionActive() ||
+        !$this->authManagerService->isAdmin($userData) ||
+        !$this->authManagerService->isSessionActive()) {
+      $this->redirectService->redirectToHome();
+    }
+
+    $allUsersList = $this->userManagementService->getAllUsers();
+    
+    $headTitle = 'Dashboard';
+    $bodyData = [
+      'title' => 'Dashboard',
+      'headerText' => 'Dashboard',
+      'errorMessage' => '',
+      'generalMessage' => '',
+      'csrfToken' => $this->authManagerService->getCsrfToken(),
+      'users' => $allUsersList,
+      'userList' => ViewPath::PARTIAL_USER_LIST->getPath(),
+      'deleteUrlAction' => '/admin/dashboard/user/',
+      ];
+
+    $viewData = $this->prepareView(ViewPath::ADMIN_LIST_ALL_USERS, $headTitle, $bodyData);
+    $this->viewRenderService->render($viewData);
+  }
+
   public function deletePostByAdminAction(int $postId) {
     $userData = $this->authManagerService->getUserData();
 
