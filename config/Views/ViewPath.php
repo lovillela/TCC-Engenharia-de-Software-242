@@ -15,6 +15,7 @@ enum ViewPath: string{
   case ADMIN_DASHBOARD = 'Admin/DashBoardView.php';
   case ADMIN_LOGIN = 'Admin/LoginView.php';
   case ADMIN_LIST_ALL_USERS_POSTS = 'Admin/ListAllUsersPostsView.php';
+  case ADMIN_LIST_ALL_USERS = 'Admin/ListAllUsersView.php';
   /**
    * Fim/End Admin Views
    */
@@ -39,6 +40,7 @@ enum ViewPath: string{
    */
   case PARTIAL_TEXT_EDITOR = 'Partial/QuillPartialView.php';
   case PARTIAL_POST_LIST = 'Partial/PostListPartialView.php';
+  case PARTIAL_USER_LIST = 'Partial/UserListPartialView.php';
     /**
    * Fim/End Partial Views
    */
