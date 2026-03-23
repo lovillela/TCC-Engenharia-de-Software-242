@@ -152,37 +152,6 @@ class PostRepository{
     }
   }
 
-
-  public function deleteAllUserReactionsByUserId(int $userId){
-
-    try {
-
-      $deleteAllUserReactionsStmt = $this->connection->prepare($this->deleteAllUserReactions);
-      $deleteAllUserReactionsStmt->bindValue(1, $userId);
-      $deleteAllUserReactionsStmt->executeStatement();
-
-    } catch (Throwable $th) {
-        $this->logger->error('Erro ao deletar as reações do usuário!', 
-                                ['userId' => $userId, 'exception' => $th]);
-          throw new Exception('Erro ao deletar as reações do usuário!');      
-    }
-  }
-
-  public function deleteAllUserCommentsByUserId(int $userId) {
-
-    try {
-
-      $deleteAllUserCommentsStmt = $this->connection->prepare($this->deleteAllUserComments);
-      $deleteAllUserCommentsStmt->bindValue(1, $userId);
-      $deleteAllUserCommentsStmt->executeStatement();
-
-    } catch (Throwable $th) {
-        $this->logger->error('Erro ao deletar os comentários do usuário!', 
-                                ['userId' => $userId, 'exception' => $th]);
-          throw new Exception('Erro ao deletar os comentários do usuário!');      
-    }
-  }
-
   public function deletePostCommentsInRange(array $postIds) {
 
     try {
