@@ -190,7 +190,7 @@ final class AdminController extends BaseController{
     $this->viewRenderService->render($viewData);
   }
 
-  public function deleteUserAction(){
+  public function deleteUserAction(int $userId){
     $userData = $this->authManagerService->getUserData();
     
     if (!isset($userData) ||
@@ -203,9 +203,9 @@ final class AdminController extends BaseController{
       exit;
     }
 
-    $userId = trim($_POST['userId']);
-
     $this->userManagementService->delete($userId);
+
+    $this->redirectService->redirectToAdminUsersList();
   }
 
   public function deletePostByAdminAction(int $postId) {
