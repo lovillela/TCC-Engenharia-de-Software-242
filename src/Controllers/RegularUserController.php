@@ -35,6 +35,7 @@ final class RegularUserController extends BaseController{
       'headerText' => 'Login',
       'errorMessage' => '',
       'generalMessage' => '',
+      'returnHomeLinkText' => 'Voltar para Home',
       'userLabel' => 'Usuário',
       'passwordLabel'=> 'Senha',
       'loginButtonText' => 'Entrar',
@@ -87,6 +88,12 @@ final class RegularUserController extends BaseController{
       'headerText' => 'Cadastro',
       'errorMessage' => '',
       'generalMessage' => '',
+      'returnHomeLinkText' => 'Voltar à página Inicial',
+      'userLabel' => 'Usuário',
+      'emailLabel' => 'E-mail',
+      'passwordLabel' => 'Senha',
+      'signUpButtonText' => 'Cadastrar',
+      'alreadyRegisteredLoginText' => 'Já tem uma conta? Faça Login',
       'csrfToken' => $this->authManagerService->getCsrfToken(),
     ];
 

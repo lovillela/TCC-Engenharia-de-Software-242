@@ -1,29 +1,51 @@
-<div>
-
-  <div name="header">
-    <a href="/">Home</a>
-  </div>
-
-  <?php 
-    if (!empty($errorMessage)) {
-      echo($errorMessage);
-    }
-
-    if (!empty($generalMessage)) {
-      echo($generalMessage);
-    }
-  ?>
-
-  <h1><?php echo($headerText) ?></h1>
-
-  <form action="" method="post">
-
-    Username: <input type="text" name="newUser" id="newUser_Regular" required> <br>
-    Password: <input type="password" name="newUserPassword" id="newUserPassword_Regular" required> <br>
-    Email: <input type="email" name="newUserEmail" id="newUserEmail_Regular" required> <br>
+<div class="row justify-content-center mt-4">
+  <div class="col-md-6 col-lg-5">
     
-    <button type="submit">Signup</button>
+    <a href="/" class="btn btn-sm btn-secondary mb-3">« <?php echo($returnHomeLinkText); ?></a>
 
-  </form>
+    <div class="card shadow-sm border-0">
+      <div class="card-body p-5">
+        
+        <h2 class="text-center mb-4 text-success"><?php echo($headerText); ?></h2>
 
+        <?php if (!empty($errorMessage)): ?>
+          <div class="alert alert-danger" role="alert">
+            <?php echo($errorMessage); ?>
+          </div>
+        <?php endif; ?>
+
+        <?php if (!empty($generalMessage)): ?>
+          <div class="alert alert-success" role="alert">
+            <?php echo($generalMessage); ?>
+          </div>
+        <?php endif; ?>
+
+        <form action="" method="post">
+          <div class="mb-3">
+            <label for="newUser_Regular" class="form-label"><?php echo($userLabel); ?></label>
+            <input type="text" name="newUser" id="newUser_Regular" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="newUserEmail_Regular" class="form-label"><?php echo($emailLabel); ?></label>
+            <input type="email" name="newUserEmail" id="newUserEmail_Regular" class="form-control" required>
+          </div>
+
+          <div class="mb-4">
+            <label for="newUserPassword_Regular" class="form-label"><?php echo($passwordLabel); ?></label>
+            <input type="password" name="newUserPassword" id="newUserPassword_Regular" class="form-control" required>
+          </div>
+
+          <div class="d-grid">
+            <button type="submit" class="btn btn-success btn-lg"><?php echo($signUpButtonText); ?></button>
+          </div>
+        </form>
+
+        <div class="text-center mt-4">
+          <a href="/login/" class="text-decoration-none text-success"><?php echo($alreadyRegisteredLoginText); ?></a>
+        </div>
+
+      </div>
+    </div>
+  </div>
 </div>
