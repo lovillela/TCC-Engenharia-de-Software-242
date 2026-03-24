@@ -1,0 +1,21 @@
+/*Estilos gerais*/
+body { 
+    background-color: #f8f9fa; 
+}
+
+.content-wrapper { 
+    background-color: #ffffff; 
+    padding: 30px; 
+    border-radius: 8px; 
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+}
+/* FIM Estilos gerais FIM*/
+/*---------------------------------------------------------------------------------------*
+/*Estilos para posts*/
+
+.post-content {
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+
+/* FIM Estilos para posts FIM*/
