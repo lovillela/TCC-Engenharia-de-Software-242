@@ -4,11 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-  
-  <style>
-    body { background-color: #f8f9fa; }
-    .content-wrapper { background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-  </style>
+  <link href="/assets/css/main.css" rel="stylesheet">
   
   <title><?php echo($headTitle) ?></title>
 </head>
