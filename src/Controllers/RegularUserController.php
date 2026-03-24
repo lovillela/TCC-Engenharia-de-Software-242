@@ -124,13 +124,16 @@ final class RegularUserController extends BaseController{
     $headTitle = 'Dashboard';
 
     $bodyData = [
-      'title' => 'Dashboard',
       'headerText' => 'Dashboard',
       'errorMessage' => '',
       'generalMessage' => '',
       'csrfToken' => $this->authManagerService->getCsrfToken(),
       'userPosts' => $userPosts,
       'postList' => ViewPath::PARTIAL_POST_LIST->getPath(),
+        'editButtonText' => 'Editar',
+        'deleteButtonText' => 'Deletar',
+        'tableHeaderPostTitleText' => 'Título do Post',
+        'tableHeaderActionText' => 'Ações',
       'deleteActionUrl' => '/dashboard/post/',
       ];
 
