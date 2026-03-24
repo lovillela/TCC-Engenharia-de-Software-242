@@ -15,6 +15,6 @@ $router->map('POST', 'dashboard/create/user/', 'AdminController#createUserAction
 $router->map('GET', 'dashboard/list/posts/', 'AdminController#getAllUsersPosts');
 $router->map('POST', 'dashboard/post/delete/[:postId]', 'AdminController#deletePostByAdminAction');
 $router->map('GET', 'dashboard/list/users/', 'AdminController#getAllUsers');
-$router->map('POST', 'dashboard/user/delete/[:userId]', 'AdminController#deleteUser');
+$router->map('POST', 'dashboard/user/delete/[:userId]', 'AdminController#deleteUserAction');
 
 return $router;

@@ -125,7 +125,12 @@ class PostManagementService {
     try {
       //$this->connection->beginTransaction();
 
-      $userPosts = array_column($this->postRepository->getUsersPostsByUserId($userId), 'id_post');
+      /**
+       * Para corrigir o erro em caso do usuário NÃO ter posts
+       */
+      $userPostsIds = $this->postRepository->getUsersPostsByUserId($userId);
+
+      $userPosts = !empty($userPostsIds) ? array_column($userPostsIds, 'id_post') : [];
 
       if (!empty($userPosts)) {
         $this->postRepository->deleteAllPostUserRelantionship($userId);
