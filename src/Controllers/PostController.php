@@ -33,11 +33,10 @@ final class PostController extends BaseController{
       exit;
     }
 
-    $headTitle = 'All Posts';
+    $headTitle = 'Todos os artigos';
     
     $bodyData = [
-      'title' => 'Post Home',
-      'headerText' => 'Post Home',
+      'headerText' => 'Todos os artigos',
       'errorMessage' => '',
       'generalMessage' => '',
       'posts' => $posts,

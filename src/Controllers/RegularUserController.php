@@ -45,11 +45,10 @@ final class RegularUserController extends BaseController{
 
   public function signUpAction(){
 
-    $headTitle = 'SignUp page';
+    $headTitle = 'Cadastro';
 
     $bodyData = [
-      'title' => 'SignUp page',
-      'headerText' => 'SignUp page',
+      'headerText' => 'Cadastro',
       'errorMessage' => '',
       'generalMessage' => '',
       'csrfToken' => $this->authManagerService->getCsrfToken(),
@@ -79,11 +78,10 @@ final class RegularUserController extends BaseController{
 
   public function signUpPage(){
 
-    $headTitle = 'SignUp page';
+    $headTitle = 'Cadastro';
 
     $bodyData = [
-      'title' => 'SignUp page',
-      'headerText' => 'SignUp page',
+      'headerText' => 'Cadastro',
       'errorMessage' => '',
       'generalMessage' => '',
       'csrfToken' => $this->authManagerService->getCsrfToken(),
