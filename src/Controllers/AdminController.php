@@ -29,12 +29,14 @@ final class AdminController extends BaseController{
   }
   public function index() {
     
-    $headTitle = 'Admin Login';
+    $headTitle = 'Acesso Admin';
 
     $bodyData=[
-      'title' => 'Admin Login',
-      'loginHeaderText' => 'Admin Login Page',
+      'loginHeaderText' => 'Acesso Admin',
       'errorMessage' => '',
+      'userLabel' => 'Usuário Admin',
+      'passwordLabel' => 'Senha Admin',
+      'loginButtonText' => 'Acesso Admin',
       'csrfToken' => $this->authManagerService->getCsrfToken(),
     ];
 

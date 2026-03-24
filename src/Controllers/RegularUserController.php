@@ -32,10 +32,13 @@ final class RegularUserController extends BaseController{
     $headTitle = 'Login';
 
     $bodyData = [
-      'title' => 'Login',
       'headerText' => 'Login',
       'errorMessage' => '',
       'generalMessage' => '',
+      'userLabel' => 'Usuário',
+      'passwordLabel'=> 'Senha',
+      'loginButtonText' => 'Entrar',
+      'signUpLoginText' => 'Não tem uma conta? Cadastre-se',
       'csrfToken' => $this->authManagerService->getCsrfToken(),
     ];
 
