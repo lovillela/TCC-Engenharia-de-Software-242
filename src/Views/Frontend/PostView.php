@@ -1,7 +1,3 @@
-<div name="header">
-  <a href="/">Home</a>
-</div>
-
 <?php 
   if (!empty($errorMessage)) {
     echo($errorMessage);
@@ -12,14 +8,14 @@
   }
 ?>
 
-<h1><?php echo($title);?></h1>
-
-<div name="post">
+<div class="col-lg-12">
+  <a href="/post/" class="btn btn-sm btn-secondary mb-4">« Voltar para Artigos</a>
+  <h1><?php echo($title);?></h1>
   <?php 
     if (isset($content)) {
         echo('<br>');
         echo($content);
-        echo('<br> <br>');
+        echo('<br>');
     }
   ?>
 </div>
