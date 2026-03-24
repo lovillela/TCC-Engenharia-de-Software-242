@@ -16,7 +16,7 @@ class PostRepository{
   private string $insertPostUsersQuery = 'INSERT INTO `post_users` VALUES (?, ?) ';
   
   //Selects
-  private string $selectAllPostsQuery = 'SELECT `title`, `content`, `slug` FROM `post` LIMIT 50';
+  private string $selectAllPostsQuery = 'SELECT `title`, `slug` FROM `post` LIMIT 50';
   private string $selectAllPostsForAdminQuery = 'SELECT `id`, `title` FROM `post`';
   private string $selectPostByID_Query = 'SELECT `id`, `title`, `content`, `slug` FROM `post` WHERE `id` = ?';
   private string $selectPostBySlugQuery = 'SELECT `title`, `content` FROM `post` WHERE `slug` = ?';
