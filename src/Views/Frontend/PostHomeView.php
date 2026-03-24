@@ -17,17 +17,18 @@
 
   <div class="row">
     <?php foreach ($posts as $post):?>
-      <div class="card h-100 border-light shadow-sm">
+      <div class="col-md-6 mb-4">
+        <div class="card h-100 border-light shadow-sm">
         <div class="card-body">
-           <a href="/post/<?php echo($post['slug']); ?>/" class="text-decoration-none text-dark">
-            <?php echo($post['title']); ?>
-          </a>
+          <h5 class="card-title">
+            <a href="/post/<?php echo($post['slug']); ?>/" class="text-decoration-none text-dark">
+              <?php echo($post['title']); ?>
+            </a>
+          </h5>
+          <a href="/post/<?php echo($post['slug']); ?>/" class="btn btn-outline-primary btn-sm mt-3">Leia mais »</a>
         </div>
+      </div>
       </div>
     <?php endforeach;?>
   </div>
-
-
-
-
 <?php endif; ?>
