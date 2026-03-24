@@ -79,7 +79,7 @@ final class ViewRenderService{
      * In the case of an object, just to be safe. Will be adjuestd if necessary.
      * Note: line breaks are not allowed.
      */
-    header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js; object-src 'none'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css;");
+    header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net/npm/quill@2/dist/quill.min.js https://cdn.jsdelivr.net/npm/bootstrap@5/dist/js/bootstrap.min.js; object-src 'none'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net/npm/quill@2/dist/quill.snow.min.css https://cdn.jsdelivr.net/npm/bootstrap@5/dist/css/bootstrap.min.css;");
 
   }
 }
