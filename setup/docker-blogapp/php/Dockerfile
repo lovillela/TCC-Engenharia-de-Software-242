@@ -31,7 +31,7 @@ RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
 # Limite de armazenamento de 4 mil arquivos no opcahe
 RUN echo "expose_php = Off" >> /usr/local/etc/php/conf.d/z-tcc.ini && \ 
     echo "display_errors = Off" >> /usr/local/etc/php/conf.d/z-tcc.ini && \
-    echo "session.cookie_secure = 1" >> /usr/local/etc/php/conf.d/z-tcc.ini && \
+    echo "session.cookie_secure = 0" >> /usr/local/etc/php/conf.d/z-tcc.ini && \
     echo "session.cookie_httponly = 1" >> /usr/local/etc/php/conf.d/z-tcc.ini && \
     echo "opcache.enable=1" >> /usr/local/etc/php/conf.d/z-tcc.ini && \
     echo "opcache.memory_consumption=128" >> /usr/local/etc/php/conf.d/z-tcc.ini && \
