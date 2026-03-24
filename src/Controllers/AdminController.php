@@ -8,6 +8,7 @@ use Lovillela\BlogApp\Services\UserManagementService;
 use Lovillela\BlogApp\Services\ViewRenderService;
 use Lovillela\BlogApp\Services\RedirectService;
 use Lovillela\BlogApp\Config\Views\ViewPath;
+use Lovillela\BlogApp\Services\PostManagementService;
 
 final class AdminController extends BaseController{
 
@@ -16,6 +17,7 @@ final class AdminController extends BaseController{
   private RedirectService $redirectService;
   private AuthManagerService $authManagerService;
   private ViewRenderService $viewRenderService;
+  private PostManagementService $postService;
   
   public function __construct(array $dependencyContainer) {
     $this->dependencyContainer = $dependencyContainer;
@@ -23,6 +25,7 @@ final class AdminController extends BaseController{
     $this->redirectService = $this->dependencyContainer['RedirectService'];
     $this->authManagerService = $this->dependencyContainer['AuthManagerService'];
     $this->viewRenderService = $this->dependencyContainer['ViewRenderService'];
+    $this->postService = $this->dependencyContainer['PostManagementService'];
   }
   public function index() {
     
@@ -42,8 +45,11 @@ final class AdminController extends BaseController{
 
   public function dashboard(){
   
-    if (!$this->authManagerService->isSessionActive() ||
-        !$this->authManagerService->isAdmin($this->authManagerService->getUserData())) {
+    $userData = $this->authManagerService->getUserData();
+
+    if (!$this->authManagerService->isSessionActive() || 
+        !isset($userData) || 
+        !$this->authManagerService->isAdmin($userData)){
       $this->authManagerService->destroySession();
       $this->redirectService->redirectToHome();
       exit;
@@ -56,6 +62,7 @@ final class AdminController extends BaseController{
       'headerText' => 'Admin Dashboard',
       'errorMessage' => '',
       'generalMessage' => '',
+      'csrfToken' => $this->authManagerService->getCsrfToken(),
     ];
 
     $viewData = $this->prepareView(ViewPath::ADMIN_DASHBOARD, $headTitle, $bodyData);
@@ -126,4 +133,95 @@ final class AdminController extends BaseController{
 
   }
 
+  public function getAllUsersPosts() {
+    $userData = $this->authManagerService->getUserData();
+
+    if (!isset($userData) ||
+        !$this->authManagerService->isSessionActive() ||
+        !$this->authManagerService->isAdmin($userData) ||
+        !$this->authManagerService->isSessionActive()) {
+      $this->redirectService->redirectToHome();
+    }
+
+    $allUserPostsList = $this->postService->getAllPostsIdsAndTitlesForAdmin();
+
+    $headTitle = 'Dashboard';
+
+    $bodyData = [
+      'title' => 'Dashboard',
+      'headerText' => 'Dashboard',
+      'errorMessage' => '',
+      'generalMessage' => '',
+      'csrfToken' => $this->authManagerService->getCsrfToken(),
+      'userPosts' => $allUserPostsList,
+      'postListView' => ViewPath::PARTIAL_POST_LIST->getPath(),
+      'deleteUrlAction' => '/admin/dashboard/post/',
+      ];
+
+    $viewData = $this->prepareView(ViewPath::ADMIN_LIST_ALL_USERS_POSTS, $headTitle, $bodyData);
+    $this->viewRenderService->render($viewData);
+  }
+
+  public function getAllUsers() {
+    $userData = $this->authManagerService->getUserData();
+
+    if (!isset($userData) ||
+        !$this->authManagerService->isSessionActive() ||
+        !$this->authManagerService->isAdmin($userData) ||
+        !$this->authManagerService->isSessionActive()) {
+      $this->redirectService->redirectToHome();
+    }
+
+    $allUsersList = $this->userManagementService->getAllUsers();
+    
+    $headTitle = 'Dashboard';
+    $bodyData = [
+      'title' => 'Dashboard',
+      'headerText' => 'Dashboard',
+      'errorMessage' => '',
+      'generalMessage' => '',
+      'csrfToken' => $this->authManagerService->getCsrfToken(),
+      'users' => $allUsersList,
+      'userListView' => ViewPath::PARTIAL_USER_LIST->getPath(),
+      'deleteUrlAction' => '/admin/dashboard/user/',
+      ];
+
+    $viewData = $this->prepareView(ViewPath::ADMIN_LIST_ALL_USERS, $headTitle, $bodyData);
+    $this->viewRenderService->render($viewData);
+  }
+
+  public function deleteUserAction(int $userId){
+    $userData = $this->authManagerService->getUserData();
+    
+    if (!isset($userData) ||
+        !$this->authManagerService->isSessionActive() ||
+        !$this->authManagerService->isAdmin($userData) ||
+        !$this->authManagerService->validateCsrfToken($_POST['csrfToken'])) {
+      
+      $this->authManagerService->destroySession();
+      $this->redirectService->redirectToHome();
+      exit;
+    }
+
+    $this->userManagementService->delete($userId);
+
+    $this->redirectService->redirectToAdminUsersList();
+  }
+
+  public function deletePostByAdminAction(int $postId) {
+    $userData = $this->authManagerService->getUserData();
+
+    
+    if (!isset($userData) ||
+        !$this->authManagerService->isSessionActive() ||
+        !$this->authManagerService->isAdmin($userData) ||
+        !$this->authManagerService->validateCsrfToken($_POST['csrfToken'])) {
+      
+      $this->authManagerService->destroySession();
+      $this->redirectService->redirectToHome();
+      exit;
+    }
+    $this->postService->deletePostByAdmin($postId);
+    $this->redirectService->redirectToAdminDashboard();
+  }
  }

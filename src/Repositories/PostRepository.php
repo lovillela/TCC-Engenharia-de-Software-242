@@ -3,6 +3,7 @@
 namespace Lovillela\BlogApp\Repositories;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ArrayParameterType;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Throwable;
@@ -16,12 +17,20 @@ class PostRepository{
   
   //Selects
   private string $selectAllPostsQuery = 'SELECT `title`, `content` FROM `post` LIMIT 50';
+  private string $selectAllPostsForAdminQuery = 'SELECT `id`, `title` FROM `post`';
   private string $selectPostByID_Query = 'SELECT `id`, `title`, `content`, `slug` FROM `post` WHERE `id` = ?';
   private string $selectPostBySlugQuery = 'SELECT `title`, `content` FROM `post` WHERE `slug` = ?';
   private string $selectPostsByUserId = 'SELECT `id_post` FROM `post_users` WHERE `id_user` = ?';
   private string $selectPostIdsInRange = 'SELECT DISTINCT `id_post` FROM `post_users` WHERE `id_post` IN (?)';
   private string $selectOwnership = 'SELECT `id_user` FROM `post_users` WHERE `id_post` = ?';
-  private string $selectOwnershipCount = 'SELECT COUNT (*) FROM `post_users` WHERE `id_post` = ?';
+  private string $selectOwnershipCount = 'SELECT COUNT(*) FROM `post_users` WHERE `id_post` = ?';
+
+  //Joins
+  private string $joinPost_PostUsers_ByUserId = 'SELECT `post`.`id`, `post`.`title` '
+                                                .'FROM `post` '
+                                                .'INNER JOIN `post_users` '
+                                                .'ON `post`.`id` = `post_users`.`id_post` '
+                                                .'WHERE `post_users`.`id_user` = ? ';
 
   //Updates
   private string $editPostQuery = 'UPDATE `post` SET `title` = ?, `content` = ?, `slug` = ? WHERE `id` = ?';
@@ -37,6 +46,7 @@ class PostRepository{
   private string $deleteAllPostTagsInRange = 'DELETE FROM `post_tag` WHERE `id_post` IN (?)';
   private string $deleteAllPostsInRange = 'DELETE FROM `post` WHERE `id` IN (?)';
   private string $deletePostUserRelationship = 'DELETE FROM `post_users` WHERE `id_post` = ? AND `id_user` = ?';
+  private string $deleteAllUsersFromPostUserRelationship = 'DELETE FROM `post_users` WHERE `id_post` = ?';
 
   public function __construct(Connection $connection, LoggerInterface $logger) {
     $this->connection = $connection;
@@ -131,33 +141,14 @@ class PostRepository{
 
   }
 
-  public function deleteAllUserReactionsByUserId(int $userId){
-
+  public function deleteAllUsersFromPost(int $postId) {
     try {
-
-      $deleteAllUserReactionsStmt = $this->connection->prepare($this->deleteAllUserReactions);
-      $deleteAllUserReactionsStmt->bindValue(1, $userId);
-      $deleteAllUserReactionsStmt->executeStatement();
-
+      $deleteAllUsersFromPostStmt = $this->connection->prepare($this->deleteAllUsersFromPostUserRelationship);
+      $deleteAllUsersFromPostStmt->bindValue(1, $postId);
+      $deleteAllUsersFromPostStmt->executeStatement();
     } catch (Throwable $th) {
-        $this->logger->error('Erro ao deletar as reações do usuário!', 
-                                ['userId' => $userId, 'exception' => $th]);
-          throw new Exception('Erro ao deletar as reações do usuário!');      
-    }
-  }
-
-  public function deleteAllUserCommentsByUserId(int $userId) {
-
-    try {
-
-      $deleteAllUserCommentsStmt = $this->connection->prepare($this->deleteAllUserComments);
-      $deleteAllUserCommentsStmt->bindValue(1, $userId);
-      $deleteAllUserCommentsStmt->executeStatement();
-
-    } catch (Throwable $th) {
-        $this->logger->error('Erro ao deletar os comentários do usuário!', 
-                                ['userId' => $userId, 'exception' => $th]);
-          throw new Exception('Erro ao deletar os comentários do usuário!');      
+        $this->logger->error('Erro ao deletar autores do post!', ['postId' => $postId, 'exception' => $th]);
+        throw new Exception('Erro ao deletar autores do post!');
     }
   }
 
@@ -167,7 +158,7 @@ class PostRepository{
       
       $this->connection->executeStatement($this->deleteAllPostCommentsInRange,
                                                 [$postIds],
-                                                [$this->connection::PARAM_INT_ARRAY]);
+                                                [ArrayParameterType::INTEGER]);
     } catch (Throwable $th) {
         $this->logger->error('Erro ao deletar os comentários dos posts!', 
                                 ['postIds' => $postIds, 'exception' => $th]);
@@ -180,7 +171,7 @@ class PostRepository{
     try {
       $this->connection->executeStatement($this->deleteAllPostReactionsInRange,
                                           [$postIds],
-                                          [$this->connection::PARAM_INT_ARRAY]);
+                                          [ArrayParameterType::INTEGER]);
     } catch (Throwable $th) {
         $this->logger->error('Erro ao deletar reações dos posts!', 
                                 ['postIds' => $postIds, 'exception' => $th]);
@@ -192,7 +183,7 @@ class PostRepository{
     try {
       $this->connection->executeStatement($this->deleteAllPostCategoriesInRange,
                                             [$postIds],
-                                            [$this->connection::PARAM_INT_ARRAY]);
+                                            [ArrayParameterType::INTEGER]);
     } catch (Throwable $th) {
         $this->logger->error('Erro ao deletar as categorias dos posts!', 
                                 ['postIds' => $postIds, 'exception' => $th]);
@@ -206,7 +197,7 @@ class PostRepository{
 
       $this->connection->executeStatement($this->deleteAllPostTagsInRange,
                                             [$postIds],
-                                            [$this->connection::PARAM_INT_ARRAY]);	      
+                                            [ArrayParameterType::INTEGER]);	      
     } catch (Throwable $th) {
         $this->logger->error('Erro ao deletar tags dos posts!', 
                                 ['postIds' => $postIds, 'exception' => $th]);
@@ -220,7 +211,7 @@ class PostRepository{
     try {
       $this->connection->executeStatement($this->deleteAllPostsInRange,
                                               [$postIds],
-                                              [$this->connection::PARAM_INT_ARRAY]);
+                                              [ArrayParameterType::INTEGER]);
     } catch (Throwable $th) {
         $this->logger->error('Erro ao deletar posts em lote!', 
                                 ['postIds' => $postIds, 'exception' => $th]);
@@ -273,7 +264,7 @@ class PostRepository{
 
   }
 
-  public function getUsersPostsByUserId(int $userId): array {
+  public function getUsersPostsByUserId(int $userId): ?array {
     try {
       $selectPostsByUserIdStmt = $this->connection->prepare($this->selectPostsByUserId);
       $selectPostsByUserIdStmt->bindValue(1, $userId);
@@ -286,11 +277,36 @@ class PostRepository{
     }    
   }
 
+  public function getAllPostsIdsAndTitlesForAdmin() {
+    try {
+      $selectAllPostsIdsTitles = $this->connection->prepare($this->selectAllPostsForAdminQuery);
+
+      return $selectAllPostsIdsTitles->executeQuery()->fetchAllAssociative() ?: null;
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao ler ids e títulos de posts de todos os usuários!', 
+                                ['exception' => $th]);
+          throw new Exception('Erro ao ler ids e títulos de posts de todos os usuários!');
+    }
+  }
+
+  public function getAllPostsIdsAndTitlesByUserId(int $userId): ?array {
+    try {
+      $joinPost_PostUsers_ByUserIdStmt = $this->connection->prepare($this->joinPost_PostUsers_ByUserId);
+      $joinPost_PostUsers_ByUserIdStmt->bindValue(1, $userId);
+
+      return $joinPost_PostUsers_ByUserIdStmt->executeQuery()->fetchAllAssociative() ?: null;
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao ler ids e títulos de posts do usuário!', 
+                                ['userId' => $userId, 'exception' => $th]);
+          throw new Exception('Erro ao ler ids e títulos de posts do usuário!'); 
+    }
+  }
+
   public function getPostIdsInRange(array $postIds): array {
     try {
       return $this->connection->executeQuery($this->selectPostIdsInRange, 
                                           [$postIds], 
-                                          [$this->connection::PARAM_INT_ARRAY])->fetchAllAssociative();
+                                          [ArrayParameterType::INTEGER])->fetchAllAssociative();
     } catch (Throwable $th) {
         $this->logger->error('Erro ao ler posts em lote!', 
                                 ['postIds' => $postIds, 'exception' => $th]);

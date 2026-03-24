@@ -25,4 +25,10 @@ class RedirectService{
     header('Location: ' . $dashboardLink);
     exit;
   }
+
+  public function redirectToAdminUsersList() {
+    $AdminUsersListDashboardLink = "https://$_SERVER[HTTP_HOST]/admin/dashboard/list/users/";
+    header('Location: ' . $AdminUsersListDashboardLink);
+    exit;
+  }
 }

@@ -56,14 +56,26 @@ final class InputSanitizationService{
   }
 
   public function displayPostSanitize(array $post): array {
+
+    if (isset($post['id'])) {
+      $post['id'] = $this->idSanitize($post['id']);
+    }
     
-    $post['title'] = htmlspecialchars($post['title'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
-    
+    if (isset($post['title'])) {
+      $post['title'] = htmlspecialchars($post['title'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    }
+       
     /**
      * É possível utilizar, mas é uma biblioteca pesada.
      * This may be used, it is a heavy library however.
      */
-    $post['content'] = $this->postContentSanitize($post['content']);
+    if (isset($post['content'])) {
+      $post['content'] = $this->postContentSanitize($post['content']);
+    }
+
+    if (isset($post['slug'])) {
+      $post['slug'] = $this->slugSanitize($post['slug']);
+    }
 
     return $post;
   }

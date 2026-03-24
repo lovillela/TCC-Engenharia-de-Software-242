@@ -118,13 +118,19 @@ class PostManagementService {
   }
 
   public function deleteAllUserPostsByUserId(int $userId) {
-    
+    /**
+     * Nota: beginTransaction, commit e rollback estão comentados
+     * para evitar problemas com a orquestração no user service
+     */
     try {
-      $this->connection->beginTransaction();
+      //$this->connection->beginTransaction();
 
-      $this->postRepository->deleteAllUserReactionsByUserId($userId);
-      $this->postRepository->deleteAllUserCommentsByUserId($userId);
-      $userPosts = array_column($this->postRepository->getUsersPostsByUserId($userId), 'id_post');
+      /**
+       * Para corrigir o erro em caso do usuário NÃO ter posts
+       */
+      $userPostsIds = $this->postRepository->getUsersPostsByUserId($userId);
+
+      $userPosts = !empty($userPostsIds) ? array_column($userPostsIds, 'id_post') : [];
 
       if (!empty($userPosts)) {
         $this->postRepository->deleteAllPostUserRelantionship($userId);
@@ -157,11 +163,29 @@ class PostManagementService {
 
       }
 
+      //$this->connection->commit();
+    } catch (Throwable $th) {
+        //$this->connection->rollBack();
+        $this->logger->warning('Erro ao deletar posts do usuário!', ['userId' => $userId, 'exception' => $th->getMessage()]);
+        throw new Exception('Erro ao deletar posts do usuário!', 0 , $th);
+    }
+  }
+
+  public function deletePostByAdmin(int $postId) {
+    try {
+      $this->connection->beginTransaction();
+      $this->postRepository->deletePostCategoriesInRange([$postId]);
+      $this->postRepository->deletePostTagsInRange([$postId]);
+      $this->postRepository->deletePostCommentsInRange([$postId]);
+      $this->postRepository->deletePostReactionsInRange([$postId]);
+      $this->postRepository->deleteAllUsersFromPost($postId);
+      $this->postRepository->delete($postId);
+      $this->slugService->deleteInRange([$postId], $this::ENTITY);
       $this->connection->commit();
-    } catch (\Throwable $th) {
+    } catch (Throwable $th) {
         $this->connection->rollBack();
-        $this->logger->warning('Erro ao deletar posts do usuário!', ['userId' => $userId]);
-        return ['status' => false, 'message' => 'Erro ao deletar posts!'];
+        $this->logger->error('Erro ao deletar post pelo admin!', ['id' => $postId, 'exception' => $th->getMessage()]);
+        return ['status' => false, 'message' => $th->getMessage()];
     }
   }
 
@@ -199,6 +223,50 @@ class PostManagementService {
       return null;
     }
 
+  }
+
+  public function getAllPostsIdsAndTitlesByUserId(int $userId): ?array{
+
+    try {
+      $userPostsData = [];
+      $userPostsIdsAndTitles = $this->postRepository->getAllPostsIdsAndTitlesByUserId($userId);
+
+      if (!isset($userPostsIdsAndTitles)) {
+        return null;
+      }
+
+      foreach ($userPostsIdsAndTitles as $userPost) {
+        $userPost = $this->sanitizationService->displayPostSanitize($userPost);
+        array_push($userPostsData, ['id' => $userPost['id'], 'title' => $userPost['title']]);
+      }
+
+      return isset($userPostsData) ? $userPostsData : null;
+    } catch (Throwable $th) {
+      $this->logger->notice('Erro ao ler posts do usuário', ['userId' => $userId]);
+      return null;
+    }
+    
+  }
+
+  public function getAllPostsIdsAndTitlesForAdmin() {
+    try {
+      $allUsersPostsIdsAndTitles= $this->postRepository->getAllPostsIdsAndTitlesForAdmin();
+      $allUsersPostsData = [];
+
+      if (!isset($allUsersPostsIdsAndTitles)) {
+        return null;
+      }
+
+      foreach ($allUsersPostsIdsAndTitles as $userPost) {
+        $userPost = $this->sanitizationService->displayPostSanitize($userPost);
+        array_push($allUsersPostsData, ['id' => $userPost['id'] ,'title' => $userPost['title']]);
+      }
+
+      return isset($allUsersPostsData) ? $allUsersPostsData : null;
+    } catch (Throwable $th) {
+      $this->logger->error('Erro ao ler id e títulos de posts de usuários');
+      return null;
+    }
   }
 
   public function getOwnershipById(int $postId): ?int {

@@ -3,6 +3,8 @@
 namespace Lovillela\BlogApp\Repositories;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use Psr\Log\LoggerInterface;
 use Throwable;
 use Exception;
@@ -76,8 +78,8 @@ class SlugRepository{
     try {
       return $this->connection->executeStatement($this->deleteFromSlugMapInRange,
                                           [$entityIds, $entity],
-                                          [$this->connection::PARAM_INT_ARRAY,
-                                                  $this->connection::PARAM_STR]);
+                                          [ArrayParameterType::INTEGER,
+                                                  ParameterType::STRING]);
     } catch (Throwable $th) {
         $this->logger->error('Erro ao deletar slugs!', 
                                 ['entity' => $entity, 'entityIds' => $entityIds,'exception' => $th]);

@@ -4,6 +4,7 @@ namespace Lovillela\BlogApp\Controllers;
 
 use Lovillela\BlogApp\Config\Views\ViewPath;
 use Lovillela\BlogApp\Services\AuthManagerService;
+use Lovillela\BlogApp\Services\PostManagementService;
 use Lovillela\BlogApp\Services\RedirectService;
 use Lovillela\BlogApp\Services\UserManagementService;
 use Lovillela\BlogApp\Config\Permissions\UserPermissions;
@@ -15,6 +16,7 @@ final class RegularUserController extends BaseController{
   private RedirectService $redirectService;
   private AuthManagerService $authManagerService;
   private ViewRenderService $viewRenderService;
+  private PostManagementService $postService;
 
   public function __construct(array $dependencyContainer) {
     $this->dependencyContainer = $dependencyContainer;
@@ -22,6 +24,7 @@ final class RegularUserController extends BaseController{
     $this->redirectService = $this->dependencyContainer['RedirectService'];
     $this->authManagerService = $this->dependencyContainer['AuthManagerService'];
     $this->viewRenderService = $this->dependencyContainer['ViewRenderService'];
+    $this->postService = $this->dependencyContainer['PostManagementService'];
   }
   
   public function index() {
@@ -96,17 +99,6 @@ final class RegularUserController extends BaseController{
    */
   public function dashboard(){
     
-    $headTitle = 'Dashboard';
-
-    $bodyData = [
-      'title' => 'Dashboard',
-      'headerText' => 'Dashboard',
-      'errorMessage' => '',
-      'generalMessage' => '',
-      'csrfToken' => $this->authManagerService->getCsrfToken(),
-    ];
-    
-    
     if (!$this->authManagerService->isSessionActive()) {
       $this->authManagerService->destroySession();
       $this->redirectService->redirectToHome();
@@ -118,6 +110,21 @@ final class RegularUserController extends BaseController{
       $this->authManagerService->destroySession();
       $this->redirectService->redirectToHome();
     }
+
+    $userPosts = $this->postService->getAllPostsIdsAndTitlesByUserId($userData->userId);
+
+    $headTitle = 'Dashboard';
+
+    $bodyData = [
+      'title' => 'Dashboard',
+      'headerText' => 'Dashboard',
+      'errorMessage' => '',
+      'generalMessage' => '',
+      'csrfToken' => $this->authManagerService->getCsrfToken(),
+      'userPosts' => $userPosts,
+      'postList' => ViewPath::PARTIAL_POST_LIST->getPath(),
+      'deleteActionUrl' => '/dashboard/post/',
+      ];
 
     $viewData = $this->prepareView(ViewPath::FRONTEND_DASHBOARD_REGULARUSER, $headTitle, $bodyData);
     $this->viewRenderService->render($viewData);
