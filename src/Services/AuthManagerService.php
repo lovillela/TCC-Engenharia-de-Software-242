@@ -59,13 +59,16 @@ final class AuthManagerService {
   }
 
   public function setCsrfToken() {
-    $this->sessionService->setCsrfToken($this->csrfService->generate());
+    $csrfToken = $this->getCsrfToken();
+    if (empty($csrfToken) || !isset($csrfToken)) {
+      $this->sessionService->setCsrfToken($this->csrfService->generate());
+    }
   }
 
   public function validateCsrfToken(string $csrfToken): bool {
 
     if (!$this->csrfService->validate($csrfToken, $this->sessionService->getCsrfToken())) {
-      $this->logger->warning('Falha ao validar o csrfToken! Acão bloqueada!', ['csrfToken' => $csrfToken]);
+      $this->logger->warning('Falha ao validar o csrfToken! Acão bloqueada!', ['csrfToken' => $csrfToken, 'sessionCsrfToken' => $_SESSION['csrfToken']]);
       return false;
     }
 
