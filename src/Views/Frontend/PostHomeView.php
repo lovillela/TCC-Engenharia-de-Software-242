@@ -1,7 +1,3 @@
-<div name="header">
-  <a href="/">Home</a>
-</div>
-
 <?php 
   if (!empty($errorMessage)) {
     echo($errorMessage);
@@ -14,16 +10,20 @@
 
 <h1><?php echo($headerText);?></h1>
 
-<div name="posts">
-  <?php 
-    if (isset($posts)) {
+<?php if(!isset($posts)): ?>
+  <div class="alert alert-info">Nenhum post publicado ainda. Volte em breve!</div>
 
-      foreach ($posts as $post) {
-        echo('<h2>'. $post['title'] . '</h2>'); 
-        echo('<br>');
-        echo($post['content']);
-        echo('<br> <br>');
-      }
-    }
-  ?>
-</div>
+<?php else: ?>
+
+  <div class="row">
+    <?php foreach ($posts as $post):?>
+      <a href="/post/<?php echo($post['slug']); ?>/" class="text-decoration-none text-dark">
+        <?php echo($post['title']); ?>
+      </a>
+    <?php endforeach;?>
+  </div>
+
+
+
+
+<?php endif; ?>
