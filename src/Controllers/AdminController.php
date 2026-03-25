@@ -86,8 +86,16 @@ final class AdminController extends BaseController{
     $headTitle = 'User Creator';
 
     $bodyData=[
-      'title' => 'User Creator',
-      'headerText' => 'User Creator',
+      'headerText' => 'Adicionar Novo Usuário',
+      'returnToDashboardLinkText' => 'Voltar para o Dashboard',
+      'userLabel' => 'Usuário',
+      'emailLabel' => 'E-mail',
+      'passwordLabel' => 'Senha',
+      'roleLevelLabel' => 'Nível de Acesso (Role):',
+      'adminLabel' => 'Admin',
+      'moderatorLabel' => 'Moderador',
+      'regularUserLabel' => 'Usuário Comum',
+      'createAccountButtonText' => 'Criar Conta',
       'errorMessage' => '',
       'csrfToken' => $this->authManagerService->getCsrfToken(), 
     ];
@@ -110,20 +118,31 @@ final class AdminController extends BaseController{
 
     $headTitle = 'User Creator';
 
-    $bodyData=[
-      'title' => 'User Creator',
-      'headerText' => 'User Creator',
+   $bodyData=[
+      'headerText' => 'Adicionar Novo Usuário',
+      'returnToDashboardLinkText' => 'Voltar para o Dashboard',
+      'userLabel' => 'Usuário',
+      'emailLabel' => 'E-mail',
+      'passwordLabel' => 'Senha',
+      'roleLevelLabel' => 'Nível de Acesso (Role):',
+      'adminLabel' => 'Admin',
+      'moderatorLabel' => 'Moderador',
+      'regularUserLabel' => 'Usuário Comum',
+      'createAccountButtonText' => 'Criar Conta',
       'errorMessage' => '',
-      'generalMessage' => '',
-      'csrfToken' => $this->authManagerService->getCsrfToken(),
+      'csrfToken' => $this->authManagerService->getCsrfToken(), 
     ];
 
     $username = trim($_POST['newUser']);
     $password = trim($_POST['newUserPassword']);
     $email = trim($_POST['newUserEmail']);
 
+    $roleFormPost = $_POST['userRole'] ?? null;
+
+    $role = (UserPermissions::tryFrom((int)$roleFormPost) ?? UserPermissions::RegularUser)->value;
+
     $response = $this->userManagementService->create($username, $password, 
-                                              $email, UserPermissions::Admin->value);
+                                              $email, $role);
 
     if (!$response['status']) {
       $bodyData['errorMessage'] = $response['message'];
@@ -164,7 +183,7 @@ final class AdminController extends BaseController{
         'tableHeaderPostTitleText' => 'Título do Post',
         'tableHeaderActionText' => 'Ações Administrativas',      
         'hideEditButton' => true,
-      'deleteUrlAction' => '/admin/dashboard/post/',
+      'deleteActionUrl' => '/admin/dashboard/post/',
       ];
 
     $viewData = $this->prepareView(ViewPath::ADMIN_LIST_ALL_USERS_POSTS, $headTitle, $bodyData);
