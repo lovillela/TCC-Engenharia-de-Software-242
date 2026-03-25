@@ -1,6 +1,6 @@
-<div class="table-responsive">
-  <table class="table table-hover align-middle">
-    <thead class="table-light">
+<div class="table-responsive shadow-sm rounded">
+  <table class="table table-hover table-striped align-middle mb-0">
+    <thead class="table-dark">
       <tr>
         <th> <?php echo($tableHeaderPostTitleText); ?> </th>
         <th class="text-end"><?php echo($tableHeaderActionText); ?></th>
@@ -20,14 +20,14 @@
             <td class="text-end">
               
               <?php if (!isset($hideEditButton) || $hideEditButton === false): ?>
-                <a href="/dashboard/post/edit/<?php echo($post['id_post']); ?>" class="btn btn-sm btn-outline-primary">
+                <a href="/dashboard/post/edit/<?php echo($post['id_post']); ?>" class="btn btn-sm btn-primary">
                   <?php echo($editButtonText); ?>
                 </a>
               <?php endif; ?>
 
-              <form action="<?php echo($deleteActionUrl) ?>delete/<?php echo($post['id']); ?>" method="POST" onsubmit="return confirm('Tem certeza que deseja deletar este post?')">
+              <form action="<?php echo($deleteActionUrl) ?>delete/<?php echo($post['id_post']); ?>" method="POST" class="d-inline" onsubmit="return confirm('Tem certeza que deseja deletar este post?')">
                 <input type="hidden" name="csrfToken" value="<?php echo($csrfToken); ?>">
-                <button type="submit" class="btn btn-sm btn-outline-danger"><?php echo($deleteButtonText) ?></button>
+                <button type="submit" class="btn btn-sm btn-danger"><?php echo($deleteButtonText) ?></button>
               </form>
 
             </td>
