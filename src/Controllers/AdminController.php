@@ -182,15 +182,21 @@ final class AdminController extends BaseController{
 
     $allUsersList = $this->userManagementService->getAllUsers();
     
-    $headTitle = 'Dashboard';
+    $headTitle = 'Dashboard - Usuários';
     $bodyData = [
-      'title' => 'Dashboard',
       'headerText' => 'Dashboard',
       'errorMessage' => '',
       'generalMessage' => '',
       'csrfToken' => $this->authManagerService->getCsrfToken(),
       'users' => $allUsersList,
       'userListView' => ViewPath::PARTIAL_USER_LIST->getPath(),
+        'tableHeaderIdText' => 'Id',
+        'tableHeaderUsernameText' => 'Usuário',
+        'tableHeaderEmailText' => 'E-mail',
+        'tableHeaderPermissionText' => 'Função',
+        'tableHeaderActionText' => 'Ações Administrativas',
+        'noUsersNoticeText' => 'Nenhum usuário registrado.',
+        'deleteButtonText' => 'Deletar Usuário',
       'deleteUrlAction' => '/admin/dashboard/user/',
       ];
 
