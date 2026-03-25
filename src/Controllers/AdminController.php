@@ -157,6 +157,12 @@ final class AdminController extends BaseController{
       'csrfToken' => $this->authManagerService->getCsrfToken(),
       'userPosts' => $allUserPostsList,
       'postListView' => ViewPath::PARTIAL_POST_LIST->getPath(),
+        'noPostsNoticeText' => 'Não há artigos cadastrados!',
+        'editButtonText' => 'Editar',
+        'deleteButtonText' => 'Deletar',
+        'tableHeaderPostTitleText' => 'Título do Post',
+        'tableHeaderActionText' => 'Ações Administrativas',      
+        'hideEditButton' => true,
       'deleteUrlAction' => '/admin/dashboard/post/',
       ];
 

@@ -130,10 +130,12 @@ final class RegularUserController extends BaseController{
       'csrfToken' => $this->authManagerService->getCsrfToken(),
       'userPosts' => $userPosts,
       'postList' => ViewPath::PARTIAL_POST_LIST->getPath(),
+        'noPostsNoticeText' => 'Não há artigos cadastrados!',
         'editButtonText' => 'Editar',
         'deleteButtonText' => 'Deletar',
         'tableHeaderPostTitleText' => 'Título do Post',
         'tableHeaderActionText' => 'Ações',
+        'hideEditButton' => false,
       'deleteActionUrl' => '/dashboard/post/',
       ];
 
