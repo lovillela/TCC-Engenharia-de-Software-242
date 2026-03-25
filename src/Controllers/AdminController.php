@@ -236,6 +236,6 @@ final class AdminController extends BaseController{
       exit;
     }
     $this->postService->deletePostByAdmin($postId);
-    $this->redirectService->redirectToAdminDashboard();
+    $this->redirectService->redirectToAdminPostsList();
   }
  }

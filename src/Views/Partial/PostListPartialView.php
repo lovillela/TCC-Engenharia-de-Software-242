@@ -20,12 +20,12 @@
             <td class="text-end">
               
               <?php if (!isset($hideEditButton) || $hideEditButton === false): ?>
-                <a href="/dashboard/post/edit/<?php echo($post['id_post']); ?>" class="btn btn-sm btn-primary">
+                <a href="/dashboard/post/edit/<?php echo($post['id']); ?>" class="btn btn-sm btn-primary">
                   <?php echo($editButtonText); ?>
                 </a>
               <?php endif; ?>
 
-              <form action="<?php echo($deleteActionUrl) ?>delete/<?php echo($post['id_post']); ?>" method="POST" class="d-inline" onsubmit="return confirm('Tem certeza que deseja deletar este post?')">
+              <form action="<?php echo($deleteActionUrl) ?>delete/<?php echo($post['id']); ?>" method="POST" class="d-inline" onsubmit="return confirm('Tem certeza que deseja deletar este post?')">
                 <input type="hidden" name="csrfToken" value="<?php echo($csrfToken); ?>">
                 <button type="submit" class="btn btn-sm btn-danger"><?php echo($deleteButtonText) ?></button>
               </form>
