@@ -1,12 +1,22 @@
 <div class="row justify-content-center mt-5">
   <div class="col-md-6 col-lg-5">
-    <div class="card shadow border-0">
+    
+    <a href="/" class="btn btn-sm btn-secondary mb-3">« <?php echo($returnHomeLinkText); ?></a>
+
+    <div class="card shadow-sm border-0 border-top border-primary border-4">
       <div class="card-body p-5">
-        <h2 class="text-center mb-4 fw-bold"><?php echo($headerText); ?></h2>
+        
+        <h2 class="text-center mb-4 fw-bold text-primary"><?php echo($headerText); ?></h2>
 
         <?php if (!empty($errorMessage)): ?>
           <div class="alert alert-danger" role="alert">
             <?php echo($errorMessage); ?>
+          </div>
+        <?php endif; ?>
+
+        <?php if (!empty($generalMessage)): ?>
+          <div class="alert alert-success" role="alert">
+            <?php echo($generalMessage); ?>
           </div>
         <?php endif; ?>
 
@@ -27,12 +37,13 @@
             <button type="submit" class="btn btn-primary btn-lg"><?php echo($loginButtonText); ?></button>
           </div>
         </form>
-
+        
         <div class="text-center mt-4">
           <a href="/signup/" class="text-decoration-none link-secondary">
             <small><?php echo($signUpLoginText); ?></small>
           </a>
         </div>
+
       </div>
     </div>
   </div>

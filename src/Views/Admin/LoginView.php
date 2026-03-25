@@ -1,8 +1,12 @@
 <div class="row justify-content-center mt-5">
   <div class="col-md-6 col-lg-5">
-    <div class="card shadow border-0">
+    
+    <a href="/" class="btn btn-sm btn-secondary mb-3">« <?php echo($returnHomeLinkText); ?></a>
+
+    <div class="card shadow-sm border-0 border-top border-danger border-4">
       <div class="card-body p-5">
-        <h2 class="text-center mb-4 fw-bold"><?php echo($loginHeaderText); ?></h2>
+        
+        <h2 class="text-center mb-4 fw-bold text-danger"><?php echo($loginHeaderText); ?></h2>
 
         <?php if (!empty($errorMessage)): ?>
           <div class="alert alert-danger" role="alert">
@@ -20,13 +24,14 @@
 
           <div class="mb-4">
             <label for="passwordAdmin" class="form-label fw-semibold"><?php echo($passwordLabel); ?></label>
-            <input type="password" name="password" id="passwordAdmin" class="form-control"  required autocomplete="off">
+            <input type="password" name="password" id="passwordAdmin" class="form-control" required autocomplete="off">
           </div>
 
           <div class="d-grid">
-            <button type="submit" class="btn btn-primary btn-lg"><?php echo($loginButtonText); ?></button>
+            <button type="submit" class="btn btn-danger btn-lg"><?php echo($loginButtonText); ?></button>
           </div>
         </form>
+
       </div>
     </div>
   </div>

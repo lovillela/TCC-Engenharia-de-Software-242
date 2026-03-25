@@ -34,6 +34,7 @@ final class AdminController extends BaseController{
     $bodyData=[
       'loginHeaderText' => 'Acesso Admin',
       'errorMessage' => '',
+      'returnHomeLinkText' => 'Voltar para Home',
       'userLabel' => 'Usuário Admin',
       'passwordLabel' => 'Senha Admin',
       'loginButtonText' => 'Acesso Admin',

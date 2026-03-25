@@ -88,7 +88,7 @@ final class RegularUserController extends BaseController{
       'headerText' => 'Cadastro',
       'errorMessage' => '',
       'generalMessage' => '',
-      'returnHomeLinkText' => 'Voltar à página Inicial',
+      'returnHomeLinkText' => 'Voltar para Home',
       'userLabel' => 'Usuário',
       'emailLabel' => 'E-mail',
       'passwordLabel' => 'Senha',
