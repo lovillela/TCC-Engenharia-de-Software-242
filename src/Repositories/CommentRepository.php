@@ -33,6 +33,8 @@ final class CommentRepository {
       $insertCommentStmt->bindValue(5, date("Y-m-d H:i:s"));
       $insertCommentStmt->bindValue(6, 1);
 
+      $insertCommentStmt->executeQuery();
+
     } catch (Throwable $th) {
         $this->logger->error('Erro ao salvar comentário!', 
                             ['userId' => $userId, 
