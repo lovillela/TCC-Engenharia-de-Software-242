@@ -17,7 +17,33 @@ final class CommentRepository {
                                         (`id_user`, `id_post`, `content`, `parent`, `created_at`, `is_visible`) 
                                         VALUES 
                                         (?, ?, ?, ?, ?, ?)';
+  
+  //Selects
+  /**
+   * WITH RECURSIVE -> para mysql 8.0+
+   * seguindo a mesma lógica do user repo
+   */
+  private string $selectCommentWithChildrenQuery = '
+    WITH RECURSIVE CommentWithChildren AS (
+      SELECT `id`, 1 AS CommentDepth
+      FROM `user_comment_post` 
+      WHERE `id` = ?
+      
+      UNION ALL
+      
+      SELECT `user_comment_post`.`id`, CommentWithChildren.CommentDepth + 1
+      FROM `user_comment_post`
+      INNER JOIN CommentWithChildren ON `user_comment_post`.`parent` = CommentWithChildren.`id`
+    )
+  
+    SELECT `id` FROM CommentWithChildren ORDER BY CommentDepth DESC';
 
+  //Deletes
+  /**
+   * Lembre-se:
+   * Usar em conjunto com selectCommentWithChildrenQuery -> IN (?)
+   */
+  private string $deleteCommentsInRangeQuery = 'DELETE FROM `user_comment_post` WHERE `id` IN (?)';
   public function __construct(Connection $connection, LoggerInterface $logger) {
     $this->connection = $connection;
     $this->logger = $logger;
@@ -44,11 +70,44 @@ final class CommentRepository {
     }
   }
 
-  public function getPostComments(int $postId) {
-    
+  /**
+   * Como no user repo
+   * 
+   */
+  public function deleteComment(int $commentId) {
+    try {
+      $commentWithChildren = $this->getCommentWithChildren($commentId);
+      
+      if (empty($commentWithChildren)) {
+        return;
+      }
+
+      $this->connection->executeStatement($this->deleteCommentsInRangeQuery,
+                                          [$commentWithChildren],
+                                          [ArrayParameterType::INTEGER]);
+
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao deletar comentário e filhos!', 
+                                ['commentId' => $commentId,'exception' => $th]);
+        throw new Exception('Erro ao deletar comentário e filhos!'); 
+    }
   }
 
-  public function deleteComment(int $commentId) {
-    
+  /**
+   * Lê o comentário e respostas
+   * @param int $userId
+   * @throws Exception
+   * @return array
+   */
+  private function getCommentWithChildren(int $commentId): ?array{
+    try {
+      $userCommentsWithChildrenStmt = $this->connection->prepare($this->selectCommentWithChildrenQuery);
+      $userCommentsWithChildrenStmt->bindValue(1, $commentId);
+      return $userCommentsWithChildrenStmt->executeQuery()->fetchFirstColumn();
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao ler comentários do usuário!',
+                                ['userId' => $commentId, 'exception' => $th]);
+          throw new Exception('Erro ao ler comentários do usuário!');
+    }
   }
 }
