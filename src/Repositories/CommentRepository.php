@@ -58,7 +58,7 @@ final class CommentRepository {
     $this->logger = $logger;
   }
 
-  public function save(int $userId, int $postId, string $content, ?int $parentId = null) {
+  public function create(int $userId, int $postId, string $content, ?int $parentId = null) {
     try {
       $insertCommentStmt = $this->connection->prepare($this->insertCommentQuery);
       $insertCommentStmt->bindValue(1, $userId);
@@ -94,7 +94,7 @@ final class CommentRepository {
    * Como no user repo
    * 
    */
-  public function deleteComment(int $commentId) {
+  public function delete(int $commentId) {
     try {
       $commentWithChildren = $this->getCommentWithChildren($commentId);
       
