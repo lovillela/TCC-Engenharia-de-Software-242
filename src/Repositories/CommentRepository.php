@@ -37,6 +37,15 @@ final class CommentRepository {
     )
   
     SELECT `id` FROM CommentWithChildren ORDER BY CommentDepth DESC';
+  
+  private string $selectCommentsQuery = 'SELECT `user_comment_post`.`id`, `user_comment_post`.`id_user`, 
+                                              `user_comment_post`.`id_post`, `user_comment_post`.`content`, 
+                                                `user_comment_post`.`parent`, `user_comment_post`.`created_at`, 
+                                                `users`.`username` 
+                                    FROM `user_comment_post`
+                                    JOIN `users` ON `user_comment_post`.`id_user` = `users`.id
+                                    WHERE `user_comment_post`.`id_post` = ? AND `user_comment_post`.`is_visible` = 1
+                                    ORDER BY `user_comment_post`.`created_at` ASC';
 
   //Deletes
   /**
@@ -67,6 +76,17 @@ final class CommentRepository {
                             'postId' => $postId,
                             'exception' => $th]);
         throw new Exception('Erro ao salvar comentário!');
+    }
+  }
+
+  public function getPostComments(int $postId) : ?array {
+    try {
+      $selectCommentsStmt = $this->connection->prepare($this->selectCommentsQuery);
+      $selectCommentsStmt->bindValue(1, $postId);
+      return $selectCommentsStmt->executeQuery()->fetchAllAssociative();
+    } catch (Throwable $th) {
+        $this->logger->error('Erro ao carregar comentários do post!', ['postId' => $postId, 'exception' => $th]);
+        throw new Exception('Erro ao carregar comentários do post!');
     }
   }
 
