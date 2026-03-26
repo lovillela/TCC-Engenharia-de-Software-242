@@ -52,7 +52,7 @@ final class CommentService {
 
       $postCommentModel = new CommentData(
                                 $postComment['id'],
-                                $postComment['parent'] !== null ? (int) $postComment['parent'] : null,
+                                $postComment['parent'] !== null ? $postComment['parent'] : null,
                                 $postComment['content'],
                                 $postComment['username'],
                                 $postComment['created_at']
