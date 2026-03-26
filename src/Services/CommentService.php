@@ -54,8 +54,8 @@ final class CommentService {
                                 $postComment['id'],
                                 $postComment['parent'] !== null ? $postComment['parent'] : null,
                                 $postComment['content'],
+                                $postComment['created_at'],
                                 $postComment['username'],
-                                $postComment['created_at']
                               );
 
       array_push($postCommentsData, $postCommentModel);
