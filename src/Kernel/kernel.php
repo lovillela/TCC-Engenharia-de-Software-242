@@ -2,6 +2,8 @@
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
+use Lovillela\BlogApp\Repositories\CommentRepository;
+use Lovillela\BlogApp\Services\CommentService;
 use Lovillela\BlogApp\Services\CsrfService;
 use Lovillela\BlogApp\Services\SlugService;
 use Lovillela\BlogApp\Services\SessionService;
@@ -41,6 +43,10 @@ $renderService = new ViewRenderService();
 $redirectService = new RedirectService();
 
 $userRepository = new UserRepository($connection, $infraLogger);
+
+$commentRepository = new CommentRepository($connection, $infraLogger);
+
+$commentService = new CommentService($commentRepository, $appLogger);
 
 $sanitizationService = new InputSanitizationService();
 
@@ -87,6 +93,7 @@ $dependencyContainer = [
   'RedirectService' => $redirectService,
   'ViewRenderService' => $renderService,
   'InputSanitizationService' => $sanitizationService,
+  'CommentService' => $commentService,
 ];
 
 $routerMain = require_once __DIR__ . '/../../config/Routes/main.php';
