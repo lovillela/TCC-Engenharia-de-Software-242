@@ -44,7 +44,7 @@ final class CommentService {
     $postComments = $this->commentRepository->getPostComments($postId);
     $postCommentsData = [];
 
-    if (!isset($postComments)) {
+    if (empty($postComments)) {
       return [];
     }
 
@@ -61,7 +61,18 @@ final class CommentService {
       array_push($postCommentsData, $postCommentModel);
     }
 
-    return $postCommentsData;
+    //Apesar do nome, pode conter respostas
+    $commentWithReplies = [];
+
+    foreach ($postCommentsData as $comment) {
+      if ($comment->parentId == null) { //Nome como no DTO
+        array_push($commentWithReplies, $comment);
+      }elseif (isset($comment->parentId)) {
+        array_push($commentWithReplies, $comment->replies);
+      }
+    }
+
+    return $commentWithReplies;
   }
 
 }
