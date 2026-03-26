@@ -12,7 +12,7 @@
     </form>
   <?php else: ?>
     <div class="alert alert-light border text-center text-muted mb-4">
-      Faça <a href="/login/">login</a> para participar da discussão.
+      <?php echo($loginButtonText); ?>
     </div>
   <?php endif; ?>
 

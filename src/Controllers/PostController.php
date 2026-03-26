@@ -80,6 +80,7 @@ final class PostController extends BaseController{
     $headTitle = $post['title'];
     
     $bodyData = [
+      'goBackToPostHomeButtonText' => 'Voltar para Artigos',
       'postId' => $post['id'],
       'title' => $post['title'],
       'content' => $post['content'],
@@ -90,6 +91,7 @@ final class PostController extends BaseController{
         'replyButtonText' => 'Responder',
         'sendButtonText' > 'Enviar',
         'noCommentsText' => 'Nenhum comentário ainda.',
+        'loginButtonText' => 'Faça <a href="/login/">login</a> para participar da discussão.',
       'errorMessage' => '',
       'generalMessage' => '',
       'csrfToken' => $this->authManagerService->getCsrfToken(),

@@ -10,7 +10,7 @@
 
 <div class="row justify-content-center">
   <div class="col-lg-12">
-    <a href="/post/" class="btn btn-sm btn-secondary mb-4">« Voltar para Artigos</a>
+    <a href="/post/" class="btn btn-sm btn-secondary mb-4">« <?php echo($goBackToPostHomeButtonText); ?></a>
     <h1 class="display-3 text-center mb-5"><?php echo($title);?></h1>
     
     <div class="post-content">
