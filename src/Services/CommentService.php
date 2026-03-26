@@ -42,11 +42,13 @@ final class CommentService {
 
   public function getPostComments(int $postId) : ?array {
     $postComments = $this->commentRepository->getPostComments($postId);
-    $postCommentsData = [];
+    
 
     if (empty($postComments)) {
       return [];
     }
+
+    $commentsById = [];
 
     foreach ($postComments as $postComment) {
 
@@ -58,17 +60,19 @@ final class CommentService {
                                 $postComment['username'],
                               );
 
-      array_push($postCommentsData, $postCommentModel);
+      $commentsById[$postCommentModel->commentId] = $postCommentModel;
     }
 
     //Apesar do nome, pode conter respostas
     $commentWithReplies = [];
-
-    foreach ($postCommentsData as $comment) {
-      if ($comment->parentId == null) { //Nome como no DTO
-        array_push($commentWithReplies, $comment);
-      }elseif (isset($comment->parentId)) {
-        array_push($commentWithReplies, $comment->replies);
+    /*Não esquecer: os arrays recebem a REFERÊNCIA dos objetos e não o valor
+    *Alterações no commentsById refletem no commentWithReplies
+    */
+    foreach ($commentsById as $comment) {
+      if ($comment->parentId === null) { //Nome como no DTO
+        $commentWithReplies[] = $comment;
+      }else {
+        $commentsById[$comment->parentId]->replies[] = $comment;
       }
     }
 
