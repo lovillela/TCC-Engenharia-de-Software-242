@@ -60,6 +60,7 @@ final class PostController extends BaseController{
 
     $comments = $this->commentService->getPostComments($post['id']);
     $userData = $this->authManagerService->getUserData();
+    $isLoggedIn = $this->authManagerService->isSessionActive();
     $isAdminOrModerator = isset($userData) && ($this->authManagerService->isAdmin($userData) || 
                                 $this->authManagerService->isModerator($userData));
 
@@ -68,7 +69,7 @@ final class PostController extends BaseController{
         'comments' => $comments,
         'csrfToken' => $this->authManagerService->getCsrfToken(),
         'postId' => $post['id'],
-        'isLoggedIn' => $this->authManagerService->isSessionActive(),
+        'isLoggedIn' => $isLoggedIn,
         'isAdminOrModerator' => $isAdminOrModerator,
         'replyButtonText' => 'Responder',
         'sendButtonText' => 'Enviar'
@@ -92,7 +93,7 @@ final class PostController extends BaseController{
       'errorMessage' => '',
       'generalMessage' => '',
       'csrfToken' => $this->authManagerService->getCsrfToken(),
-      'isLoggedIn' => $this->authManagerService->isSessionActive(),
+      'isLoggedIn' => $isLoggedIn,
       'loggedUserId' => $userData->userId ?? null,
       'isAdminOrModerator' => isset($userData) && ($this->authManagerService->isAdmin($userData) || $this->authManagerService->isModerator($userData)),
     ];

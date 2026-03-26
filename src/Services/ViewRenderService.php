@@ -94,7 +94,27 @@ final class ViewRenderService{
 
       $renderedComments .= '</div>'; //Fechando o bloco de ações
       /**
-       * Fim Ações (deletar, responder) 
+       * Fim - Ações (deletar, responder) 
+       */
+
+      /**
+       * Form de respostas
+       */
+      if($renderPartialViewData['isLoggedIn']){
+        $renderedComments .= '<div class="collapse mt-2" id="reply-' . $comment->commentId . '">' .
+                             '<form action="/post/comment/add" method="POST">' .
+                             '<input type="hidden" name="csrfToken" value="' . $renderPartialViewData['csrfToken'] . '">' .
+                             '<input type="hidden" name="postId" value="' . $renderPartialViewData['postId'] . '">' .
+                             '<input type="hidden" name="parentId" value="' . $comment->commentId . '">' .
+                             '<div class="input-group input-group-sm w-75">' .
+                             '<input type="text" class="form-control" name="content" required>' .
+                             '<button class="btn btn-outline-primary" type="submit">' . $renderPartialViewData['sendButtonText'] . '</button>' .
+                             '</div>' .
+                             '</form>' .
+                             '</div>';
+      }
+      /**
+       * Fim -Form de respostas
        */
 
       /**
