@@ -21,6 +21,8 @@
           echo('<br>');
         }
       ?>
+
+      <?php require_once $commentView ?>
     </div>
   </div>
 </div>

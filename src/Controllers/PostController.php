@@ -3,6 +3,7 @@
 namespace Lovillela\BlogApp\Controllers;
 
 use Lovillela\BlogApp\Services\AuthManagerService;
+use Lovillela\BlogApp\Services\CommentService;
 use Lovillela\BlogApp\Services\ViewRenderService;
 use Lovillela\BlogApp\Services\PostManagementService;
 use Lovillela\BlogApp\Services\RedirectService;
@@ -14,6 +15,7 @@ final class PostController extends BaseController{
   private RedirectService $redirectService;
   private AuthManagerService $authManagerService;
   private ViewRenderService $viewRenderService;
+  private CommentService $commentService;
   private array $dependencyContainer;
 
   public function __construct(array $dependencyContainer) {
@@ -22,6 +24,7 @@ final class PostController extends BaseController{
     $this->redirectService = $this->dependencyContainer['RedirectService'];
     $this->authManagerService = $this->dependencyContainer['AuthManagerService'];
     $this->viewRenderService = $this->dependencyContainer['ViewRenderService'];
+    $this->commentService = $this->dependencyContainer['CommentService'];
   }
 
   public function index() {
@@ -55,13 +58,43 @@ final class PostController extends BaseController{
       exit;
     }
 
+    $comments = $this->commentService->getPostComments($post['id']);
+    $userData = $this->authManagerService->getUserData();
+    $isAdminOrModerator = isset($userData) && ($this->authManagerService->isAdmin($userData) || 
+                                $this->authManagerService->isModerator($userData));
+
+
+    $renderPartialViewData = [
+        'comments' => $comments,
+        'csrfToken' => $this->authManagerService->getCsrfToken(),
+        'postId' => $post['id'],
+        'isLoggedIn' => $this->authManagerService->isSessionActive(),
+        'isAdminOrModerator' => $isAdminOrModerator,
+        'replyButtonText' => 'Responder',
+        'sendButtonText' => 'Enviar'
+    ];
+
+    $renderedComments = $this->viewRenderService->renderComments($renderPartialViewData);
+
     $headTitle = $post['title'];
     
     $bodyData = [
+      'postId' => $post['id'],
       'title' => $post['title'],
       'content' => $post['content'],
+      'comments' => $renderedComments,
+      'commentView' => ViewPath::PARTIAL_COMMENTS->getPath(),
+        'commentsBlockHeaderText' => 'Comentários',
+        'commentActionButtonText' => 'Comentar',
+        'replyButtonText' => 'Responder',
+        'sendButtonText' > 'Enviar',
+        'noCommentsText' => 'Nenhum comentário ainda.',
       'errorMessage' => '',
       'generalMessage' => '',
+      'csrfToken' => $this->authManagerService->getCsrfToken(),
+      'isLoggedIn' => $this->authManagerService->isSessionActive(),
+      'loggedUserId' => $userData->userId ?? null,
+      'isAdminOrModerator' => isset($userData) && ($this->authManagerService->isAdmin($userData) || $this->authManagerService->isModerator($userData)),
     ];
 
     $viewData = $this->prepareView(ViewPath::FRONTEND_POST, $headTitle, $bodyData);
