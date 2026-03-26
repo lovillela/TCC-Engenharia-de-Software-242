@@ -11,7 +11,7 @@
 <h1 class="mb-4 text-primary"><?php echo($headerText);?></h1>
 
 <?php if(!isset($posts)): ?>
-  <div class="alert alert-info">Nenhum post publicado ainda. Volte em breve!</div>
+  <div class="alert alert-info"><?php $noPostsNoticeText ?></div>
 
 <?php else: ?>
 

@@ -43,6 +43,7 @@ final class PostController extends BaseController{
       'errorMessage' => '',
       'generalMessage' => '',
       'posts' => $posts,
+      'noPostsNoticeText' => 'Nenhum post publicado ainda. Volte em breve!' ,
     ];
 
     $viewData = $this->prepareView(ViewPath::FRONTEND_POST_HOME, $headTitle, $bodyData);
