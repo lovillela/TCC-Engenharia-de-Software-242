@@ -19,7 +19,7 @@ class PostRepository{
   private string $selectAllPostsQuery = 'SELECT `title`, `slug` FROM `post` LIMIT 50';
   private string $selectAllPostsForAdminQuery = 'SELECT `id`, `title` FROM `post`';
   private string $selectPostByID_Query = 'SELECT `id`, `title`, `content`, `slug` FROM `post` WHERE `id` = ?';
-  private string $selectPostBySlugQuery = 'SELECT `title`, `content` FROM `post` WHERE `slug` = ?';
+  private string $selectPostBySlugQuery = 'SELECT `id`, `title`, `content` FROM `post` WHERE `slug` = ?';
   private string $selectPostsByUserId = 'SELECT `id_post` FROM `post_users` WHERE `id_user` = ?';
   private string $selectPostIdsInRange = 'SELECT DISTINCT `id_post` FROM `post_users` WHERE `id_post` IN (?)';
   private string $selectOwnership = 'SELECT `id_user` FROM `post_users` WHERE `id_post` = ?';
