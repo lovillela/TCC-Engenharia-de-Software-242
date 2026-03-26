@@ -2,7 +2,9 @@
 
 namespace Lovillela\BlogApp\Services;
 
+use Lovillela\BlogApp\Models\Comments\CommentData;
 use Lovillela\BlogApp\Repositories\CommentRepository;
+use Lovillela\BlogApp\Models\Comments;
 use Psr\Log\LoggerInterface;
 use Throwable;
 use Exception;
@@ -36,7 +38,30 @@ final class CommentService {
         $this->logger->error('Erro ao deletar comentário', ['commentId' => $commentId, 'exception' => $th->getMessage()]);
         throw new Exception('Erro ao deletar comentário');
     }
+  }
 
+  public function getPostComments(int $postId) : ?array {
+    $postComments = $this->commentRepository->getPostComments($postId);
+    $postCommentsData = [];
+
+    if (!isset($postComments)) {
+      return [];
+    }
+
+    foreach ($postComments as $postComment) {
+
+      $postCommentModel = new CommentData(
+                                $postComment['id'],
+                                $postComment['parent'] !== null ? (int) $postComment['parent'] : null,
+                                $postComment['content'],
+                                $postComment['username'],
+                                $postComment['created_at']
+                              );
+
+      array_push($postCommentsData, $postCommentModel);
+    }
+
+    return $postCommentsData;
   }
 
 }

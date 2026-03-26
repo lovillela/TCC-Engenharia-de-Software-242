@@ -127,7 +127,7 @@ final class CommentRepository {
     } catch (Throwable $th) {
         $this->logger->error('Erro ao ler comentários do usuário!',
                                 ['userId' => $commentId, 'exception' => $th]);
-          throw new Exception('Erro ao ler comentários do usuário!');
+        throw new Exception('Erro ao ler comentários do usuário!');
     }
   }
 }
