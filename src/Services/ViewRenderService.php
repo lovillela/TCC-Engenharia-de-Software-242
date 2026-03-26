@@ -79,13 +79,13 @@ final class ViewRenderService{
        * Se logado, mostra o botão de resposta
        */
       if($renderPartialViewData['isLoggedIn']){
-        $renderedComments .= '<button class="btn btn-link btn-sm p-0 text-decoration-none' . 
+        $renderedComments .= '<button class="btn btn-link btn-sm p-0 text-decoration-none" ' . 
                               'data-bs-toggle="collapse" data-bs-target="#reply-' . $comment->commentId . '">' . 
                               $renderPartialViewData['replyButtonText']  . '</button>';
       }
 
       if ($renderPartialViewData['isAdminOrModerator']) {
-        $renderedComments .= '<form action="/post/comment/delete/' . $comment->commentId . '" method="POST"' .
+        $renderedComments .= '<form action="/post/comment/delete/' . $comment->commentId . '" method="POST" ' .
                              'class="d-inline" onsubmit="return confirm(\'Deletar este comentário e suas respostas?\')">' .
                              '<input type="hidden" name="csrfToken" value="' . $renderPartialViewData['csrfToken'] . '">' .
                              '<button type="submit" class="btn btn-link btn-sm p-0 text-danger text-decoration-none">Deletar</button>' .
