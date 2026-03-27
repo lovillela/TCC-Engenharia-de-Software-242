@@ -1,6 +1,6 @@
 # 📝 Blog App — TCC Engenharia de Software (Turma 242)
 
-> Sistema de Blog/CMS desenvolvido em **PHP 8.4 puro** (sem frameworks) como Trabalho de Conclusão de Curso (TCC) em Engenharia de Software — com foco nos **fundamentos da linguagem e da web**, arquitetura MVC com Service Layer, e infraestrutura containerizada com Docker.
+> Sistema de Blog/CMS desenvolvido em **PHP 8.4 puro** (sem frameworks) como Trabalho de Conclusão de Curso (TCC) em Engenharia de Software — com foco nos **fundamentos da linguagem e da web**, arquitetura MVC com Camada de Serviço, e infraestrutura containerizada com Docker.
 
 **Autor:** Luís Otávio Villela Antunes  
 **Contato:** luis.villela3@gmail.com
@@ -30,7 +30,7 @@
 
 ## 🎯 Sobre o Projeto
 
-O **Blog App** é um CMS (Content Management System) de blog completo, construído em **PHP 8.4 puro** — sem o uso de frameworks — seguindo o padrão arquitetural **MVC com camada de Service**. A proposta do TCC é demonstrar domínio dos fundamentos de desenvolvimento web, padrões de projeto e boas práticas de segurança, ao invés de depender de abstrações prontas de frameworks.
+O **Blog App** é um CMS (Content Management System) de blog completo, construído em **PHP 8.4 puro** — sem o uso de frameworks — seguindo o padrão arquitetural **MVC com camada de Serviço**. A proposta do TCC é demonstrar domínio dos fundamentos de desenvolvimento web, padrões de projeto e boas práticas de segurança, ao invés de depender de abstrações prontas de frameworks.
 
 O sistema oferece três perfis de usuário com diferentes níveis de acesso:
 
@@ -81,7 +81,7 @@ O sistema oferece três perfis de usuário com diferentes níveis de acesso:
 
 ## 🏗 Arquitetura
 
-O projeto implementa o padrão **MVC com camada de Service** e injeção de dependências manual via um array `$dependencyContainer`, construído no Kernel:
+O projeto implementa o padrão **MVC com camada de Serviço** e injeção de dependências manual via um array `$dependencyContainer`, construído no Kernel:
 
 ```
                      Requisição HTTP
@@ -394,5 +394,28 @@ O **AuthorizationService** implementa controle de acesso baseado em papéis (Rol
 | Criar usuários (qualquer perfil) | ✅ | ❌ | ❌ |
 | Excluir usuários | ✅ | ❌ | ❌ |
 | Moderar comentários | ✅ | ✅ | ❌ |
+
+---
+
+## ⚙ Camada de Serviços
+
+Os Serviços encapsulam toda a lógica de negócio e são injetados nos Controllers via o `$dependencyContainer`:
+
+| Serviço | Responsabilidade |
+|---------:|:-----------------|
+| `AuthManagerService` | Fachada para autenticação, autorização e CSRF |
+| `AuthenticationControlService` | Verificação de credenciais de login |
+| `AuthorizationService` | Controle de permissões RBAC |
+| `PostManagementService` | CRUD de posts com transações, sanitização (via InputSanitizationService) e gerenciamento de slugs (via SlugService) |
+| `UserManagementService` | CRUD de usuários com transações e exclusão em cascata |
+| `CommentService` | CRUD de comentários com árvore de respostas aninhadas |
+| `InputSanitizationService` | HTMLPurifier para conteúdo de texto rico; regex para URLs e slugs |
+| `ViewRenderService` | Renderização de views com output buffering e headers de segurança |
+| `RouteMatchService` | Correspondência de rotas via AltoRouter e instanciação de Controllers |
+| `SessionService` | Gerenciamento de sessão segura (configuração, CSRF, dados do usuário) |
+| `SlugService` | Geração e gestão de slugs únicos |
+| `CsrfService` | Geração e validação de tokens CSRF |
+| `RedirectService` | Redirecionamentos HTTP |
+| `DatabaseConnectionService` | Conexão com o banco via Doctrine DBAL e variáveis de ambiente |
 
 ---
