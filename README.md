@@ -140,3 +140,15 @@ O projeto implementa o padrão **MVC com camada de Service** e injeção de depe
                │                     │  Headers de Segurança
                └─────────────────────┘
 ```
+
+### Princípios Fundamentais
+
+| Princípio | Descrição |
+|----------|-----------|
+| **Ponto de entrada único** | Todas as requisições passam por `public/index.php` via `.htaccess` |
+| **MVC + Camada de Serviços** | Controllers são finos; a lógica de negócio está nos Serviços |
+| **Injeção de dependências** | Array `$dependencyContainer` montado no Kernel e passado aos Controllers |
+| **Separação de rotas** | Rotas `/admin/*` usam handler separado para controle de permissões |
+| **DTOs imutáveis** | Classes `readonly` para transferência segura de dados (`ViewData`, `UserIdentity`) |
+
+---
