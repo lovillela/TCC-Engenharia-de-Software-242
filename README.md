@@ -265,3 +265,23 @@ TCC-Engenharia-de-Software-242/
 ├── composer.json                    # Dependências e autoload PSR-4
 └── composer.lock                    # Versões exatas (não versionado)
 ```
+
+## 🗄 Banco de Dados
+
+O banco utiliza **MySQL 8.4** com charset `utf8mb4` e collation `utf8mb4_0900_ai_ci`. A estrutura relacional é composta por **11 tabelas**:
+
+### Descrição das Tabelas
+
+| Tabela | Descrição | Destaques |
+|--------|-----------|-----------|
+| `users` | Usuários do sistema | Constraints UNIQUE em `username` e `email` |
+| `post` | Posts/artigos do blog | FULLTEXT index em `title` + `content`; slug UNIQUE |
+| `post_users` | Relacionamento M:N posts ↔ autores | FK com `ON DELETE CASCADE` |
+| `category` | Categorias de posts | FULLTEXT index em `title` + `description` |
+| `tag` | Tags para classificação | Slug UNIQUE |
+| `post_category` | M:N posts ↔ categorias | FK com `ON DELETE CASCADE` |
+| `post_tag` | M:N posts ↔ tags | FK com `ON DELETE CASCADE` |
+| `category_tag` | M:N categorias ↔ tags | FK com `ON DELETE CASCADE` |
+| `user_comment_post` | Comentários em posts | Self-referencing FK (`parent`) para respostas aninhadas; FULLTEXT em `content` |
+| `user_reaction_post` | Reações (like/dislike) em posts | PK composta `(id_user, id_post)` |
+| `slug_map` | Mapeamento polimórfico de slugs | Entidade + tipo (post, category, tag) com UNIQUE constraint |
