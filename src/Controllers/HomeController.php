@@ -10,8 +10,9 @@ final class HomeController extends BaseController{
   private ViewRenderService $viewRenderService;
 
   public function __construct(array $dependencyContainer) {
-  $this->dependencyContainer = $dependencyContainer;
-  $this->viewRenderService = $this->dependencyContainer['ViewRenderService'];
+    parent::__construct($dependencyContainer);
+    $this->dependencyContainer = $dependencyContainer;
+    $this->viewRenderService = $this->dependencyContainer['ViewRenderService'];
   }
   public function index(){
     

@@ -19,6 +19,7 @@ final class PostController extends BaseController{
   private array $dependencyContainer;
 
   public function __construct(array $dependencyContainer) {
+    parent::__construct($dependencyContainer);
     $this->dependencyContainer = $dependencyContainer;
     $this->postService = $this->dependencyContainer['PostManagementService'];
     $this->redirectService = $this->dependencyContainer['RedirectService'];

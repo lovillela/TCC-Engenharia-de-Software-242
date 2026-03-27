@@ -20,6 +20,7 @@ final class AdminController extends BaseController{
   private PostManagementService $postService;
   
   public function __construct(array $dependencyContainer) {
+    parent::__construct($dependencyContainer);
     $this->dependencyContainer = $dependencyContainer;
     $this->userManagementService = $this->dependencyContainer['UserService'];
     $this->redirectService = $this->dependencyContainer['RedirectService'];
