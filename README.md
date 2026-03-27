@@ -47,3 +47,33 @@ O sistema oferece três perfis de usuário com diferentes níveis de acesso:
 - **Biblioteca, não framework** — cada dependência resolve uma responsabilidade isolada, sem ditar a estrutura do projeto
 
 ---
+
+## 🛠 Tecnologias Utilizadas
+
+### Aplicação
+
+| Camada | Tecnologia | Versão | Finalidade |
+|--------|-----------|--------|-----------|
+| **Linguagem** | PHP | 8.4 | Linguagem principal do back-end |
+| **Roteamento** | [altorouter/altorouter](https://github.com/dannyvankooten/AltoRouter) | ^2.0 | Mapeamento de URLs para Controllers |
+| **Banco de Dados (DBAL)** | [doctrine/dbal](https://www.doctrine-project.org/projects/dbal.html) | ^4.4 | Abstração de acesso ao banco de dados |
+| **Migrations** | [doctrine/migrations](https://www.doctrine-project.org/projects/migrations.html) | ^3.9 | Controle de versão do schema do banco |
+| **Sanitização** | [ezyang/htmlpurifier](http://htmlpurifier.org/) | ^4.0 | Filtragem de conteúdo HTML (entrada e saída) |
+| **Variáveis de Ambiente** | [vlucas/phpdotenv](https://github.com/vlucas/phpdotenv) | ^5.6 | Carregamento de `.env` |
+| **Logs** | [monolog/monolog](https://github.com/Seldaek/monolog) | ^3.10 | Log de erros estruturado com múltiplos canais |
+
+### Infraestrutura
+
+| Componente | Tecnologia | Versão | Finalidade |
+|-----------|-----------|--------|-----------|
+| **Servidor Web** | Apache HTTP Server | 2.4 | Proxy reverso + servidor de arquivos estáticos |
+| **Processamento PHP** | PHP-FPM | 8.4 | Gerenciamento de processos PHP |
+| **Banco de Dados** | MySQL | 8.4 | Armazenamento relacional |
+| **Admin de Banco** | phpMyAdmin | 5.2 | Interface web para administração do MySQL |
+| **Containerização** | Docker Compose | — | Orquestração de todos os serviços |
+
+### Desenvolvimento
+
+| Ferramenta | Finalidade |
+|-----------|-----------|
+| **PHPMetrics** (^2.9, dev) | Geração de relatórios de métricas de código |
