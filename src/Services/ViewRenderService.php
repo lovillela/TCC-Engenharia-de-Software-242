@@ -85,9 +85,11 @@ final class ViewRenderService{
       }
 
       if ($renderPartialViewData['isAdminOrModerator']) {
-        $renderedComments .= '<form action="/post/comment/delete/' . $comment->commentId . '" method="POST" ' .
-                             'class="d-inline" onsubmit="return confirm(\'Deletar este comentário e suas respostas?\')">' .
-                             '<input type="hidden" name="csrfToken" value="' . $renderPartialViewData['csrfToken'] . '">' .
+        $renderedComments .= '<form action="/post/comment/delete/" method="POST" ' .
+                             'class="d-inline" onsubmit="return confirm(\'Deletar este comentário e suas respostas?\')"> ' .
+                             '<input type="hidden" name="csrfToken" value="' . $renderPartialViewData['csrfToken'] . '"> ' .
+                             '<input type="hidden" name="commentId" value="' . $comment->commentId . '">' .
+                             '<input type="hidden" name="postId" value="' . $renderPartialViewData['postId'] . '">' .
                              '<button type="submit" class="btn btn-link btn-sm p-0 text-danger text-decoration-none">Deletar</button>' .
                              '</form>';
       }

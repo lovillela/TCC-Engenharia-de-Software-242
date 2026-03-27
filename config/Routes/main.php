@@ -28,4 +28,5 @@ $router->map(method: 'GET', route: '/post/[:slug]', target: 'RedirectService#red
 $router->map('POST', '/dashboard/post/delete/[:postId]', 'PostController#deletePostAction', 'deletePostAction');
 
 $router->map('POST','/post/comment/create/', 'PostController#createCommentAction', 'commentCreate');
+$router->map('POST', '/post/comment/delete/', 'PostController#deleteCommentAction', 'deleteCommentAction');
 return $router;
