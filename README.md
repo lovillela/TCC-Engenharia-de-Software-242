@@ -419,3 +419,22 @@ Os Serviços encapsulam toda a lógica de negócio e são injetados nos Controll
 | `DatabaseConnectionService` | Conexão com o banco via Doctrine DBAL e variáveis de ambiente |
 
 ---
+
+## 🖼 Sistema de Views
+
+O sistema de renderização utiliza **output buffering** do PHP (`ob_start()` / `ob_get_clean()`) e templates PHP puros:
+
+1. O Controller chama `prepareView()` do `BaseController`, que cria um **ViewData** (DTO `readonly`)
+2. O `ViewRenderService::render()` recebe o `ViewData`, carrega a view específica e injeta os dados via `extract()`
+3. O conteúdo renderizado é inserido no layout base (`BaseView.php`)
+4. Headers de segurança (CSP, X-Frame-Options, etc.) são adicionados antes do envio da resposta
+
+### Organização das Views
+
+| Diretório | Conteúdo |
+|-----------|----------|
+| `Views/Admin/` | Dashboard admin, gerenciamento de usuários, login admin |
+| `Views/Frontend/` | Home, posts, login, cadastro, dashboard do usuário |
+| `Views/Partial/` | Componentes reutilizáveis (editor Quill, lista de posts/usuários, comentários) |
+
+---
