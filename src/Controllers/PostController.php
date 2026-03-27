@@ -13,7 +13,6 @@ final class PostController extends BaseController{
 
   private PostManagementService $postService;
   private RedirectService $redirectService;
-  private AuthManagerService $authManagerService;
   private ViewRenderService $viewRenderService;
   private CommentService $commentService;
   private array $dependencyContainer;
@@ -23,7 +22,6 @@ final class PostController extends BaseController{
     $this->dependencyContainer = $dependencyContainer;
     $this->postService = $this->dependencyContainer['PostManagementService'];
     $this->redirectService = $this->dependencyContainer['RedirectService'];
-    $this->authManagerService = $this->dependencyContainer['AuthManagerService'];
     $this->viewRenderService = $this->dependencyContainer['ViewRenderService'];
     $this->commentService = $this->dependencyContainer['CommentService'];
   }

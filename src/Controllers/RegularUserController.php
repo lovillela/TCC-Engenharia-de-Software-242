@@ -14,7 +14,6 @@ final class RegularUserController extends BaseController{
   private array $dependencyContainer;
   private UserManagementService $userManagementService;
   private RedirectService $redirectService;
-  private AuthManagerService $authManagerService;
   private ViewRenderService $viewRenderService;
   private PostManagementService $postService;
 
@@ -23,7 +22,6 @@ final class RegularUserController extends BaseController{
     $this->dependencyContainer = $dependencyContainer;
     $this->userManagementService = $this->dependencyContainer['UserService'];
     $this->redirectService = $this->dependencyContainer['RedirectService'];
-    $this->authManagerService = $this->dependencyContainer['AuthManagerService'];
     $this->viewRenderService = $this->dependencyContainer['ViewRenderService'];
     $this->postService = $this->dependencyContainer['PostManagementService'];
   }
