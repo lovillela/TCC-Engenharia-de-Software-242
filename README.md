@@ -516,3 +516,22 @@ A aplicação roda em 4 containers orquestrados via **Docker Compose**, em duas 
 ### Healthcheck
 
 O MySQL possui healthcheck configurado que verifica a disponibilidade do banco a cada 5 segundos, garantindo que o PHP-FPM só inicie após o banco estar pronto (`depends_on: condition: service_healthy`).
+
+---
+
+## 📊 Logging
+
+O sistema utiliza **Monolog** com três canais separados, cada um com `IntrospectionProcessor` (call stack) e `BufferHandler` (otimização de I/O):
+
+| Canal | Arquivo | Finalidade |
+|-------|---------|-----------|
+| `Security` | `logs/security.log` | Falhas de login, tokens CSRF inválidos, acesso negado |
+| `App` | `logs/app.log` | Erros de negócio (CRUD de posts, usuários, comentários) |
+| `Infrastructure` | `logs/infrastructure.log` | Erros de repositório e banco de dados |
+
+Além dos logs da aplicação, a infraestrutura também registra:
+- **PHP-FPM slow log** — requisições que levam mais de 5 segundos
+- **MySQL slow query log** — queries que levam mais de 1 segundo
+- **MySQL no-index log** — queries que não utilizam índices
+
+---
