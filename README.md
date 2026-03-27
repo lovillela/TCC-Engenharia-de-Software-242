@@ -320,3 +320,43 @@ O banco utiliza **MySQL 8.4** com charset `utf8mb4` e collation `utf8mb4_0900_ai
 6. O **Controller** utiliza os Serviços injetados para processar a lógica e chama `ViewRenderService::render()` para exibir a view com os headers de segurança.
 
 ---
+
+## 🛣 Sistema de Rotas
+
+As rotas são definidas em dois arquivos separados usando o **AltoRouter**:
+
+### Rotas Públicas (`config/Routes/main.php`)
+
+| Método | Rota | Controller#Método | Descrição |
+|--------|------|-------------------|-----------|
+| `GET` | `/` | `HomeController#index` | Página inicial |
+| `GET` | `/post/` | `PostController#index` | Lista de posts |
+| `GET` | `/post/[:slug]/` | `PostController#show` | Visualizar post por slug |
+| `GET` | `/login/` | `RegularUserController#index` | Página de login |
+| `POST` | `/login/` | `AuthController#login` | Ação de login |
+| `GET` | `/logout/` | `AuthController#logout` | Ação de logout |
+| `GET` | `/signup/` | `RegularUserController#signUpPage` | Página de cadastro |
+| `POST` | `/signup/` | `RegularUserController#signUpAction` | Ação de cadastro |
+| `GET` | `/dashboard/` | `RegularUserController#dashboard` | Dashboard do usuário |
+| `GET` | `/dashboard/post/add/` | `PostController#addPostForm` | Formulário de novo post |
+| `POST` | `/dashboard/post/add/` | `PostController#addPostAction` | Ação de criar post |
+| `GET` | `/dashboard/post/edit/[:postId]` | `PostController#editPostForm` | Formulário de edição |
+| `POST` | `/dashboard/post/edit/[:postId]` | `PostController#editPostAction` | Ação de editar post |
+| `POST` | `/dashboard/post/delete/[:postId]` | `PostController#deletePostAction` | Ação de excluir post |
+| `POST` | `/post/comment/create/` | `PostController#createCommentAction` | Criar comentário |
+| `POST` | `/post/comment/delete/` | `PostController#deleteCommentAction` | Excluir comentário |
+
+### Rotas Administrativas (`config/Routes/admin.php`)
+
+| Método | Rota | Controller#Método | Descrição |
+|--------|------|-------------------|-----------|
+| `GET` | `/admin/` | `AdminController#index` | Página de login admin |
+| `POST` | `/admin/` | `AuthController#login` | Ação de login admin |
+| `GET` | `/admin/logout/` | `AuthController#logout` | Logout admin |
+| `GET` | `/admin/dashboard/` | `AdminController#dashboard` | Dashboard admin |
+| `GET` | `/admin/dashboard/create/user/` | `AdminController#userCreatorForm` | Formulário de criação de usuário |
+| `POST` | `/admin/dashboard/create/user/` | `AdminController#createUserAction` | Ação de criar usuário |
+| `GET` | `/admin/dashboard/list/posts/` | `AdminController#getAllUsersPosts` | Listar todos os posts |
+| `POST` | `/admin/dashboard/list/posts/delete/[:id]` | `AdminController#deletePostByAdminAction` | Excluir post (admin) |
+| `GET` | `/admin/dashboard/list/users/` | `AdminController#getAllUsers` | Listar todos os usuários |
+| `POST` | `/admin/dashboard/user/delete/[:userId]` | `AdminController#deleteUserAction` | Excluir usuário |
