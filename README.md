@@ -285,3 +285,11 @@ O banco utiliza **MySQL 8.4** com charset `utf8mb4` e collation `utf8mb4_0900_ai
 | `user_comment_post` | Comentários em posts | Self-referencing FK (`parent`) para respostas aninhadas; FULLTEXT em `content` |
 | `user_reaction_post` | Reações (like/dislike) em posts | PK composta `(id_user, id_post)` |
 | `slug_map` | Mapeamento polimórfico de slugs | Entidade + tipo (post, category, tag) com UNIQUE constraint |
+
+### Níveis de Permissão
+
+| Valor | Enum | Descrição |
+|-------|------|-----------|
+| `1` | `UserPermissions::Admin` | Administrador — acesso total |
+| `2` | `UserPermissions::Moderator` | Moderador — moderação de comentários |
+| `3` | `UserPermissions::RegularUser` | Usuário Comum — CRUD de posts próprios |
