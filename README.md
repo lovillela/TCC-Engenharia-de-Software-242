@@ -535,3 +535,65 @@ Além dos logs da aplicação, a infraestrutura também registra:
 - **MySQL no-index log** — queries que não utilizam índices
 
 ---
+## 📋 Pré-requisitos
+
+### Com Docker (recomendado)
+
+- **Docker** (>= 20.x)
+- **Docker Compose** (>= 2.x)
+- **Git**
+- **Ubuntu 24.04 - WSL**
+
+---
+
+## 🚀 Instalação e Configuração
+
+### Com Docker (recomendado)
+
+1. **Clone o repositório:**
+
+   ```bash
+   git clone https://github.com/lovillela/TCC-Engenharia-de-Software-242.git
+   cd TCC-Engenharia-de-Software-242
+   ```
+
+2. **Configure as variáveis de ambiente do Docker:**
+
+   ```bash
+   cp setup/docker-blogapp/.env.sample setup/docker-blogapp/.env
+   ```
+
+   Edite `setup/docker-blogapp/.env` com as senhas desejadas para o MySQL:
+
+   ```env
+   DB_ROOT_PASSWORD='sua_senha_root'
+   DB_PASSWORD='sua_senha_app'
+   ```
+
+3. **Configure as variáveis de ambiente da aplicação:**
+
+   ```bash
+   cp config/.env.sample config/.env
+   ```
+
+   Edite `config/.env` com os dados de conexão:
+
+   ```env
+   DB_NAME="blog_app"
+   DB_USER="blogApp"
+   DB_PASSWORD="sua_senha_app"
+   DB_HOST="mysql-db"
+   DB_PORT="3306"
+   DB_DRIVER="pdo_mysql"
+   DB_CHARSET="utf8mb4"
+   DB_COLLATION="utf8mb4_0900_ai_ci"
+   ```
+
+   > **Importante:** O valor de `DB_PASSWORD` no `config/.env` deve ser igual ao `DB_PASSWORD` do `setup/docker-blogapp/.env`.
+
+4. **Suba os containers:**
+
+   ```bash
+   cd setup/docker-blogapp
+   docker compose up -d
+   ```
