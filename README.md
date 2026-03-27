@@ -438,3 +438,39 @@ O sistema de renderização utiliza **output buffering** do PHP (`ob_start()` / 
 | `Views/Partial/` | Componentes reutilizáveis (editor Quill, lista de posts/usuários, comentários) |
 
 ---
+
+## 🔒 Segurança
+
+O projeto implementa múltiplas camadas de segurança:
+
+### Proteções na Aplicação
+
+| Medida | Implementação |
+|--------|--------------|
+| **Sanitização de entrada e saída** | HTMLPurifier para conteúdo rico; `strip_tags`, `preg_replace` e `htmlspecialchars` para campos simples |
+| **Proteção CSRF** | Token por sessão, validado em todas as ações POST |
+| **Hashing de senhas** | `password_hash()` com bcrypt |
+| **Sessão segura** | `httponly`, `strict_mode`, `samesite=Strict`, regeneração de ID no login |
+| **Transações no banco** | `beginTransaction()` / `commit()` / `rollBack()` em operações de escrita |
+
+### Headers HTTP de Segurança
+
+| Header | Valor | Proteção |
+|--------|-------|----------|
+| `Content-Security-Policy` | `default-src 'self'` | Prevenção de injeção de scripts/recursos externos |
+| `X-Frame-Options` | `SAMEORIGIN` | Proteção contra clickjacking |
+| `X-Content-Type-Options` | `nosniff` | Prevenção de MIME sniffing |
+
+### Proteções no Servidor
+
+| Medida | Implementação |
+|--------|--------------|
+| **ServerTokens** | `Prod` — oculta versão do Apache |
+| **ServerSignature** | `Off` — sem assinatura nos erros |
+| **expose_php** | `Off` — oculta o header `X-Powered-By` |
+| **display_errors** | `Off` — sem exposição de erros em produção |
+| **bind-address (MySQL)** | Apenas do hostname do container — sem acesso externo ao banco |
+| **local-infile (MySQL)** | `0` — desabilita carregamento de arquivos via SQL |
+| **MYSQL_ROOT_HOST** | `localhost` — root apenas via container |
+
+---
