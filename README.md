@@ -360,3 +360,39 @@ As rotas são definidas em dois arquivos separados usando o **AltoRouter**:
 | `POST` | `/admin/dashboard/list/posts/delete/[:id]` | `AdminController#deletePostByAdminAction` | Excluir post (admin) |
 | `GET` | `/admin/dashboard/list/users/` | `AdminController#getAllUsers` | Listar todos os usuários |
 | `POST` | `/admin/dashboard/user/delete/[:userId]` | `AdminController#deleteUserAction` | Excluir usuário |
+
+---
+
+## 🔐 Autenticação e Autorização
+
+### Autenticação
+
+O sistema de autenticação é gerenciado pelo **AuthManagerService**, que atua como fachada (Facade Pattern) para os serviços:
+
+- **`AuthenticationControlService`** — verifica credenciais (email + senha) via `UserManagementService`
+- **`SessionService`** — gerencia a sessão PHP com configurações endurecidas:
+  - `cookie_httponly = 1` —  proteção contra XSS via cookies
+  - `use_strict_mode = 1` — rejeita IDs de sessão não inicializados pelo servidor
+  - `use_cookies = 1 / use_only_cookies = 1` -  o identificador de sessão (PHPSESSID) trafega exclusivamente via cookie, impedindo propagação por URL (?PHPSESSID=xyz)
+  - `cookie_samesite = Strict` — proteção contra CSRF via cookies
+  - `cookie_secure = 0` — desabilitado intencionalmente no ambiente de demonstração (certificado SSL autoassinado); deve ser habilitado (1) em produção
+  - Regeneração do ID de sessão no login (`session_regenerate_id(true)`)
+- **`CsrfService`** — geração e validação de tokens CSRF em todas as requisições POST
+
+### Autorização (RBAC)
+
+O **AuthorizationService** implementa controle de acesso baseado em papéis (Role-Based Access Control):
+
+| Ação | Admin | Moderador | Usuário Comum |
+|------|:-------:|:-----------:|:--------------:|
+| Acessar dashboard admin | ✅ | ✅ | ❌ |
+| Acessar dashboard regular | ❌ | ❌ | ✅ |
+| Criar posts | ❌ | ❌ | ✅ |
+| Editar posts próprios | ❌ | ❌ | ✅ |
+| Excluir posts próprios | ✅ | ❌ | ✅ |
+| Excluir qualquer post | ✅ | ❌ | ❌ |
+| Criar usuários (qualquer perfil) | ✅ | ❌ | ❌ |
+| Excluir usuários | ✅ | ❌ | ❌ |
+| Moderar comentários | ✅ | ✅ | ❌ |
+
+---
