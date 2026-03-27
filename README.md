@@ -77,3 +77,66 @@ O sistema oferece três perfis de usuário com diferentes níveis de acesso:
 | Ferramenta | Finalidade |
 |-----------|-----------|
 | **PHPMetrics** (^2.9, dev) | Geração de relatórios de métricas de código |
+---
+
+## 🏗 Arquitetura
+
+O projeto implementa o padrão **MVC com camada de Service** e injeção de dependências manual via um array `$dependencyContainer`, construído no Kernel:
+
+```
+                     Requisição HTTP
+                          │
+                          ▼
+               ┌─────────────────────┐
+               │   Apache (httpd)    │  Proxy reverso
+               │   mod_rewrite       │  Reescrita de URLs
+               │   mod_deflate       │  Compressão gzip
+               └─────────┬───────────┘
+                         │ proxy:fcgi://php:9000
+                         ▼
+               ┌─────────────────────┐
+               │  public/index.php   │  Ponto de entrada único
+               └─────────┬───────────┘
+                         │ require
+                         ▼
+               ┌─────────────────────┐
+               │  src/Kernel/        │  Bootstrap:
+               │  kernel.php         │  • Sessão e CSRF
+               │                     │  • Conexão com o Banco de Dados
+               │                     │  • DI Container (Instanciação e injeção)
+               │                     │  • Definição de Rotas
+               └──────────┬──────────┘
+                          │
+                   ┌──────┴──────┐
+                   │             │
+                /admin/*     outras rotas
+                   │             │
+                   ▼             ▼
+          AdminRouteHandler  RouteHandler
+                   │             │
+                   └──────┬──────┘
+                          ▼
+               ┌─────────────────────┐
+               │  RouteMatchService  │  AltoRouter → Controller#método
+               └─────────┬───────────┘
+                         ▼
+               ┌─────────────────────┐
+               │     Controller      │  Camada fina: delega ao Serviço
+               └─────────┬───────────┘
+                         ▼
+               ┌─────────────────────┐
+               │      Service        │  Regras de negócio
+               │                     │  Sanitização e Validação
+               │                     │  Transações
+               └─────────┬───────────┘
+                         ▼
+               ┌─────────────────────┐
+               │    Repository       │  Queries e Statments via Doctrine DBAL
+               └─────────┬───────────┘
+                         ▼
+               ┌─────────────────────┐
+               │  ViewRenderService  │  Renderiza a View
+               │                     │  Output Buffering
+               │                     │  Headers de Segurança
+               └─────────────────────┘
+```
