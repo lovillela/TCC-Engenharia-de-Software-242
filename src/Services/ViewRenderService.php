@@ -102,12 +102,12 @@ final class ViewRenderService{
        */
       if($renderPartialViewData['isLoggedIn']){
         $renderedComments .= '<div class="collapse mt-2" id="reply-' . $comment->commentId . '">' .
-                             '<form action="/post/comment/add" method="POST">' .
+                             '<form action="/post/comment/create/" method="POST">' .
                              '<input type="hidden" name="csrfToken" value="' . $renderPartialViewData['csrfToken'] . '">' .
                              '<input type="hidden" name="postId" value="' . $renderPartialViewData['postId'] . '">' .
                              '<input type="hidden" name="parentId" value="' . $comment->commentId . '">' .
                              '<div class="input-group input-group-sm w-75">' .
-                             '<input type="text" class="form-control" name="content" required>' .
+                             '<input type="text" class="form-control" name="commentContent" required>' .
                              '<button class="btn btn-outline-primary" type="submit">' . $renderPartialViewData['sendButtonText'] . '</button>' .
                              '</div>' .
                              '</form>' .

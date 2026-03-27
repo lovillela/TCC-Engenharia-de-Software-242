@@ -23,8 +23,9 @@ $router->map(method: 'POST', route: '/dashboard/post/add/', target: 'PostControl
 $router->map(method: 'POST', route: '/dashboard/post/edit/[:postId]', target: 'PostController#editPostAction', name: 'updatePostAction');
 //Individual Posts
 $router->map(method: 'GET', route: '/post/[:slug]/', target: 'PostController#show', name: 'showPost');
-$router->map(method: 'GET', route: '/post/[:slug]', target: 'PostController#redirectToTrailingSlash', name: 'showPostRedirect');
+$router->map(method: 'GET', route: '/post/[:slug]', target: 'RedirectService#redirectToTrailingSlash', name: 'showPostRedirect');
 
 $router->map('POST', '/dashboard/post/delete/[:postId]', 'PostController#deletePostAction', 'deletePostAction');
 
+$router->map('POST','/post/comment/create/', 'PostController#createCommentAction', 'commentCreate');
 return $router;

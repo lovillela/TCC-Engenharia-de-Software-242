@@ -2,12 +2,12 @@
   <h4 class="mb-4"><?php echo($commentsBlockHeaderText); ?></h4>
 
   <?php if (isset($isLoggedIn) && $isLoggedIn): ?>
-    <form action="/post/comment/add" method="POST" class="mb-4">
+    <form action="/post/comment/create/" method="POST" class="mb-4">
       <input type="hidden" name="csrfToken" value="<?php echo($csrfToken); ?>">
       <input type="hidden" name="postId" value="<?php echo($postId); ?>">
       <input type="hidden" name="parentId" value="">
       
-      <textarea class="form-control mb-2" name="content" rows="2" required></textarea>
+      <textarea class="form-control mb-2" name="commentContent" rows="2" required></textarea>
       <button type="submit" class="btn btn-primary btn-sm"><?php echo($commentActionButtonText); ?></button>
     </form>
   <?php else: ?>

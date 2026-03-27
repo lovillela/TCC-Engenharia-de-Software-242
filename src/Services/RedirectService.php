@@ -32,9 +32,14 @@ class RedirectService{
     exit;
   }
 
-    public function redirectToAdminPostsList() {
+  public function redirectToAdminPostsList() {
     $AdminPostsListDashboardLink = "https://$_SERVER[HTTP_HOST]/admin/dashboard/list/posts/";
     header('Location: ' . $AdminPostsListDashboardLink);
     exit;
+  }
+
+  public function redirectToPostBySlug(string $postSlug) {
+    $postLink = "https://$_SERVER[HTTP_HOST]/post/$postSlug/";
+    header('Location:' . $postLink);
   }
 }

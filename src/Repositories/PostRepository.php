@@ -24,6 +24,7 @@ class PostRepository{
   private string $selectPostIdsInRange = 'SELECT DISTINCT `id_post` FROM `post_users` WHERE `id_post` IN (?)';
   private string $selectOwnership = 'SELECT `id_user` FROM `post_users` WHERE `id_post` = ?';
   private string $selectOwnershipCount = 'SELECT COUNT(*) FROM `post_users` WHERE `id_post` = ?';
+  private string $selectPostSlugQuery = 'SELECT `slug` FROM `post` WHERE `id`=?';
 
   //Joins
   private string $joinPost_PostUsers_ByUserId = 'SELECT `post`.`id`, `post`.`title` '
@@ -245,9 +246,22 @@ class PostRepository{
 
     } catch (Throwable $th) {
         $this->logger->error('Erro ao ler post por slug!', 
-                                ['slug' => $slug, 'exception' => $th]);
-          throw new Exception('Erro ao ler post por slug!');     
+                                ['slug' => $slug, 'exception' => $th->getMessage()]);
+        throw new Exception('Erro ao ler post por slug!');     
     }    
+  }
+
+  public function getPostSlug(int $postId) : string {
+    try{
+      $getPostStmt = $this->connection->prepare($this->selectPostSlugQuery);
+      $getPostStmt->bindValue(1, $postId);
+
+      return $getPostStmt->executeQuery()->fetchOne();
+    }catch (Throwable $th){
+        $this->logger->error('Erro ao ler slug do post!', 
+                                ['postId' => $postId, 'exception' => $th->getMessage()]);
+        throw new Exception('Erro ao ler slug do post!');
+    }
   }
 
   public function getPostByID(int $id): array|null {

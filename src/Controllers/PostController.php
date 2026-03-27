@@ -142,6 +142,30 @@ final class PostController extends BaseController{
     $this->viewRenderService->render($viewData);
   }
 
+  public function createCommentAction() {
+  
+    $userData = $this->authManagerService->getUserData();
+
+    if (!$this->authManagerService->isSessionActive() || !isset($userData) 
+        || !$this->authManagerService->validateCsrfToken($_POST['csrfToken'])) {
+      $this->authManagerService->destroySession();
+      $this->redirectService->redirectToHome();
+      exit;
+    }
+
+    $userId = $userData->userId;
+    $postId = $_POST['postId'];
+    $commentContent = trim($_POST['commentContent']);
+    $parentId = !empty($_POST['parentId']) ? $_POST['parentId'] : null;
+
+    $this->commentService->create($userId, $postId, $commentContent, $parentId);
+
+    $postSlugToRedirectTo = $this->postService->getPostSlug($postId);
+    
+    $this->redirectService->redirectToPostBySlug($postSlugToRedirectTo);
+    exit;
+  }
+
   public function deletePostAction(int $postId) {
 
     $userData = $this->authManagerService->getUserData();

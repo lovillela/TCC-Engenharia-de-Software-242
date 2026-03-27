@@ -225,6 +225,16 @@ class PostManagementService {
 
   }
 
+  public function getPostSlug(int $postId) : string {
+    try {
+      $postSlug = $this->postRepository->getPostSlug($postId);
+      return $postSlug ? $postSlug : null;
+    } catch (Throwable $th) {
+      $this->logger->warning('Erro ao ler o slug do post', ['postId' => $postId]);
+      return null;
+    }
+  }
+
   public function getAllPostsIdsAndTitlesByUserId(int $userId): ?array{
 
     try {
