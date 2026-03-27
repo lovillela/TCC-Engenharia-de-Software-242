@@ -21,7 +21,7 @@ abstract class BaseController{
   protected function prepareView(ViewPath $view, string $headTitle, array $bodyData) {
 
     $bodyData['isLoggedIn'] = $this->authManagerService->isSessionActive();
-    
+
     return new ViewData($view->getPath(), $headTitle, $bodyData);
   }
 }

@@ -17,8 +17,12 @@
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="/post/">Artigos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/signup/">Cadastro</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/login/">Login</a></li>
+                    <?php if(!$isLoggedIn): ?>
+                      <li class="nav-item"><a class="nav-link" href="/signup/">Cadastro</a></li>
+                      <li class="nav-item"><a class="nav-link" href="/login/">Login</a></li>
+                    <?php else: ?>
+                      <li class="nav-item"><a class="nav-link" href="/logout/">Logout</a></li>
+                    <?php endif; ?>
                 </ul>
             </div>
         </div>
