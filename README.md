@@ -474,3 +474,45 @@ O projeto implementa múltiplas camadas de segurança:
 | **MYSQL_ROOT_HOST** | `localhost` — root apenas via container |
 
 ---
+
+## 🐳 Infraestrutura Docker
+
+A aplicação roda em 4 containers orquestrados via **Docker Compose**, em duas redes isoladas:
+
+### Arquitetura dos Containers
+
+```
+                    ┌─────────────────────────────────┐
+                    │        Rede: blogapp_web        │
+    Conexões        │                                 │
+    Externas        │                                 │
+    :80/:443 ──►    │  ┌───────────┐  ┌─────────────┐ │
+                    │  │  Apache   │  │ phpMyAdmin  │ │
+                    │  │  (httpd)  │  │ :80 interno │ │
+                    │  └─────┬─────┘  └──────┬──────┘ │
+                    │        │               │        │
+                    └────────┼───────────────┼────────┘
+                             │               │
+                    ┌────────┼───────────────┼────────┐
+                    │        │               │        │
+                    │  ┌─────▼─────┐  ┌──────▼──────┐ │
+                    │  │  PHP-FPM  │  │   MySQL     │ │
+                    │  │  :9000    │  │   8.4       │ │
+                    │  └───────────┘  └─────────────┘ │
+                    │                                 │
+                    │     Rede: blogapp_database      │
+                    └─────────────────────────────────┘
+```
+
+### Serviços
+
+| Container | Imagem | Detalhes |
+|----------|--------|---------|
+| `apache-httpd` | `httpd:2.4` (custom Dockerfile) | mod_rewrite, mod_proxy_fcgi, mod_ssl, mod_http2, mod_deflate; VirtualHosts para HTTP e HTTPS; proxy para PHP-FPM e phpMyAdmin; compressão gzip nível 5 |
+| `php-fpm` | `php:8.4-fpm` (custom Dockerfile) | Extensões: pdo_mysql, zip, mbstring, opcache; OPcache habilitado (128MB, 4000 arquivos); PM dinâmico (máx 10 processos, restart após 500 requisições); slow log (>5s); UID/GID mapeados para o host |
+| `mysql-db` | `mysql:8.4` | InnoDB buffer pool 256MB; slow query log (>1s); log de queries sem índice; máx 100 conexões; wait_timeout 60s; charset utf8mb4; scripts SQL carregados automaticamente via `docker-entrypoint-initdb.d/` |
+| `phpmyadmin` | `phpmyadmin:5.2` | Acessível via `/phpmyadmin/` no Apache (proxy reverso) |
+
+### Healthcheck
+
+O MySQL possui healthcheck configurado que verifica a disponibilidade do banco a cada 5 segundos, garantindo que o PHP-FPM só inicie após o banco estar pronto (`depends_on: condition: service_healthy`).
