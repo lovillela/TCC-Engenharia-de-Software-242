@@ -12,20 +12,17 @@ use Lovillela\BlogApp\Services\PostManagementService;
 
 final class AdminController extends BaseController{
 
-  private array $dependencyContainer;
   private UserManagementService $userManagementService;
   private RedirectService $redirectService;
-  private AuthManagerService $authManagerService;
   private ViewRenderService $viewRenderService;
   private PostManagementService $postService;
   
   public function __construct(array $dependencyContainer) {
-    $this->dependencyContainer = $dependencyContainer;
-    $this->userManagementService = $this->dependencyContainer['UserService'];
-    $this->redirectService = $this->dependencyContainer['RedirectService'];
-    $this->authManagerService = $this->dependencyContainer['AuthManagerService'];
-    $this->viewRenderService = $this->dependencyContainer['ViewRenderService'];
-    $this->postService = $this->dependencyContainer['PostManagementService'];
+    parent::__construct($dependencyContainer);
+    $this->userManagementService = $dependencyContainer['UserService'];
+    $this->redirectService = $dependencyContainer['RedirectService'];
+    $this->viewRenderService = $dependencyContainer['ViewRenderService'];
+    $this->postService = $dependencyContainer['PostManagementService'];
   }
   public function index() {
     

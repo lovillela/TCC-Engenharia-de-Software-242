@@ -13,18 +13,15 @@ final class PostController extends BaseController{
 
   private PostManagementService $postService;
   private RedirectService $redirectService;
-  private AuthManagerService $authManagerService;
   private ViewRenderService $viewRenderService;
   private CommentService $commentService;
-  private array $dependencyContainer;
 
   public function __construct(array $dependencyContainer) {
-    $this->dependencyContainer = $dependencyContainer;
-    $this->postService = $this->dependencyContainer['PostManagementService'];
-    $this->redirectService = $this->dependencyContainer['RedirectService'];
-    $this->authManagerService = $this->dependencyContainer['AuthManagerService'];
-    $this->viewRenderService = $this->dependencyContainer['ViewRenderService'];
-    $this->commentService = $this->dependencyContainer['CommentService'];
+    parent::__construct($dependencyContainer);
+    $this->postService = $dependencyContainer['PostManagementService'];
+    $this->redirectService = $dependencyContainer['RedirectService'];
+    $this->viewRenderService = $dependencyContainer['ViewRenderService'];
+    $this->commentService = $dependencyContainer['CommentService'];
   }
 
   public function index() {
