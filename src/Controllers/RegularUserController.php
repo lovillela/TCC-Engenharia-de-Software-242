@@ -11,7 +11,6 @@ use Lovillela\BlogApp\Config\Permissions\UserPermissions;
 use Lovillela\BlogApp\Services\ViewRenderService;
 
 final class RegularUserController extends BaseController{
-  private array $dependencyContainer;
   private UserManagementService $userManagementService;
   private RedirectService $redirectService;
   private ViewRenderService $viewRenderService;
@@ -19,11 +18,10 @@ final class RegularUserController extends BaseController{
 
   public function __construct(array $dependencyContainer) {
     parent::__construct($dependencyContainer);
-    $this->dependencyContainer = $dependencyContainer;
-    $this->userManagementService = $this->dependencyContainer['UserService'];
-    $this->redirectService = $this->dependencyContainer['RedirectService'];
-    $this->viewRenderService = $this->dependencyContainer['ViewRenderService'];
-    $this->postService = $this->dependencyContainer['PostManagementService'];
+    $this->userManagementService = $dependencyContainer['UserService'];
+    $this->redirectService = $dependencyContainer['RedirectService'];
+    $this->viewRenderService = $dependencyContainer['ViewRenderService'];
+    $this->postService = $dependencyContainer['PostManagementService'];
   }
   
   public function index() {
