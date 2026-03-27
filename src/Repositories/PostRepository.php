@@ -16,14 +16,15 @@ class PostRepository{
   private string $insertPostUsersQuery = 'INSERT INTO `post_users` VALUES (?, ?) ';
   
   //Selects
-  private string $selectAllPostsQuery = 'SELECT `title`, `content` FROM `post` LIMIT 50';
+  private string $selectAllPostsQuery = 'SELECT `title`, `slug` FROM `post` LIMIT 50';
   private string $selectAllPostsForAdminQuery = 'SELECT `id`, `title` FROM `post`';
   private string $selectPostByID_Query = 'SELECT `id`, `title`, `content`, `slug` FROM `post` WHERE `id` = ?';
-  private string $selectPostBySlugQuery = 'SELECT `title`, `content` FROM `post` WHERE `slug` = ?';
+  private string $selectPostBySlugQuery = 'SELECT `id`, `title`, `content` FROM `post` WHERE `slug` = ?';
   private string $selectPostsByUserId = 'SELECT `id_post` FROM `post_users` WHERE `id_user` = ?';
   private string $selectPostIdsInRange = 'SELECT DISTINCT `id_post` FROM `post_users` WHERE `id_post` IN (?)';
   private string $selectOwnership = 'SELECT `id_user` FROM `post_users` WHERE `id_post` = ?';
   private string $selectOwnershipCount = 'SELECT COUNT(*) FROM `post_users` WHERE `id_post` = ?';
+  private string $selectPostSlugQuery = 'SELECT `slug` FROM `post` WHERE `id`=?';
 
   //Joins
   private string $joinPost_PostUsers_ByUserId = 'SELECT `post`.`id`, `post`.`title` '
@@ -245,9 +246,22 @@ class PostRepository{
 
     } catch (Throwable $th) {
         $this->logger->error('Erro ao ler post por slug!', 
-                                ['slug' => $slug, 'exception' => $th]);
-          throw new Exception('Erro ao ler post por slug!');     
+                                ['slug' => $slug, 'exception' => $th->getMessage()]);
+        throw new Exception('Erro ao ler post por slug!');     
     }    
+  }
+
+  public function getPostSlug(int $postId) : string {
+    try{
+      $getPostStmt = $this->connection->prepare($this->selectPostSlugQuery);
+      $getPostStmt->bindValue(1, $postId);
+
+      return $getPostStmt->executeQuery()->fetchOne();
+    }catch (Throwable $th){
+        $this->logger->error('Erro ao ler slug do post!', 
+                                ['postId' => $postId, 'exception' => $th->getMessage()]);
+        throw new Exception('Erro ao ler slug do post!');
+    }
   }
 
   public function getPostByID(int $id): array|null {

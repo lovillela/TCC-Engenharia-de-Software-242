@@ -46,6 +46,98 @@ final class ViewRenderService{
   }
 
   /**
+   * Função recursiva para montar o html dos comentários
+   */
+  public function renderComments(array $renderPartialViewData, int $depth = 0) : string {
+    
+    $comments = $renderPartialViewData['comments'];
+    $renderedComments = '';
+
+    foreach ($comments as $comment) {
+      /*Margem dos comentários baseada na profundidade (respostas)*/
+      $margin = $depth > 0 ? 'ms-2 border-start ps-3' : '';
+
+      /**
+       * Estrutura base do comentário
+       */
+
+      $renderedComments .= '<div class="mb-3 ' . $margin . '">' .
+                            '<div class="d-flex justify-content-between align-items-center">' .
+                            '<strong>' . $comment->userName  . '</strong>' .
+                            '<small class="text-muted">' . date('d/m/Y H:i', strtotime($comment->createdAt)) . '</small>' . 
+                            '</div>' . 
+                            ' <p class="mb-1 text-break">' . $comment->content . '</p>';
+      /**
+       * Fim - Estrutura base do comentário
+       */
+
+      /**Ações (deletar, responder) */
+
+      $renderedComments .= '<div class="d-flex gap-3 mt-1">';
+
+      /**
+       * Se logado, mostra o botão de resposta
+       */
+      if($renderPartialViewData['isLoggedIn']){
+        $renderedComments .= '<button class="btn btn-link btn-sm p-0 text-decoration-none" ' . 
+                              'data-bs-toggle="collapse" data-bs-target="#reply-' . $comment->commentId . '">' . 
+                              $renderPartialViewData['replyButtonText']  . '</button>';
+      }
+
+      if ($renderPartialViewData['isAdminOrModerator']) {
+        $renderedComments .= '<form action="/post/comment/delete/" method="POST" ' .
+                             'class="d-inline" onsubmit="return confirm(\'Deletar este comentário e suas respostas?\')"> ' .
+                             '<input type="hidden" name="csrfToken" value="' . $renderPartialViewData['csrfToken'] . '"> ' .
+                             '<input type="hidden" name="commentId" value="' . $comment->commentId . '">' .
+                             '<input type="hidden" name="postId" value="' . $renderPartialViewData['postId'] . '">' .
+                             '<button type="submit" class="btn btn-link btn-sm p-0 text-danger text-decoration-none">Deletar</button>' .
+                             '</form>';
+      }
+
+      $renderedComments .= '</div>'; //Fechando o bloco de ações
+      /**
+       * Fim - Ações (deletar, responder) 
+       */
+
+      /**
+       * Form de respostas
+       */
+      if($renderPartialViewData['isLoggedIn']){
+        $renderedComments .= '<div class="collapse mt-2" id="reply-' . $comment->commentId . '">' .
+                             '<form action="/post/comment/create/" method="POST">' .
+                             '<input type="hidden" name="csrfToken" value="' . $renderPartialViewData['csrfToken'] . '">' .
+                             '<input type="hidden" name="postId" value="' . $renderPartialViewData['postId'] . '">' .
+                             '<input type="hidden" name="parentId" value="' . $comment->commentId . '">' .
+                             '<div class="input-group input-group-sm w-75">' .
+                             '<input type="text" class="form-control" name="commentContent" required>' .
+                             '<button class="btn btn-outline-primary" type="submit">' . $renderPartialViewData['sendButtonText'] . '</button>' .
+                             '</div>' .
+                             '</form>' .
+                             '</div>';
+      }
+      /**
+       * Fim -Form de respostas
+       */
+
+      /**
+       * Recursão para preencher os filhos, usando as respostas
+       */
+
+      if(!empty($comment->replies)){
+        $renderPartialViewData['comments'] = $comment->replies; //os comentários são atualizados com as respostas
+        $renderedComments .= '<div class="mt-2">' . 
+                             $this->renderComments($renderPartialViewData, $depth + 1) .
+                             '</div>';
+      }
+
+      //Fechamento da div base
+      $renderedComments .= '</div>';
+    }
+
+    return $renderedComments;
+  }
+
+  /**
    * Função de segurança para CSP, caso o HtmlPurifier não funcione 
    * CSP security function, just in case HtmlPurifier does not work
    * @return void
@@ -79,7 +171,7 @@ final class ViewRenderService{
      * In the case of an object, just to be safe. Will be adjuestd if necessary.
      * Note: line breaks are not allowed.
      */
-    header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js; object-src 'none'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css;");
+    header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self';");
 
   }
 }

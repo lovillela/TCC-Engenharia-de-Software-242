@@ -41,6 +41,7 @@ enum ViewPath: string{
   case PARTIAL_TEXT_EDITOR = 'Partial/QuillPartialView.php';
   case PARTIAL_POST_LIST = 'Partial/PostListPartialView.php';
   case PARTIAL_USER_LIST = 'Partial/UserListPartialView.php';
+  case PARTIAL_COMMENTS = 'Partial/CommentPartialView.php';
     /**
    * Fim/End Partial Views
    */

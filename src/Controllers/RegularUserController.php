@@ -32,10 +32,14 @@ final class RegularUserController extends BaseController{
     $headTitle = 'Login';
 
     $bodyData = [
-      'title' => 'Login',
       'headerText' => 'Login',
       'errorMessage' => '',
       'generalMessage' => '',
+      'returnHomeLinkText' => 'Voltar para Home',
+      'userLabel' => 'Usuário',
+      'passwordLabel'=> 'Senha',
+      'loginButtonText' => 'Entrar',
+      'signUpLoginText' => 'Não tem uma conta? Cadastre-se',
       'csrfToken' => $this->authManagerService->getCsrfToken(),
     ];
 
@@ -45,11 +49,10 @@ final class RegularUserController extends BaseController{
 
   public function signUpAction(){
 
-    $headTitle = 'SignUp page';
+    $headTitle = 'Cadastro';
 
     $bodyData = [
-      'title' => 'SignUp page',
-      'headerText' => 'SignUp page',
+      'headerText' => 'Cadastro',
       'errorMessage' => '',
       'generalMessage' => '',
       'csrfToken' => $this->authManagerService->getCsrfToken(),
@@ -79,13 +82,18 @@ final class RegularUserController extends BaseController{
 
   public function signUpPage(){
 
-    $headTitle = 'SignUp page';
+    $headTitle = 'Cadastro';
 
     $bodyData = [
-      'title' => 'SignUp page',
-      'headerText' => 'SignUp page',
+      'headerText' => 'Cadastro',
       'errorMessage' => '',
       'generalMessage' => '',
+      'returnHomeLinkText' => 'Voltar para Home',
+      'userLabel' => 'Usuário',
+      'emailLabel' => 'E-mail',
+      'passwordLabel' => 'Senha',
+      'signUpButtonText' => 'Cadastrar',
+      'alreadyRegisteredLoginText' => 'Já tem uma conta? Faça Login',
       'csrfToken' => $this->authManagerService->getCsrfToken(),
     ];
 
@@ -116,13 +124,18 @@ final class RegularUserController extends BaseController{
     $headTitle = 'Dashboard';
 
     $bodyData = [
-      'title' => 'Dashboard',
       'headerText' => 'Dashboard',
       'errorMessage' => '',
       'generalMessage' => '',
       'csrfToken' => $this->authManagerService->getCsrfToken(),
       'userPosts' => $userPosts,
       'postList' => ViewPath::PARTIAL_POST_LIST->getPath(),
+        'noPostsNoticeText' => 'Não há artigos cadastrados!',
+        'editButtonText' => 'Editar',
+        'deleteButtonText' => 'Deletar',
+        'tableHeaderPostTitleText' => 'Título do Post',
+        'tableHeaderActionText' => 'Ações',
+        'hideEditButton' => false,
       'deleteActionUrl' => '/dashboard/post/',
       ];
 

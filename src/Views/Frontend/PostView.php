@@ -1,7 +1,3 @@
-<div name="header">
-  <a href="/">Home</a>
-</div>
-
 <?php 
   if (!empty($errorMessage)) {
     echo($errorMessage);
@@ -12,14 +8,21 @@
   }
 ?>
 
-<h1><?php echo($title);?></h1>
+<div class="row justify-content-center">
+  <div class="col-lg-12">
+    <a href="/post/" class="btn btn-sm btn-secondary mb-4">« <?php echo($goBackToPostHomeButtonText); ?></a>
+    <h1 class="display-3 text-center mb-5"><?php echo($title);?></h1>
+    
+    <div class="post-content">
+      <?php 
+        if (isset($content)) {
+          echo('<br>');
+          echo($content);
+          echo('<br>');
+        }
+      ?>
 
-<div name="post">
-  <?php 
-    if (isset($content)) {
-        echo('<br>');
-        echo($content);
-        echo('<br> <br>');
-    }
-  ?>
+      <?php require_once $commentView ?>
+    </div>
+  </div>
 </div>
