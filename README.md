@@ -293,3 +293,30 @@ O banco utiliza **MySQL 8.4** com charset `utf8mb4` e collation `utf8mb4_0900_ai
 | `1` | `UserPermissions::Admin` | Administrador — acesso total |
 | `2` | `UserPermissions::Moderator` | Moderador — moderação de comentários |
 | `3` | `UserPermissions::RegularUser` | Usuário Comum — CRUD de posts próprios |
+
+---
+
+## 🔄 Fluxo de Requisições
+
+1. **Requisição HTTP** chega ao **Apache**, e pelas regras do `.htaccess`, redireciona para `index.php`.
+
+2. O Apache encaminha a requisição ao **PHP-FPM** via `proxy:fcgi://php:9000`.
+
+3. O `public/index.php` carrega o **Kernel** (`src/Kernel/kernel.php`), que executa o bootstrap:
+   - Carrega o autoload do Composer (`vendor/autoload.php`)
+   - Estabelece a **conexão com o banco** via `DatabaseConnectionService` (Doctrine DBAL + phpdotenv)
+   - Instancia os **3 canais de log** do Monolog (Security, App, Infrastructure)
+   - Instancia todos os **Repositories**, **Services** e monta o **Dependency Container**
+   - Inicia a **sessão** e gera o **token CSRF**
+   - Carrega as **definições de rotas** (front-end e admin)
+   - Define as funções `RouteHandler()` e `AdminRouteHandler()`
+
+4. O `index.php` examina a URL via `parse_url()`:
+   - Se contém `/admin/` → chama `AdminRouteHandler()`
+   - Caso contrário → chama `RouteHandler()`
+
+5. O **RouteMatchService** utiliza o AltoRouter para encontrar a rota correspondente, sanitiza a URL, instancia o Controller apropriado e invoca o método.
+
+6. O **Controller** utiliza os Serviços injetados para processar a lógica e chama `ViewRenderService::render()` para exibir a view com os headers de segurança.
+
+---
