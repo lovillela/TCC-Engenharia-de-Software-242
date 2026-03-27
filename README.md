@@ -39,3 +39,11 @@ O sistema oferece três perfis de usuário com diferentes níveis de acesso:
 | **Usuário Comum** | Criar conta, fazer login, publicar/editar/excluir posts próprios, comentar em posts |
 | **Moderador** | Moderar comentários (excluir comentários inadequados) |
 | **Administrador** | Gerenciar todos os posts e usuários da plataforma (criar usuários de qualquer perfil, excluir posts de qualquer usuário, excluir usuários) |
+
+### Filosofia do Projeto
+
+- **Sem frameworks** — todo o código é escrito do zero, utilizando apenas bibliotecas pontuais para necessidades específicas (roteamento, DBAL, sanitização, etc.)
+- **Foco em fundamentos** — o objetivo é aprofundar o entendimento de como a web funciona: ciclo de vida HTTP, sessões, segurança, acesso a banco de dados, gerenciamento de processos
+- **Biblioteca, não framework** — cada dependência resolve uma responsabilidade isolada, sem ditar a estrutura do projeto
+
+---
