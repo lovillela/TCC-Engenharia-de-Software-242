@@ -6,13 +6,11 @@ use Lovillela\BlogApp\Config\Views\ViewPath;
 
 final class HomeController extends BaseController{
 
-  private array $dependencyContainer;
   private ViewRenderService $viewRenderService;
 
   public function __construct(array $dependencyContainer) {
     parent::__construct($dependencyContainer);
-    $this->dependencyContainer = $dependencyContainer;
-    $this->viewRenderService = $this->dependencyContainer['ViewRenderService'];
+    $this->viewRenderService = $dependencyContainer['ViewRenderService'];
   }
   public function index(){
     
