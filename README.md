@@ -152,3 +152,116 @@ O projeto implementa o padrão **MVC com camada de Service** e injeção de depe
 | **DTOs imutáveis** | Classes `readonly` para transferência segura de dados (`ViewData`, `UserIdentity`) |
 
 ---
+
+## 📂 Estrutura de Diretórios
+
+```
+TCC-Engenharia-de-Software-242/
+│
+├── config/                          # Configurações da aplicação
+│   ├── .env                         # Variáveis de ambiente (não versionado)
+│   ├── .env.sample                  # Modelo das variáveis de ambiente
+│   ├── Permissions/
+│   │   └── UserPermissions.php      # Enum: Admin=1, Moderator=2, RegularUser=3
+│   ├── Routes/
+│   │   ├── admin.php                # Rotas administrativas (AltoRouter)
+│   │   └── main.php                 # Rotas do front-end (AltoRouter)
+│   ├── Session/
+│   │   └── SessionTime.php          # Enum: tempos de sessão
+│   └── Views/
+│       └── ViewPath.php             # Enum: caminhos(paths) de todas as views
+│
+├── public/                          # DocumentRoot do Apache
+│   ├── .htaccess                    # Reescrita de URLs → index.php
+│   ├── index.php                    # Pontro de Entrada Único
+│   └── assets/                      # Scripts e estilos do Editor Quill e Bootstrap
+│       ├── css/                     # Folhas de estilo
+│       └── js/                      # Scripts
+│
+├── src/                              # Código-fonte da aplicação
+│   ├── Controllers/                  # Camada de apresentação (MVC)
+│   │   ├── BaseController.php        # Classe abstrata (prepareView, authManager)
+│   │   ├── AuthController.php        # Login e Logout
+│   │   ├── HomeController.php        # Página inicial
+│   │   ├── PostController.php        # CRUD de posts + comentários
+│   │   ├── AdminController.php       # Dashboard e operações administrativas
+│   │   └── RegularUserController.php # Cadastro, login e dashboard do usuário
+│   │
+│   ├── Kernel/
+│   │   └── kernel.php               # Bootstrap: DI container, sessão, rotas
+│   │
+│   ├── Models/                      # DTOs e modelos de dados
+│   │   ├── Comments/
+│   │   │   └── CommentData.php      # DTO de comentário (respostas aninhadas)
+│   │   ├── Users/
+│   │   │   ├── User.php             # Modelo de usuário
+│   │   │   └── UserIdentity.php     # DTO imutável (readonly)
+│   │   └── Views/
+│   │       └── ViewData.php         # DTO imutável da view (readonly)
+│   │
+│   ├── Repositories/                # Acesso a dados (Doctrine DBAL)
+│   │   ├── CommentRepository.php    # Operações de comentários
+│   │   ├── PostRepository.php       # Operações de posts
+│   │   ├── SlugRepository.php       # Operações de slugs
+│   │   └── UserRepository.php       # Operações de usuários
+│   │
+│   ├── Services/                            # Regras de negócio
+│   │   ├── AuthManagerService.php           # Fachada: autenticação + autorização + CSRF
+│   │   ├── AuthenticationControlService.php # Verificação de credenciais
+│   │   ├── AuthorizationService.php         # RBAC (controle por papéis)
+│   │   ├── CommentService.php               # Lógica de comentários (árvore de respostas)
+│   │   ├── CsrfService.php                  # Tokens CSRF
+│   │   ├── DatabaseConnectionService.php    # Conexão via Doctrine DBAL + phpdotenv
+│   │   ├── InputSanitizationService.php     # HTMLPurifier + regex
+│   │   ├── PostManagementService.php        # CRUD de posts com transações
+│   │   ├── RedirectService.php              # Redirecionamentos HTTP
+│   │   ├── RouteMatchService.php            # AltoRouter → Controller
+│   │   ├── SessionService.php               # Sessão segura
+│   │   ├── SlugService.php                  # Geração e unicidade de slugs
+│   │   ├── UserManagementService.php        # CRUD de usuários com transações
+│   │   └── ViewRenderService.php            # Renderização com output buffering
+│   │
+│   ├── Utils/
+│   │   └── PasswordHash.php         # Helper: password_hash (bcrypt)
+│   │
+│   ├── Views/                            # Templates PHP
+│   │   ├── BaseView.php                  # Layout base (HTML shell)
+│   │   ├── Admin/                        # Views do painel administrativo
+│   │   │   ├── AddUserView.php           # Formulário administrativo de adição de usuários
+│   │   │   ├── DashBoardView.php         # Home do painel administrativo
+│   │   │   ├── ListAllUsersPostsView.php # Lista administrativa de todos os artigos
+│   │   │   ├── ListAllUsersView.php      # Lista administrativa de todos os usuários
+│   │   │   └── LoginView.php             # Página de login administrativo
+│   │   ├── Frontend/                        # Views públicas e do usuário comum
+│   │   │   ├── DashBoardViewRegularUser.php # Home do painel do usuário
+│   │   │   ├── HomePageView.php             # Home do CMS
+│   │   │   ├── LoginViewRegularUser.php     # Página de login
+│   │   │   ├── PostFormEditView.php         # Form de edição de post
+│   │   │   ├── PostFormView.php             # Fomr de criação de post
+│   │   │   ├── PostHomeView.php             # Página com todos os posts
+│   │   │   ├── PostView.php                 # Página de visualização de post
+│   │   │   └── SignupView.php               # Página de cadastro
+│   │   └── Partial/                    # Views parciais reutilizáveis
+│   │       ├── CommentPartialView.php  # Comentários e respostas
+│   │       ├── PostListPartialView.php # Listagem de posts (para o dashboard)
+│   │       ├── QuillPartialView.php    # Editor de texto (Quill)
+│   │       └── UserListPartialView.php # Listagem de usuários (para o dashboard)
+│   │
+│   └── Interfaces/                  # Interfaces (reservado para uso futuro, para reduzir acoplamento)
+│
+├── setup/                           # Infraestrutura e dados iniciais
+│   ├── blog_app_SCHEMA.sql          # DDL completo do banco de dados
+│   ├── blog_app_DATA.sql            # Dados iniciais
+│   ├── docker-blogapp/              # Configuração Docker
+│   │   ├── compose.yml              # Orquestração: Apache + PHP-FPM + MySQL + phpMyAdmin
+│   │   ├── .env / .env.sample       # Variáveis do Docker (senhas MySQL)
+│   │   ├── apache/                  # Dockerfile + VirtualHosts + SSL
+│   │   ├── php/                     # Dockerfile + configs PHP-FPM + OPcache
+│   │   └── mysql/                   # Configuração customizada (tcc-mysql.cnf)
+│   └── migrations/                  # Doctrine Migrations
+│
+├── cache/                           # Cache do HTMLPurifier (gerado automaticamente)
+├── logs/                            # Logs da aplicação (security, app, infrastructure)
+├── composer.json                    # Dependências e autoload PSR-4
+└── composer.lock                    # Versões exatas (não versionado)
+```
