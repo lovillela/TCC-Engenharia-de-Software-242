@@ -77,6 +77,7 @@ O sistema oferece três perfis de usuário com diferentes níveis de acesso:
 | Ferramenta | Finalidade |
 |-----------|-----------|
 | **PHPMetrics** (^2.9, dev) | Geração de relatórios de métricas de código |
+
 ---
 
 ## 🏗 Arquitetura
@@ -607,3 +608,29 @@ Além dos logs da aplicação, a infraestrutura também registra:
    | phpMyAdmin | `http://localhost/phpmyadmin/` |
 
    > O banco de dados é populado automaticamente com o schema (`blog_app_SCHEMA.sql`) e os dados iniciais (`blog_app_DATA.sql`) na primeira inicialização.
+
+---
+
+## 🔧 Variáveis de Ambiente
+
+### Aplicação (`config/.env`)
+
+| Variável | Descrição | Exemplo |
+|----------|-----------|---------|
+| `DB_NAME` | Nome do banco de dados | `blog_app` |
+| `DB_USER` | Usuário do banco | `blogApp` |
+| `DB_PASSWORD` | Senha do usuário do banco | `sua_senha` |
+| `DB_HOST` | Host do banco de dados | `mysql-db` (Docker) / `localhost` (manual) |
+| `DB_PORT` | Porta do banco | `3306` |
+| `DB_DRIVER` | Driver do Doctrine DBAL | `pdo_mysql` |
+| `DB_CHARSET` | Charset do banco | `utf8mb4` |
+| `DB_COLLATION` | Collation do banco | `utf8mb4_0900_ai_ci` |
+
+### Docker (`setup/docker-blogapp/.env`)
+
+| Variável | Descrição |
+|----------|-----------|
+| `DB_ROOT_PASSWORD` | Senha do usuário root do MySQL |
+| `DB_PASSWORD` | Senha do usuário da aplicação (`blogApp`) |
+
+---
