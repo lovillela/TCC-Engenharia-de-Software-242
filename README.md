@@ -597,3 +597,13 @@ Além dos logs da aplicação, a infraestrutura também registra:
    cd setup/docker-blogapp
    docker compose up -d
    ```
+
+5. **Acesse a aplicação:**
+
+   | Serviço | URL |
+   |---------|-----|
+   | Blog App | `http://localhost` (apenas de referência, utilize o HTTPS) |
+   | Blog App (HTTPS) | `https://localhost` (certificado autoassinado) |
+   | phpMyAdmin | `http://localhost/phpmyadmin/` |
+
+   > O banco de dados é populado automaticamente com o schema (`blog_app_SCHEMA.sql`) e os dados iniciais (`blog_app_DATA.sql`) na primeira inicialização.
