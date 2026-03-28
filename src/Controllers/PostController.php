@@ -215,11 +215,10 @@ final class PostController extends BaseController{
       exit;
     }
 
-    $headTitle = 'Post Form';
+    $headTitle = 'Criar Artigo';
 
     $bodyData = [
-      'title' => 'Post Form',
-      'headerText' => 'Post Form',
+      'headerText' => 'Criar Artigo',
       'errorMessage' => '',
       'generalMessage' => '',
       'csrfToken' => $this->authManagerService->getCsrfToken(),

@@ -21,6 +21,7 @@
         <?php endif; ?>
 
         <form action="" method="post">
+          <input type="hidden" name="csrfToken" id="csrfToken" value="<?php echo($csrfToken); ?>">
           <div class="mb-3">
             <label for="newUser_Regular" class="form-label fw-semibold"><?php echo($userLabel); ?></label>
             <input type="text" name="newUser" id="newUser_Regular" class="form-control"required>
