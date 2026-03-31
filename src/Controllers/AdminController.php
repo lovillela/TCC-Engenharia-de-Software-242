@@ -58,10 +58,19 @@ final class AdminController extends BaseController{
     $headTitle = 'Admin Dashboard';
 
     $bodyData = [
-      'title' => 'Admin Dashboard',
       'headerText' => 'Admin Dashboard',
       'errorMessage' => '',
       'generalMessage' => '',
+      'addNewUserText' => '+ Adicionar Novo Usuário',
+      'adminUserActionsText' => 'Visualize, edite ou remova as contas com acesso ao sistema.',
+      'listUsersText' => 'Listar todos os usuários',
+      'adminPostActionsText' => 'Acesse todo o conteúdo publicado para revisão ou moderação.',
+      'listPostText' => 'Listar todos os posts',
+      'postModerationText' => 'Moderação de Posts',
+      'userModerationText' => 'Gestão de Usuários',
+      'adminCreateUserFormUrl' => '/admin/dashboard/create/user/',
+      'adminListUsersUrl' => '/admin/dashboard/list/users/',
+      'adminListPostsUrl' => '/admin/dashboard/list/posts/',
       'csrfToken' => $this->authManagerService->getCsrfToken(),
     ];
 

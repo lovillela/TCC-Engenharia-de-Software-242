@@ -2,12 +2,13 @@
 
 RewriteEngine On
 
-# Send all requests to index.php unless file/directory exists
-# If file doesn't exist
+# Envia todas as requisições para o index.php, menos se o diretorio/arquivo existirem
+# Se o arquivo não existir
 RewriteCond %{REQUEST_FILENAME} !-f
-# If directory doesn't exist
+
+# Se o diretório não existir
 RewriteCond %{REQUEST_FILENAME} !-d
-# Send everything to index.php
+# Envia-se as requisições para o index.php
 RewriteRule ^(.*)$ index.php [QSA,L]
 
 </IfModule>
