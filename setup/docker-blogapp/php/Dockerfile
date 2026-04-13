@@ -75,6 +75,12 @@ RUN chown www-data:www-data /home/www-data/.bashrc
 RUN git config --global --add safe.directory '*' && \
     chsh -s /bin/bash www-data
 
+RUN mkdir -p /var/www/.composer/cache && chown -R ${LOCAL_UID}:${LOCAL_GID} /var/www/.composer
+
+# Copia o entrypoint para o container (precisa ser feito como root)
+COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 # Set working directory
 WORKDIR /var/www/html
 
@@ -82,3 +88,7 @@ WORKDIR /var/www/html
 USER www-data
 
 EXPOSE 9000
+
+#$ /usr/local/bin/entrypoint.sh php-fpm
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD ["php-fpm"]

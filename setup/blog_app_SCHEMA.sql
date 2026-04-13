@@ -1,12 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.2
+-- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
 -- Host: mysql-db:3306
--- Generation Time: Feb 24, 2026 at 02:01 AM
--- Server version: 8.4.6
--- PHP Version: 8.2.28
+-- Generation Time: Apr 11, 2026 at 04:42 PM
+-- Server version: 8.4.8
+-- PHP Version: 8.3.30
 
+SET FOREIGN_KEY_CHECKS=0;
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
@@ -20,7 +21,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `blog_app`
 --
-DROP DATABASE IF EXISTS `blog_app`;
 CREATE DATABASE IF NOT EXISTS `blog_app` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 USE `blog_app`;
 
@@ -184,7 +184,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 DROP TABLE IF EXISTS `user_comment_post`;
 CREATE TABLE IF NOT EXISTS `user_comment_post` (
-  `id` bigint UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
   `id_user` bigint UNSIGNED NOT NULL,
   `id_post` bigint UNSIGNED NOT NULL,
   `content` mediumtext NOT NULL,
@@ -277,6 +277,7 @@ ALTER TABLE `user_comment_post`
 ALTER TABLE `user_reaction_post`
   ADD CONSTRAINT `post_id-user_like_post` FOREIGN KEY (`id_post`) REFERENCES `post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `user_id-user_like_post` FOREIGN KEY (`id_user`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

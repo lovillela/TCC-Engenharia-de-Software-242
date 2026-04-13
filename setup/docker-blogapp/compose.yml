@@ -36,11 +36,10 @@ services:
   mysql:
     container_name: mysql-db
     image: mysql:8.4
-    user: "${UID:-1000}:${GID:-1000}"
     networks:
       - database
     volumes:
-      - ${HOME}/database:/var/lib/mysql
+      - mysql-data:/var/lib/mysql
       - ../blog_app_SCHEMA.sql:/docker-entrypoint-initdb.d/01-schema.sql
       - ../blog_app_DATA.sql:/docker-entrypoint-initdb.d/02-data.sql
       - ./mysql/tcc-mysql.cnf:/etc/mysql/conf.d/tcc-mysql.cnf:ro #Arquivo de config, modo readonly
@@ -83,3 +82,6 @@ networks:
     web:
       driver: bridge
       name: blogapp_web
+
+volumes:
+  mysql-data:
