@@ -96,19 +96,14 @@ $dependencyContainer = [
   'CommentService' => $commentService,
 ];
 
-$routerMain = require_once __DIR__ . '/../../config/Routes/main.php';
-$routerAdmin = require_once __DIR__ . '/../../config/Routes/admin.php';
+function RouteHandler($path, $dependencyContainer, $route){
 
-function RouteHandler($path, $dependencyContainer){
-  global $routerMain;
-
-  $routerService = new RouteMatchService($routerMain, $path, $dependencyContainer);
+  $routerService = new RouteMatchService($route, $path, $dependencyContainer);
   $routerService->routeMatch();
 }
 
-function AdminRouteHandler($path, $dependencyContainer){
-  global $routerAdmin;
+function AdminRouteHandler($path, $dependencyContainer, $route){
 
-  $routerService = new RouteMatchService($routerAdmin, $path, $dependencyContainer);
+  $routerService = new RouteMatchService($route, $path, $dependencyContainer);
   $routerService->routeMatch();
 }
