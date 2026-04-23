@@ -19,6 +19,12 @@ RUN sed -i \
 # Copy custom configuration and SSL certificates
 COPY ./apache.conf /usr/local/apache2/conf/extra/php-fpm.conf
 RUN mkdir -p /usr/local/apache2/conf/certs/
+
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    -keyout /usr/local/apache2/conf/certs/apache-selfsigned.key \
+    -out /usr/local/apache2/conf/certs/apache-selfsigned.crt \
+    -subj "/C=BR/ST=SP/L=Local/O=Desenvolvimento/CN=blog-app.com"
+
 COPY cert.pem /usr/local/apache2/conf/certs/apache-selfsigned.crt
 COPY key.pem /usr/local/apache2/conf/certs/apache-selfsigned.key
 
