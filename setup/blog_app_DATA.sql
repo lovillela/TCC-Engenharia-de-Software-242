@@ -70,13 +70,11 @@ TRUNCATE TABLE `post`;
 --
 
 INSERT INTO `post` (`id`, `title`, `content`, `slug`) VALUES
-(1, 'Introdução ao PHP moderno', 'PHP evoluiu muito nos últimos anos. Exploramos as principais novidades do PHP 8.x, incluindo union types, fibers e enums.', 'introducao-ao-php-moderno'),
-(2, 'Docker para desenvolvedores PHP', 'Aprenda como containerizar sua aplicação PHP com Docker e Docker Compose de forma simples e eficiente.', 'docker-para-desenvolvedores-php'),
-(3, 'Queries recursivas no MySQL', 'Entenda como usar CTEs recursivas no MySQL para percorrer estruturas hierárquicas como árvores de comentários.', 'queries-recursivas-no-mysql'),
-(4, 'Padrões de arquitetura para APIs REST', '<p>Um overview sobre Repository Pattern, Service Layer e como organizar uma API REST em PHP sem frameworks pesados.</p><p></p><p><a href=\"https://blog-app.com\">Link</a></p>', 'padroes-arquitetura-apis-rest'),
-(5, 'Otimização de índices no InnoDB', 'Como criar e utilizar índices de forma eficiente no MySQL com InnoDB para melhorar a performance de suas queries.', 'otimizacao-indices-innodb'),
-(6, 'Padrões de arquitetura para APIs REST', '<p>Padrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs RESTPadrões de arquitetura para APIs REST</p>', 'padres-de-arquitetura-para-apis-rest'),
-(7, 'Teste', '<p>TesteTesteTesteTesteTesteTesteTesteTesteTesteTesteTesteTesteTesteTesteTesteTesteTesteTeste</p>', 'teste');
+(1, 'A Evolução do PHP: Do 8.0 ao 8.4', '<p>O PHP não é mais o mesmo de 10 anos atrás. Com a chegada da versão 8.x, a linguagem ganhou recursos de linguagens de alto nível que mudaram o jogo para desenvolvedores backend.</p><ul><li><strong>JIT (Just-In-Time):</strong> Melhoria significativa em tarefas computacionais pesadas.</li><li><strong>Readonly Properties:</strong> Facilitando a criação de DTOs imutáveis.</li><li><strong>Enums:</strong> Finalmente uma forma nativa de lidar com tipos enumerados.</li></ul><p>Neste artigo, exploramos como essas mudanças impactam a arquitetura de sistemas modernos.</p>', 'a-evolucao-do-php-8'),
+(2, 'Docker para PHP: O Guia Definitivo', '<p>Containerizar uma aplicação PHP pode parecer simples, mas otimizar a imagem para produção é onde a mágica acontece. Não basta apenas um <code>docker-compose up</code>.</p><p>Discutimos o uso de imagens <em>Alpine Linux</em> para reduzir o tamanho, a separação de responsabilidades entre Nginx e PHP-FPM, e como gerenciar permissões de usuário de forma segura dentro dos containers.</p>', 'docker-php-guia-definitivo'),
+(3, 'Dominando Queries Recursivas (CTE) no MySQL', '<p>Você já precisou carregar uma árvore de categorias ou comentários com infinitos níveis? No passado, isso exigia várias queries ou lógica complexa no código.</p><p>As <strong>Common Table Expressions (CTEs)</strong> recursivas do MySQL 8.0 permitem que você resolva hierarquias complexas em uma única viagem ao banco de dados. Vamos analisar a sintaxe <code>WITH RECURSIVE</code> e casos de uso reais.</p>', 'queries-recursivas-mysql-8'),
+(4, 'Arquitetura sem Frameworks: Vale a pena?', '<p>Em um mundo dominado por Laravel e Symfony, por que alguém construiria algo em PHP puro? O segredo não é reinventar a roda, mas entender como ela gira.</p><p>Ao implementar o <strong>Repository Pattern</strong> e uma <strong>Service Layer</strong> manualmente, você ganha controle total sobre o acoplamento e a performance da sua aplicação. É um exercício fundamental para todo Engenheiro de Software.</p>', 'arquitetura-php-sem-framework'),
+(5, 'Performance: O Poder dos Índices no InnoDB', '<p>Um índice mal planejado pode ser pior do que a ausência de um. No motor InnoDB do MySQL, entender como a <em>Clustered Index</em> funciona é vital.</p><p>Neste post, comparamos índices B-Tree com índices de busca textual (Full-Text) e mostramos como usar o <code>EXPLAIN</code> para identificar gargalos em consultas que pareciam inofensivas.</p>', 'performance-indices-innodb');
 
 --
 -- Truncate table before insert `post_category`
@@ -207,17 +205,16 @@ TRUNCATE TABLE `user_comment_post`;
 -- Dumping data for table `user_comment_post`
 --
 
+-- Atualização da tabela user_comment_post com discussões simuladas
 INSERT INTO `user_comment_post` (`id`, `id_user`, `id_post`, `content`, `parent`, `created_at`, `is_visible`) VALUES
-(4, 1, 3, 'CTEs recursivas são poderosas! Usei num projeto recente.', NULL, '2026-01-12 14:00:00', 1),
-(5, 2, 4, 'Você poderia fazer um post sobre DDD também?', NULL, '2026-01-13 08:30:00', 1),
-(9, 2, 3, 'Como você lidou com ciclos na recursão? Tem algum limite de profundidade?', 4, '2026-01-12 15:00:00', 1),
-(10, 4, 4, 'DDD é um ótimo tema, vou sugerir ao autor!', 5, '2026-01-13 09:00:00', 1),
-(13, 3, 3, 'O MySQL limita a recursão com @@cte_max_recursion_depth, padrão é 1000.', 9, '2026-01-12 16:00:00', 1),
-(14, 5, 4, 'Boa ideia! DDD + PHP será o próximo post da série.', 10, '2026-01-13 10:00:00', 1),
-(20, 3, 4, 'teste', 14, '2026-03-27 00:25:58', 1),
-(33, 6, 1, 'nois', NULL, '2026-03-28 16:05:31', 1),
-(34, 6, 1, 'é', 33, '2026-03-28 16:05:36', 1),
-(35, 6, 1, 'nósi', 34, '2026-03-28 16:05:45', 1);
+(4, 1, 3, 'Excelente explicação! As CTEs salvaram a performance do meu sistema de organograma.', NULL, '2026-01-12 14:00:00', 1),
+(9, 2, 3, 'João, você notou alguma diferença de performance entre CTE e o Nested Set Model para árvores muito grandes?', 4, '2026-01-12 15:00:00', 1),
+(13, 3, 3, 'Maria, para leitura simples a CTE costuma ser mais rápida no MySQL 8, mas o Nested Set ainda vence se você tiver milhares de níveis e poucas escritas.', 9, '2026-01-12 16:00:00', 1),
+(5, 2, 4, 'Acho essa abordagem de PHP puro sensacional para aprendizado. Como você recomenda lidar com a Injeção de Dependência sem um container automatizado?', NULL, '2026-01-13 08:30:00', 1),
+(10, 4, 4, 'Maria, eu costumo usar uma classe Kernel simples que instancia os serviços no início do ciclo da requisição. Resolve 90% dos casos!', 5, '2026-01-13 09:00:00', 1),
+(14, 5, 4, 'Exato, Ana. Menos "magia" de frameworks facilita muito o debug e os testes unitários.', 10, '2026-01-13 10:00:00', 1),
+(33, 6, 1, 'Os Enums foram a melhor adição do PHP 8.1. Adeus constantes espalhadas pelo código!', NULL, '2026-03-28 16:05:31', 1),
+(34, 4, 1, 'Concordo plenamente. Já começou a usar os Fibers também para concorrência?', 33, '2026-03-28 16:05:36', 1);
 
 --
 -- Truncate table before insert `user_reaction_post`
