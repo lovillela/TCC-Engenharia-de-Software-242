@@ -1,7 +1,8 @@
 FROM httpd:2.4
 
 # Enable required Apache modules and add Listen directive for HTTPS
-RUN sed -i \
+RUN apt-get update && apt-get install -y openssl && \
+    sed -i \
     -e 's/#LoadModule rewrite_module/LoadModule rewrite_module/' \
     -e 's/#LoadModule proxy_module/LoadModule proxy_module/' \
     -e 's/#LoadModule proxy_fcgi_module/LoadModule proxy_fcgi_module/' \
@@ -25,8 +26,8 @@ RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
     -out /usr/local/apache2/conf/certs/apache-selfsigned.crt \
     -subj "/C=BR/ST=SP/L=Local/O=Desenvolvimento/CN=blog-app.com"
 
-COPY cert.pem /usr/local/apache2/conf/certs/apache-selfsigned.crt
-COPY key.pem /usr/local/apache2/conf/certs/apache-selfsigned.key
+#COPY cert.pem /usr/local/apache2/conf/certs/apache-selfsigned.crt
+#COPY key.pem /usr/local/apache2/conf/certs/apache-selfsigned.key
 
 # Include our custom configuration
 RUN echo "Include conf/extra/php-fpm.conf" >> /usr/local/apache2/conf/httpd.conf
